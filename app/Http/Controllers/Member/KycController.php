@@ -79,6 +79,7 @@ class KycController extends Controller
                     $kyc->pan_card_proof = $filePath;
                     $kyc->pan_card_proof_status	 = 0;
                 }
+                $kyc->is_confirmed = 0;
                 $res = $kyc->update();
                 if($res){
                     return back()->with(['success'=>'KYC Submitted Successfully.']);

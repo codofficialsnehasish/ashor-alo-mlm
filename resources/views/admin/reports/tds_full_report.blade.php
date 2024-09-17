@@ -78,7 +78,7 @@
                                     @php $user++ @endphp
                                     @php $amount += $item->amount @endphp
                                     <tr>
-                                        <td><a href="{{ route('report.tds-deduction-full-details',get_user_id($item->user_id)) }}">{{ get_name($item->user_id) }}</a></td>
+                                        <td>{{ get_name($item->user_id) }}</td>
                                         <td>{{ get_user_id($item->user_id) }}</td>
                                         <td>{{ $item->amount }}</td>
                                         <td>{{ format_datetime($item->created_at) }}</td>

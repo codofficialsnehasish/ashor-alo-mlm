@@ -22,6 +22,15 @@
                             <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                         </ol>
                     </div>
+                    <div class="col-md-4">
+                        <div class="float-end d-none d-md-block">
+                            <div class="dropdown">
+                                <a href="{{ route('report.direct-bonus-report') }}" class="btn btn-primary  dropdown-toggle" aria-expanded="false">
+                                    <i class="fas fa-arrow-left me-2"></i> Back
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- end page title -->
@@ -29,7 +38,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('report.generate-direct-bonus-report') }}" method="post">
+                            <form action="{{ route('report.generate-direct-bonus-full-details',$user_id) }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="mb-0 col-md-10">
@@ -59,7 +68,8 @@
                                         <th class="text-wrap">Name</th>
                                         <th>ID</th>
                                         <th class="text-wrap">Amount</th>
-                                        <!-- <th class="text-wrap">Date</th> -->
+                                        <th class="text-wrap">Statement</th>
+                                        <th class="text-wrap">Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,21 +77,23 @@
                                     @php $amount = 0 @endphp
                                     @foreach($items as $item)
                                     @php $user++ @endphp
-                                    @php $amount += $item->total_amount @endphp
+                                    @php $amount += $item->amount @endphp
                                     <tr>
-                                        <td><a href="{{ route('report.direct-bonus-full-details',get_user_id($item->user_id)) }}">{{ get_name($item->user_id) }}</a></td>
+                                        <td>{{ get_name($item->user_id) }}</td>
                                         <td>{{ get_user_id($item->user_id) }}</td>
-                                        <td>{{ $item->total_amount }}</td>
-                                        <!-- <td>{{-- format_datetime($item->first_transaction) --}}</td> -->
+                                        <td>{{ $item->amount }}</td>
+                                        <td>{{ $item->which_for }}</td>
+                                        <td>{{ format_datetime($item->created_at) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td><b>Total User - {{ $user }}</b></td>
+                                        <td></td>
                                         <td></td>
                                         <td><b>Total Amount - {{ $amount }}</b></td>
-                                        <!-- <td></td> -->
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>

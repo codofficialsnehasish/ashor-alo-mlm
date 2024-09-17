@@ -59,7 +59,7 @@
                                         <th class="text-wrap">Name</th>
                                         <th>ID</th>
                                         <th class="text-wrap">Amount</th>
-                                        <th class="text-wrap">Date</th>
+                                        <!-- <th class="text-wrap">Date</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,12 +67,12 @@
                                     @php $amount = 0 @endphp
                                     @foreach($items as $item)
                                     @php $user++ @endphp
-                                    @php $amount += $item->amount @endphp
+                                    @php $amount += $item->total_amount @endphp
                                     <tr>
-                                        <td>{{ get_name($item->user_id) }}</td>
+                                        <td><a href="{{ route('report.level-bonus-full-details',get_user_id($item->user_id)) }}">{{ get_name($item->user_id) }}</a></td>
                                         <td>{{ get_user_id($item->user_id) }}</td>
-                                        <td>{{ $item->amount }}</td>
-                                        <td>{{ format_datetime($item->created_at) }}</td>
+                                        <td>{{ $item->total_amount }}</td>
+                                        <!-- <td>{{-- format_datetime($item->created_at) --}}</td> -->
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -81,7 +81,7 @@
                                         <td><b>Total User - {{ $user }}</b></td>
                                         <td></td>
                                         <td><b>Total Amount - {{ $amount }}</b></td>
-                                        <td></td>
+                                        <!-- <td></td> -->
                                     </tr>
                                 </tfoot>
                             </table>

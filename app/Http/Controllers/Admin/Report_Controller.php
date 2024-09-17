@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class Report_Controller extends Controller
 {
+
+    // Income Report
+
     public function income_report(){
         $data['title'] = 'Sell Report';
         $data['items'] = TopUp::whereDate('start_date',date('Y-m-d'))->get();
@@ -29,6 +32,10 @@ class Report_Controller extends Controller
         ->whereDate('start_date', '<=', $endDate)->get();
         return view('admin.reports.income_report')->with($data);
     }
+
+    // End of Income Report
+
+    // Investor Return Report
 
     public function investor_return_report(){
         $data['title'] = 'Investor Return Report';
@@ -47,9 +54,14 @@ class Report_Controller extends Controller
         return view('admin.reports.investor_return_report')->with($data);
     }
 
+    // End of Investor Return Report
+
+
+    // Direct Bonus Report
+
     public function direct_bonus_report(){
         $data['title'] = 'Direct Bonus Report';
-        $data['items'] = AccountTransaction::where('which_for', 'Direct Bonus')
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
                         ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
                         ->groupBy('user_id')
                         ->get();
@@ -60,7 +72,7 @@ class Report_Controller extends Controller
         $data['title'] = 'Direct Bonus Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
-        $data['items'] = AccountTransaction::where('which_for', 'Direct Bonus')
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
                         ->whereDate('created_at', '>=', $startDate)
                         ->whereDate('created_at', '<=', $endDate)
                         ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
@@ -69,11 +81,37 @@ class Report_Controller extends Controller
         return view('admin.reports.direct_bonus_report')->with($data);
     }
 
+    public function direct_bonus_full_details(Request $r){
+        $data['title'] = 'Direct Full Report';
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                        ->where('user_id',get_id_using_user_id($r->userid))
+                        ->get();
+        return view('admin.reports.direct_bonus_full_report',compact('user_id'))->with($data);
+    }
+
+    public function generate_direct_bonus_full_details(Request $r){
+        $data['title'] = 'Direct Full Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                        ->where('user_id',get_id_using_user_id($r->userid))
+                        ->whereDate('created_at', '>=', $startDate)
+                        ->whereDate('created_at', '<=', $endDate)
+                        ->get();
+        return view('admin.reports.direct_bonus_full_report',compact('user_id'))->with($data);
+    }
+
+    // End of Direct Bonus Report
+
+    // Lavel Bonus Report
+
     public function level_bonus_report(){
         $data['title'] = 'Level Bonus Report';
-        $data['items'] = AccountTransaction::where('which_for', 'Level Bonus')
-                        // ->select('user_id', DB::raw('SUM(amount) as total_amount'))
-                        // ->groupBy('user_id')
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
+                        ->groupBy('user_id')
                         ->get();
         return view('admin.reports.level_bonus_report')->with($data);
     }
@@ -82,15 +120,40 @@ class Report_Controller extends Controller
         $data['title'] = 'Level Bonus Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
-        $data['items'] = AccountTransaction::where('which_for', 'Level Bonus')
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
                         ->whereDate('created_at', '>=', $startDate)
                         ->whereDate('created_at', '<=', $endDate)
-                        // ->select('user_id', DB::raw('SUM(amount) as total_amount'))
-                        // ->groupBy('user_id')
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
+                        ->groupBy('user_id')
                         ->get();
         return view('admin.reports.level_bonus_report')->with($data);
     }
 
+    public function level_bonus_full_details(Request $r){
+        $data['title'] = 'Level Bonus Full Report';
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                        ->where('user_id',get_id_using_user_id($r->userid))
+                        ->get();
+        return view('admin.reports.level_bonus_full_report',compact('user_id'))->with($data);
+    }
+
+    public function generate_level_bonus_full_details(Request $r){
+        $data['title'] = 'Level Bonus Full Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                        ->where('user_id',get_id_using_user_id($r->userid))
+                        ->whereDate('created_at', '>=', $startDate)
+                        ->whereDate('created_at', '<=', $endDate)
+                        ->get();
+        return view('admin.reports.level_bonus_full_report',compact('user_id'))->with($data);
+    }
+
+    // End of Lavel Bonus Report
+
+    // TDS Report
 
     public function tds_report(){
         $data['title'] = 'TDS Report';
@@ -132,6 +195,10 @@ class Report_Controller extends Controller
         return view('admin.reports.tds_full_report',compact('user_id'))->with($data);
     }
 
+    // End of TDS Report
+
+    // Repurchase Report
+
     public function repurchase_report(){
         $data['title'] = 'Repurchase Report';
         $data['items'] = RepurchaseAccount::all();
@@ -147,6 +214,10 @@ class Report_Controller extends Controller
                         ->get();
         return view('admin.reports.repurchase_report')->with($data);
     }
+
+    // End of Repurchase Report
+
+    // Product Return Report
 
     public function product_return_report(){
         $data['title'] = 'Product Return Report';
@@ -164,6 +235,10 @@ class Report_Controller extends Controller
                         ->get();
         return view('admin.reports.product_return_report')->with($data);
     }
+
+    // End of Product Return Report
+
+    // ID Activation Report
 
     public function id_activation_report(){
         $data['title'] = 'ID Activation Report';
@@ -193,4 +268,6 @@ class Report_Controller extends Controller
         }
         return view('admin.reports.id_activation_report')->with($data);
     }
+
+    // End of ID Activation Report
 }

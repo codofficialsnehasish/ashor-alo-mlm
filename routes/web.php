@@ -345,11 +345,19 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/investor-return-report",[Report_Controller::class,"investor_return_report"])->name('report.investor-return-report');
             Route::post("/generate-investor-return-report",[Report_Controller::class,"generate_investor_return_report"])->name('report.generate-investor-return-report');
 
+            // direct bonus
             Route::get("/direct-bonus-report",[Report_Controller::class,"direct_bonus_report"])->name('report.direct-bonus-report');
             Route::post("/generate-direct-bonus-report",[Report_Controller::class,"generate_direct_bonus_report"])->name('report.generate-direct-bonus-report');
+            Route::get("/{userid}/direct-bonus-full-details",[Report_Controller::class,"direct_bonus_full_details"])->name('report.direct-bonus-full-details');
+            Route::post("/{userid}/generate-direct-bonus-full-details",[Report_Controller::class,"generate_direct_bonus_full_details"])->name('report.generate-direct-bonus-full-details');
+            
 
+            // level bonus
             Route::get("/level-bonus-report",[Report_Controller::class,"level_bonus_report"])->name('report.level-bonus-report');
             Route::post("/generate-level-bonus-report",[Report_Controller::class,"generate_level_bonus_report"])->name('report.generate-level-bonus-report');
+            Route::get("/{userid}/level-bonus-full-details",[Report_Controller::class,"level_bonus_full_details"])->name('report.level-bonus-full-details');
+            Route::post("/{userid}/generate-level-bonus-full-details",[Report_Controller::class,"generate_level_bonus_full_details"])->name('report.generate-level-bonus-full-details');
+            
 
             Route::get("/tds-report",[Report_Controller::class,"tds_report"])->name('report.tds-report');
             Route::post("/generate-tds-report",[Report_Controller::class,"generate_tds_report"])->name('report.generate-tds-report');
