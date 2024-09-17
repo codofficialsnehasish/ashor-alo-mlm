@@ -179,10 +179,10 @@ class User_management extends Controller
                                     <label>Total Left :</label> <strong>' . ($user ? total_left($user->id) : '') . '</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Curr. Left BV :</label> <strong>0.00</strong>
+                                    <label>Curr. Left BV :</label> <strong>'.($user ? calculate_curr_left_business($user->id) : '').'</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Total Left BV :</label> <strong>0.00</strong>
+                                    <label>Total Left BV :</label> <strong>'. ($user ? calculate_left_business($user->id) : '') .'</strong>
                                 </div>
                                 <div class="element">
                                     <label>Total User :</label> <strong>' . ($user ? total_user($user->id) : '') . '</strong>
@@ -205,10 +205,10 @@ class User_management extends Controller
                                     <label>Total Right :</label> <strong>' . ($user ? total_right($user->id) : '') . '</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Curr. Right BV :</label> <strong>0.00</strong>
+                                    <label>Curr. Right BV :</label> <strong>'.($user ? calculate_curr_right_business($user->id) : '').'</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Total Right BV :</label> <strong>0.00</strong>
+                                    <label>Total Right BV :</label> <strong>'. ($user ? calculate_right_business($user->id) : '') .'</strong>
                                 </div>
                             </div>
                         </div>

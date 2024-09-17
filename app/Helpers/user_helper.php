@@ -132,7 +132,7 @@
                 }elseif($kyc->identy_proof_status == 1){
                     $str = '<span class="text-success" data-toggle="tooltip" data-placement="top" title="Verified"><i class="fas fa-check-circle"></i></span>';
                 }else{
-                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->identy_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i></span>';
+                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->identy_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i> ' . htmlspecialchars($kyc->identy_proof_remarks, ENT_QUOTES, 'UTF-8') . '</span>';
                 }
                 return $str;
             }else{
@@ -149,7 +149,7 @@
                 }elseif($kyc->address_proof_status == 1){
                     $str = '<span class="text-success" data-toggle="tooltip" data-placement="top" title="Verified"><i class="fas fa-check-circle"></i></span>';
                 }else{
-                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->address_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i></span>';
+                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->address_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i> '. htmlspecialchars($kyc->address_proof_remarks, ENT_QUOTES, 'UTF-8') .'</span>';
                 }
                 return $str;
             }else{
@@ -166,7 +166,7 @@
                 }elseif($kyc->bank_ac_proof_status == 1){
                     $str = '<span class="text-success" data-toggle="tooltip" data-placement="top" title="Verified"><i class="fas fa-check-circle"></i></span>';
                 }else{
-                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->bank_ac_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i></span>';
+                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->bank_ac_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i> ' . htmlspecialchars($kyc->bank_ac_proof_remarks, ENT_QUOTES, 'UTF-8') . '</span>';
                 }
                 return $str;
             }else{
@@ -183,7 +183,7 @@
                 }elseif($kyc->pan_card_proof_status == 1){
                     $str = '<span class="text-success" data-toggle="tooltip" data-placement="top" title="Verified"><i class="fas fa-check-circle"></i></span>';
                 }else{
-                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->pan_card_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i></span>';
+                    $str = '<span class="text-danger" data-toggle="popover" data-content="' . htmlspecialchars($kyc->pan_card_proof_remarks, ENT_QUOTES, 'UTF-8') . '" title="Cancelled"><i class="fas fa-times-circle"></i> ' . htmlspecialchars($kyc->pan_card_proof_remarks, ENT_QUOTES, 'UTF-8') . '</span>';
                 }
                 return $str;
             }else{

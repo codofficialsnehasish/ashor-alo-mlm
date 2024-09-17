@@ -35,6 +35,7 @@
                                                 <tr>
                                                     <th>Sl No</th>
                                                     <th>User Name</th>
+                                                    <th>User ID</th>
                                                     <th>Status</th>
                                                     <th>Created At</th>
                                                     <th>Action</th>
@@ -45,6 +46,7 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ get_name($kyc->user_id) }}</td>
+                                                    <td>{{ get_user_id($kyc->user_id) }}</td>
                                                     <td>
                                                         @if($kyc->is_confirmed == 0) Pending
                                                         @elseif($kyc->is_confirmed == 1) Completed

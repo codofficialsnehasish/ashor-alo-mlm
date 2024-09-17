@@ -72,7 +72,7 @@
                                         <td>{{ get_name($item->user_id) }}</td>
                                         <td>{{ get_user_id($item->user_id) }}</td>
                                         <td>{{ $item->total_amount }}</td>
-                                        <td>{{ format_datetime($item->created_at) }}</td>
+                                        <td>{{ format_datetime($item->first_transaction) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

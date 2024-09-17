@@ -6,6 +6,9 @@ use App\Http\Controllers\LocationController;
 
 Route::get('disburse-product-support',[CornJobs::class,'disburse_product_support']);
 Route::get('disburse-roi',[CornJobs::class,'disburse_roi']);
+Route::get('forcely-disburse-roi',[CornJobs::class,'forcely_disburse_roi']);
+Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
+Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
 
 
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
@@ -270,6 +273,7 @@ Route::middleware('auth.admin')->group(function () {
             
             Route::post("/make-id-green",[Customers::class,"make_it_green"])->name('customer.make-id-green');
             
+            Route::get("/{id}/block-user",[Customers::class,"block_user"])->name('customer.block');
             
             Route::get("/user-of-leaders",[Customers::class,"user_of_leaders"])->name('customer.user-of-leaders');
             Route::post("/get-user-of-leaders",[Customers::class,"get_users_of_leaders"])->name('customer.get-user-of-leaders');

@@ -67,7 +67,13 @@
                                             <td>{{$c->phone}}</td>
                                             <td>{{$c->decoded_password}}</td>
                                             <td class="text-wrap">{{$c->email}}</td>
-                                            <td>{!! check_status($c->status) !!}</td>
+                                            <td>
+                                                @if($c->block == 0)
+                                                {!! check_status($c->status) !!}
+                                                @else
+                                                    <span class="badge bg-danger text-light" style="font-size:15px;">Blocked</span>
+                                                @endif
+                                            </td>
                                             <td class="text-wrap">@if(!empty($c->agent_id)){{get_user_name('user_id',$c->agent_id) }} ( {{ $c->agent_id }} ) @endif</td>
                                             <td class="text-wrap">
                                                 <!-- <a class="btn btn-primary" href="{{url('/editcustomer')}}/{{$c->id}}" alt="edit"><i class="ti-check-box"></i></a> -->
@@ -78,10 +84,10 @@
                                                 @else
                                                 <!-- <b class="text-success">Join with {{-- $c->joining_amount --}} in {{-- get_join_green_date($c->join_amount_put_date) --}}</b> -->
                                                 @endif
-                                                @if($c->blobk == 0)
-                                                <a href="javascript:void(0);"><img src="{{ asset('dashboard_assets/images/block.png') }}" height="40px" alt=""></a>
+                                                @if($c->block == 0)
+                                                <a href="{{ route('customer.block',$c->id) }}"><img src="{{ asset('dashboard_assets/images/block.png') }}" height="40px" alt=""></a>
                                                 @else
-                                                <a href="javascript:void(0);"><img src="{{ asset('dashboard_assets/images/unblock.png') }}" height="40px" alt=""></a>
+                                                <a href="{{ route('customer.block',$c->id) }}"><img src="{{ asset('dashboard_assets/images/unblock.png') }}" height="40px" alt=""></a>
                                                 @endif
                                                 <!-- <a class="btn btn-info" href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#fullscreenModal{{$c->id}}"><i class="fab fa-buffer"></i></a> -->
                                                 <a class="btn btn-primary" href="{{ route('customer.edit',$c->id) }}" alt="edit"><i class="ti-check-box"></i></a>

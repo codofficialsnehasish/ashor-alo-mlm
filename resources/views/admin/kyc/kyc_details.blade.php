@@ -24,7 +24,7 @@
                                 <div class="col-md-4">
                                     <div class="float-end d-none d-md-block">
                                         <div class="dropdown">
-                                            <a href="{{ route('kyc.pendings') }}" class="btn btn-primary  dropdown-toggle" aria-expanded="false">
+                                            <a onclick="history.back()" class="btn btn-primary  dropdown-toggle" aria-expanded="false">
                                                 <i class="fas fa-arrow-left me-2"></i> Back
                                             </a>
                                         </div>

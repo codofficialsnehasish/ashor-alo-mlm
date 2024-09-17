@@ -19,6 +19,7 @@ class LevelBonusService
     public function level_bonus($user_id, $amount, $total_month, $start_date) {
         
         $user = User::where('user_id', $user_id)->first();
+        if($user_id == null) { return; }
         if (empty($user)) {
             return;
         }

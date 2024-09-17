@@ -26,7 +26,7 @@
                             <div class="col-lg-4">
                                 <div class="card mb-4">
                                     <div class="card-body text-center">
-                                        <img src="{{!empty(Auth::user()->user_image) ? asset(Auth::user()->user_image) : asset('dashboard_assets/images/users/user-13.jpg')}}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                                        <img src="{{!empty(Auth::user()->user_image) ? asset(Auth::user()->user_image) : asset('dashboard_assets/images/users/user-13.jpg')}}" alt="avatar" class="rounded-circle img-fluid" style="width: 220px;height: 220px;object-fit: contain;">
                                         <div class="d-flex justify-content-center mb-2">
                                             <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn @if(Auth::user()->status == 1) btn-success @else btn-danger @endif">@if(Auth::user()->status == 1) Active @else Inactive @endif</button>
                                             <!-- <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button> -->
@@ -34,7 +34,7 @@
                                         <h5 class="my-3">{{ Auth::user()->name }}</h5>
                                         <p class="text-muted mb-1">ID - {{ Auth::user()->user_id }}</p>
                                         <p class="text-muted mb-2">Sponsor - {{ Auth::user()->agent_id }}</p>
-                                        <p class="text-muted">Sponsor ID - {{ get_name_by_user_id(Auth::user()->agent_id) }}</p>
+                                        {{-- <p class="text-muted">Sponsor ID - {{ Auth::user()->agent_id }}</p> --}}
                                         <!-- <div class="d-flex justify-content-center mb-2">
                                             <a href="{{ route('member.update-profile',Auth::id()) }}" data-mdb-button-init data-mdb-ripple-init class="btn btn-danger">Edit Profile</a>
                                         </div> -->

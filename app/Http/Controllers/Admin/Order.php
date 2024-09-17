@@ -110,7 +110,7 @@ class Order extends Controller
 
             update_order_number($order->id);
 
-            $this->make_it_green($r->category, $order->id,$r->agent,$r->total_price,$r->date);
+            $this->make_id_green($r->category, $order->id,$r->agent,$r->total_price,$r->date);
 
             if($res){
                 return redirect()->back()->with(['success'=>'Order Placed Successfully']);
@@ -180,7 +180,7 @@ class Order extends Controller
         $order = Orders::find($r->order_id);
         $order->payment_status = $r->payment_status;
         if($r->payment_status == 'Paid'){
-            $this->make_it_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
+            $this->make_id_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
         }
         $res = $order->update();
         if($res){
@@ -197,7 +197,7 @@ class Order extends Controller
         $order->order_status = $r->order_status;
         if($r->order_status == 'Order Completed'){
             $order->status = 1;
-            $this->make_it_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
+            $this->make_id_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
             // $product_income = new ProductSectorIncome();
             // $product_income->user_id = $order->buyer_id;
             // $product_income->order_id  = $order->id;
@@ -214,7 +214,7 @@ class Order extends Controller
     }
 
 
-    public function make_it_green($category, $order_id, $user_id, $total_amount, $date){
+    public function make_id_green($category, $order_id, $user_id, $total_amount, $date){
         $ROI = calculate_ROI($total_amount,$category);
         // print_r($ROI);die;
         if(!empty($ROI)){
@@ -247,74 +247,74 @@ class Order extends Controller
                     1
                 );
     
-                if(User::where('user_id',$custo->agent_id)->exists()){
-                    $agent = User::where('user_id',$custo->agent_id)->first();
-                    if($agent->status == 1){
+                // if(User::where('user_id',$custo->agent_id)->exists()){
+                //     $agent = User::where('user_id',$custo->agent_id)->first();
+                //     if($agent->status == 1){
                         
-                        //Direct Bonus
-                        $mlm_settings = MLMSettings::first();
-                        $user_bonus = ($total_amount * ($mlm_settings->agent_direct_bonus/100));
-                        $tds_amount = $user_bonus * ($mlm_settings->tds/100);
-                        $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
-                        $user_bonus -= $tds_amount+$repurchase_amount;
-                        if(check_limit($agent->id)){
-                            if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
-                                $agent->account_balance += $user_bonus;
-                                // Direct Bonus transaction
-                                $transactionAdded = $this->transaction->make_transaction(
-                                    $agent->id,
-                                    $user_bonus,
-                                    'Direct Bonus',
-                                    1
-                                );
-                            }else{
-                                $gap = get_user_limit($agent->id) - $agent->account_balance;
-                                $agent->account_balance += $gap;
-                                $transactionAdded = $this->transaction->make_transaction(
-                                    $agent->id,
-                                    $gap,
-                                    'Direct Bonus',
-                                    1
-                                );
-                                $user_bonus = abs($user_bonus - $gap); 
-                                $agent->hold_balance += $user_bonus;
-                                $transactionAdded = $this->transaction->make_transaction(
-                                    $agent->id,
-                                    $user_bonus,
-                                    'Direct Bonus on Hold',
-                                    1
-                                );
-                            }
-                        }else{
-                            $agent->hold_balance += $user_bonus;
-                            $transactionAdded = $this->transaction->make_transaction(
-                                $agent->id,
-                                $user_bonus,
-                                'Direct Bonus on Hold',
-                                1
-                            );
-                        }
-                        $agent->update();
+                //         //Direct Bonus
+                //         $mlm_settings = MLMSettings::first();
+                //         $user_bonus = ($total_amount * ($mlm_settings->agent_direct_bonus/100));
+                //         $tds_amount = $user_bonus * ($mlm_settings->tds/100);
+                //         $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
+                //         $user_bonus -= $tds_amount+$repurchase_amount;
+                //         if(check_limit($agent->id)){
+                //             if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
+                //                 $agent->account_balance += $user_bonus;
+                //                 // Direct Bonus transaction
+                //                 $transactionAdded = $this->transaction->make_transaction(
+                //                     $agent->id,
+                //                     $user_bonus,
+                //                     'Direct Bonus',
+                //                     1
+                //                 );
+                //             }else{
+                //                 $gap = get_user_limit($agent->id) - $agent->account_balance;
+                //                 $agent->account_balance += $gap;
+                //                 $transactionAdded = $this->transaction->make_transaction(
+                //                     $agent->id,
+                //                     $gap,
+                //                     'Direct Bonus',
+                //                     1
+                //                 );
+                //                 $user_bonus = abs($user_bonus - $gap); 
+                //                 $agent->hold_balance += $user_bonus;
+                //                 $transactionAdded = $this->transaction->make_transaction(
+                //                     $agent->id,
+                //                     $user_bonus,
+                //                     'Direct Bonus on Hold',
+                //                     1
+                //                 );
+                //             }
+                //         }else{
+                //             $agent->hold_balance += $user_bonus;
+                //             $transactionAdded = $this->transaction->make_transaction(
+                //                 $agent->id,
+                //                 $user_bonus,
+                //                 'Direct Bonus on Hold',
+                //                 1
+                //             );
+                //         }
+                //         $agent->update();
             
                         
-                        $account = Account::first();
-                        $account->tds_balance += $tds_amount;
-                        $account->repurchase_balance += $repurchase_amount;
-                        $account->update();
-                        TDSAccount::create([
-                            'user_id'=>$agent->id,
-                            'amount'=>$tds_amount,
-                            'which_for'=>'Deducting from Direct bonus',
-                            'status'=>1
-                        ]);
-                        RepurchaseAccount::create([
-                            'user_id'=>$agent->id,
-                            'amount'=>$repurchase_amount,
-                            'which_for'=>'Deducting from Direct bonus',
-                            'status'=>1
-                        ]);
-                    }
-                }
+                //         $account = Account::first();
+                //         $account->tds_balance += $tds_amount;
+                //         $account->repurchase_balance += $repurchase_amount;
+                //         $account->update();
+                //         TDSAccount::create([
+                //             'user_id'=>$agent->id,
+                //             'amount'=>$tds_amount,
+                //             'which_for'=>'Deducting from Direct bonus',
+                //             'status'=>1
+                //         ]);
+                //         RepurchaseAccount::create([
+                //             'user_id'=>$agent->id,
+                //             'amount'=>$repurchase_amount,
+                //             'which_for'=>'Deducting from Direct bonus',
+                //             'status'=>1
+                //         ]);
+                //     }
+                // }
             }else{
                 if(check_limit($custo->id)){
                     if(get_user_limit($custo->id) > ($custo->account_balance + $custo->hold_balance) ){

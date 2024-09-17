@@ -78,8 +78,14 @@
                         return $html;
                     }
 
+                    $maxLevels = 40; 
                     foreach ($levels as $level => $customers) {
-                        echo render_customer_table($customers, substr($level, 5));
+                        //echo render_customer_table($customers, substr($level, 5));
+
+                        $currentLevel = substr($level, 5);
+                        if ($currentLevel <= $maxLevels) {
+                            echo render_customer_table($customers, $currentLevel);
+                        }
                     }
                     @endphp
 

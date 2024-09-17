@@ -50,7 +50,7 @@ class Report_Controller extends Controller
     public function direct_bonus_report(){
         $data['title'] = 'Direct Bonus Report';
         $data['items'] = AccountTransaction::where('which_for', 'Direct Bonus')
-                        ->select('user_id', DB::raw('SUM(amount) as total_amount'))
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
                         ->groupBy('user_id')
                         ->get();
         return view('admin.reports.direct_bonus_report')->with($data);
@@ -63,7 +63,7 @@ class Report_Controller extends Controller
         $data['items'] = AccountTransaction::where('which_for', 'Direct Bonus')
                         ->whereDate('created_at', '>=', $startDate)
                         ->whereDate('created_at', '<=', $endDate)
-                        ->select('user_id', DB::raw('SUM(amount) as total_amount'))
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'), DB::raw('MIN(created_at) as first_transaction'))
                         ->groupBy('user_id')
                         ->get();
         return view('admin.reports.direct_bonus_report')->with($data);

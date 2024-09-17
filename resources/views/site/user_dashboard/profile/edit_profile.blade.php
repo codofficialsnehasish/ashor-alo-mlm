@@ -33,7 +33,7 @@
                                 <div class="card shadow mb-4">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-center">
-                                            <img src="{{!empty($user->user_image) ? asset($user->user_image) : asset('dashboard_assets/images/users/user-13.jpg')}}" alt="avatar" class="rounded-circle img-fluid" style="width: 220px;">
+                                            <img src="{{!empty($user->user_image) ? asset($user->user_image) : asset('dashboard_assets/images/users/user-13.jpg')}}" alt="avatar" class="rounded-circle img-fluid" style="width: 220px;height: 220px;object-fit: contain;">
                                         </div>
                                         <form action="{{ route('member.process-update-profile') }}" method="post" enctype="multipart/form-data">
                                         @csrf

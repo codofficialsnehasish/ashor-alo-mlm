@@ -2,6 +2,7 @@
     use Illuminate\Support\Str;
     use Carbon\Carbon;
     use App\Models\User;
+    use App\Models\Orders;
     
     // first version
     // if (!function_exists('render_customer_tree')) {
@@ -369,5 +370,80 @@
             }else{
                 return array();
             }
+        }
+    }
+
+
+    if(!function_exists('calculate_left_business')){
+        function calculate_left_business($user_id){
+            $left_side_members = getLeftSideMembers($user_id);
+        
+            if (empty($left_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($left_side_members, 'id');
+            
+            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+                                ->sum('price_total');
+            
+            return $total_business;
+        }
+    }
+
+    if(!function_exists('calculate_curr_left_business')){
+        function calculate_curr_left_business($user_id){
+            $left_side_members = getLeftSideMembers($user_id);
+        
+            if (empty($left_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($left_side_members, 'id');
+            $today = Carbon::now()->startOfDay();
+            $last_saturday = Carbon::now()->previous(Carbon::SATURDAY)->startOfDay();
+            
+            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+                                ->whereBetween('created_at', [$last_saturday, $today])
+                                ->sum('price_total');
+            
+            return $total_business;
+        }
+    }
+
+    if(!function_exists('calculate_right_business')){
+        function calculate_right_business($user_id){
+            $right_side_members = getRightSideMembers($user_id);
+    
+            if (empty($right_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($right_side_members, 'id');
+            
+            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+                                ->sum('price_total');
+            
+            return $total_business;
+        }
+    }
+
+    if(!function_exists('calculate_curr_right_business')){
+        function calculate_curr_right_business($user_id){
+            $right_side_members = getRightSideMembers($user_id);
+        
+            if (empty($right_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($right_side_members, 'id');
+            $today = Carbon::now()->startOfDay();
+            $last_saturday = Carbon::now()->previous(Carbon::SATURDAY)->startOfDay();
+            
+            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+                                ->whereBetween('created_at', [$last_saturday, $today])
+                                ->sum('price_total');
+            
+            return $total_business;
         }
     }

@@ -145,11 +145,15 @@ class Authentication extends Controller
             return redirect()->back()->withErrors($validator->errors());
         }else{
             $obj = User::where("user_id","=",$r->user_id)->first();
-            if(Auth::attempt(['user_id'=>$r->user_id,'password'=>$r->password])){
-                // return redirect()->route('home');
-                return redirect(url('/member-dashboard'));
+            if($obj->block == 0){
+                if(Auth::attempt(['user_id'=>$r->user_id,'password'=>$r->password])){
+                    // return redirect()->route('home');
+                    return redirect(url('/member-dashboard'));
+                }else{
+                    return redirect()->back()->withErrors(['message' => 'Invalid Login']);
+                }
             }else{
-                return redirect()->back()->withErrors(['message' => 'Invalid Login']);
+                return redirect()->back()->with('error','Your ID is Blocked');
             }
         }
     }

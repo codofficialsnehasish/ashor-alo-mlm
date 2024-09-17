@@ -112,10 +112,10 @@ class Customers extends Controller
                                     <label>Total Left :</label> <strong>' . ($user ? total_left($user->id) : '') . '</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Curr. Left BV :</label> <strong>0.00</strong>
+                                    <label>Curr. Left BV :</label> <strong>'.($user ? calculate_curr_left_business($user->id) : '').'</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Total Left BV :</label> <strong>0.00</strong>
+                                    <label>Total Left BV :</label> <strong>'. ($user ? calculate_left_business($user->id) : '') .'</strong>
                                 </div>
                                 <div class="element">
                                     <label>Total User :</label> <strong>' . ($user ? total_user($user->id) : '') . '</strong>
@@ -138,10 +138,10 @@ class Customers extends Controller
                                     <label>Total Right :</label> <strong>' . ($user ? total_right($user->id) : '') . '</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Curr. Right BV :</label> <strong>0.00</strong>
+                                    <label>Curr. Right BV :</label> <strong>'.($user ? calculate_curr_right_business($user->id) : '').'</strong>
                                 </div>
                                 <div class="element">
-                                    <label>Total Right BV :</label> <strong>0.00</strong>
+                                    <label>Total Right BV :</label> <strong>'. ($user ? calculate_right_business($user->id) : '') .'</strong>
                                 </div>
                             </div>
                         </div>
@@ -345,5 +345,29 @@ class Customers extends Controller
     }
 
     //==========xxxxxxx======= End of Customer ===========xxxxxx=======
+
+
+
+    // blocking Agent
+    public function block_user($id){
+        $user = User::find($id);
+        if($user){
+            if($user->block == 1){
+                $user->block = 0;
+                $msg = 'User Unblocked Successfully';
+            }else{
+                $user->block = 1;
+                $msg = 'User Blocked Successfully';
+            }
+            $res = $user->update();
+            if($res){
+                return redirect()->back()->with('success',$msg);
+            }else{
+                return redirect()->back()->with('error','Please Try Again Latter!');
+            }
+        }else{
+            return redirect()->back()->with('error','User Not found');
+        }
+    }
 
 }
