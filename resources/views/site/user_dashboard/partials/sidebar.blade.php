@@ -29,7 +29,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#profilekyc"
                     aria-expanded="true" aria-controls="profilekyc">
-                    <i class="fas fa-fw fa-folder"></i>
+                    <i class="fas fa-user-cog"></i>
                     <span>Profile & KYC</span>
                     {!! check_kyc_status_for_menu(Auth::id()) !!}
                 </a>
@@ -79,7 +79,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
                     aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
+                    <i class="fas fa-clipboard-list"></i>
                     <span>Products & Orders</span>
                 </a>
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -93,7 +93,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#documents"
                     aria-expanded="true" aria-controls="documents">
-                    <i class="fas fa-fw fa-folder"></i>
+                    <i class="fas fa-address-card"></i>
                     <span>My Documents</span>
                 </a>
                 <div id="documents" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
@@ -104,23 +104,27 @@
                 </div>
             </li>
 
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports"
+                    aria-expanded="true" aria-controls="reports">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+                <div id="reports" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('userreport.top-report') }}">Topup Report</a>
+                    </div>
+                </div>
+            </li>
+
             <!-- <li class="nav-item">
                 <a class="nav-link" href="{{ route('add.top-up-requests') }}">
                     <i class="fas fa-comments"></i>
                     <span>Top of Requests</span>
                 </a>
-            </li> -->
-
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
-            </li> -->
-
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Tables</span></a>
             </li> -->
 
             <!-- Divider -->

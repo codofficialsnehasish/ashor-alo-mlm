@@ -59,6 +59,7 @@ use App\Http\Controllers\Site\{
 use App\Http\Controllers\Member\{
     KycController,
     Documents,
+    ReportController,
 };
 
 
@@ -148,6 +149,13 @@ Route::middleware('auth')->group(function () {
         Route::prefix('my-documents')->group(function(){
             Route::get("/welcome-letter",[Documents::class,"welcome_letter"])->name('my-documents.welcome-letter');
             Route::get("/id-card",[Documents::class,"id_card"])->name('my-documents.id-card');
+        });
+
+        Route::prefix('reports')->group(function () {
+            Route::controller(ReportController::class)->group( function (){
+                Route::get("/topup-report","topup_report")->name('userreport.top-report');
+                Route::post("/generate-income-report","generate_income_report")->name('report.generate-income-report');
+            });
         });
     });
 });
