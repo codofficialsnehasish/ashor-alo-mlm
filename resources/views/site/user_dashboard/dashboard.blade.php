@@ -67,7 +67,7 @@
                                                 Total Commission</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $account_balance }}</div>
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mt-1">
-                                                Hold Amount : {{ Auth::user()->id}}</div>
+                                                Hold Amount : {{ Auth::user()->hold_balance }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>

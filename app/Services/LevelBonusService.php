@@ -17,6 +17,8 @@ class LevelBonusService
     }
 
     public function level_bonus($user_id, $amount, $total_month, $start_date) {
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '256M');
         
         $user = User::where('user_id', $user_id)->first();
         if($user_id == null) { return; }

@@ -68,38 +68,22 @@ class User_dashboard extends Controller
 
 
     private function calculate_direct_bonus(){
-        // $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
-        $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus'])
+        $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+        // $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus'])
         ->where('user_id', Auth::id())
-        ->get();
+        ->sum('amount');
 
-        // Initialize the total amount with 15% added
-        $totalWithBonus = 0;
-
-        // Loop through each transaction and add 15% to each amount
-        foreach ($transactions as $transaction) {
-            // $amountWithBonus = $transaction->amount * 1.15; // Adding 15% to the amount
-            $amountWithBonus = $transaction->amount; // Adding 15% to the amount
-            $totalWithBonus += $amountWithBonus; // Add the updated amount to the total
-        }
-
-        return round($totalWithBonus, 2);
+        return $transactions;
     }
 
     private function get_total_income(){
-        $lavel_bonus = AccountTransaction::where('which_for','Level Bonus')->where('user_id',Auth::id())->sum('amount');
+        $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',Auth::id())->sum('amount');
         $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',Auth::id())->sum('amount');
         $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
         ->where('user_id', Auth::id())
-        ->get();
+        ->sum('amount');
 
-        $totalWithBonus = 0;
-        foreach ($transactions as $transaction) {
-            $amountWithBonus = $transaction->amount * 1.15; // Adding 15% to the amount
-            $totalWithBonus += $amountWithBonus; // Add the updated amount to the total
-        }
-
-        return round($totalWithBonus, 2) + $lavel_bonus + $product_return;
+        return $transactions + $lavel_bonus + $product_return;
     }
 
     public function member_profile(){

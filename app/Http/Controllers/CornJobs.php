@@ -100,10 +100,13 @@ class CornJobs extends Controller
     }
 
     public function forcely_disburse_roi() {
-        $income_data = TopUp::where('is_completed', 0)
-                    ->Where('total_installment_month', '>', 'month_count')
-                    ->get();
-    
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '256M');
+        // $income_data = TopUp::where('is_completed', 0)
+        //             ->Where('total_installment_month', '>', 'month_count')
+        //             ->get();
+        $income_data = TopUp::whereBetween('id', [141, 144])->get();
+        // return $income_data;
         foreach($income_data as $data){
             // Initialize variables for iteration
             $startDate = Carbon::parse($data->start_date);
