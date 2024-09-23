@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Orders;
+use App\Models\MLMSettings;
 use App\Models\TopUp; 
 use App\Models\AccountTransaction;
 use App\Models\LocationCountries;
@@ -47,13 +48,14 @@ class User_dashboard extends Controller
     public function member_dashboard(){
         $data['title'] = 'Dashboard';
         $data['total_income'] = $this->get_total_income();
-        $data['account_balance'] = Auth::user()->account_balance;
+        $data['total_commission'] = $this->calculate_total_commission('comission');
+        $data['hold_amount'] = $this->calculate_total_commission('hold');
         $data['total_purchase'] = Orders::where('buyer_id',Auth::id())->sum('price_total');
         $data_customer = $this->get_all_customers(Auth::user()->user_id);
         $data['total_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
         $data['total_active_team_member'] = activated_right(Auth::user()->id) + activated_left(Auth::user()->id);
         $data['direct_bonus'] = $this->calculate_direct_bonus();
-        $data['level_bonus'] = AccountTransaction::where('which_for','Level Bonus')->where('user_id',Auth::id())->sum('amount');
+        $data['level_bonus'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',Auth::id())->sum('amount');
         $data['product_return'] = AccountTransaction::where('which_for','ROI Daily')->where('user_id',Auth::id())->sum('amount');
         $data['direct_team_member'] = User::where('agent_id',Auth::user()->user_id)->count();
         $data['left_team_member'] = total_left(Auth::id());
@@ -69,11 +71,46 @@ class User_dashboard extends Controller
 
     private function calculate_direct_bonus(){
         $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
-        // $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus'])
         ->where('user_id', Auth::id())
         ->sum('amount');
 
         return $transactions;
+    }
+
+    private function calculate_level_bonus(){
+        $transactions = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+        ->where('user_id', Auth::id())
+        ->sum('amount');
+
+        return $transactions;
+    }
+
+    public function calculate_total_commission($type){
+        $mlm_settings = MLMSettings::first();
+        $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
+        $comission = $this->calculate_direct_bonus() + $this->calculate_level_bonus();
+        $deduction = ($comission * $total_deduction) / 100; // 15% of the commission
+        $final_commission = $comission - $deduction;
+
+        $total_top_up_amount = TopUp::where('user_id',Auth::id())->sum('total_amount');
+        $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',Auth::id())->sum('amount');
+        $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
+        $product_return = $product_return - $product_return_deduction;
+        
+        if($final_commission >= ($total_top_up_amount * 10)){
+            if($type == 'comission'){
+                return ($total_top_up_amount * 10) + $product_return;
+            }elseif($type == 'hold'){
+                return round($final_commission - ($total_top_up_amount * 10),2);
+            }
+        }else{
+            if($type == 'comission'){
+                return round(($final_commission + $product_return),2);
+            }
+            if($type == 'hold'){
+                return 0.00;
+            }
+        }
     }
 
     private function get_total_income(){

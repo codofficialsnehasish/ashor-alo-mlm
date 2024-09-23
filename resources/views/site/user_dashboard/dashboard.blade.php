@@ -65,9 +65,9 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Total Commission</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $account_balance }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_commission }}</div>
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mt-1">
-                                                Hold Amount : {{ Auth::user()->hold_balance }}</div>
+                                                Hold Amount : ₹{{ $hold_amount }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>

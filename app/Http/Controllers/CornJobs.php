@@ -15,7 +15,7 @@ use App\Models\Account;
 use App\Models\MLMSettings;
 
 use App\Services\LevelBonusService;
-use App\Jobs\ProcessLevelBonus;
+use App\Jobs\ProcessWeeklyLevelBonusJob;
 
 class CornJobs extends Controller
 {
@@ -68,7 +68,8 @@ class CornJobs extends Controller
                 $startDate = Carbon::parse($data->start_date)->addMonth($m-1);
                 $endDate = Carbon::parse($data->start_date)->addMonth($m);
             }
-            $daysDifference = $endDate->diffInDays($startDate) + 1;
+            // $daysDifference = $endDate->diffInDays($startDate) + 1;
+            $daysDifference = $endDate->diffInDays($startDate);
             $user_per_day_roi = round(($data->installment_amount_per_month / $daysDifference),2);
             // $user_per_day_roi = $data->installment_amount_per_month / $daysDifference;
             $user = User::find($data->user_id);
@@ -93,20 +94,20 @@ class CornJobs extends Controller
             $top_up->save();
 
 
-            $this->levelBonusService->level_bonus($user->agent_id,$data->total_amount,$data->total_installment_month,$data->start_date);
+            // $this->levelBonusService->level_bonus($user->agent_id,$data->total_amount,$data->total_installment_month,$data->start_date,$daysDifference,1);
             // ProcessLevelBonus::dispatch($user->agent_id, $data->total_amount,$data->total_installment_month,$data->start_date);
         }
 
     }
 
     public function forcely_disburse_roi() {
-        ini_set('max_execution_time', 600);
-        ini_set('memory_limit', '256M');
         // $income_data = TopUp::where('is_completed', 0)
         //             ->Where('total_installment_month', '>', 'month_count')
         //             ->get();
-        $income_data = TopUp::whereBetween('id', [141, 144])->get();
-        // return $income_data;
+        ini_set('max_execution_time', 600);
+        ini_set('memory_limit', '256M');
+        $income_data = TopUp::whereBetween('id', [1, 2])->get();
+
         foreach($income_data as $data){
             // Initialize variables for iteration
             $startDate = Carbon::parse($data->start_date);
@@ -122,14 +123,19 @@ class CornJobs extends Controller
             // Loop through each day between the start date and the current date minus 1
             for ($date = $startDate; $date->lessThanOrEqualTo($currentDate); $date->addDay()) {
                 // Calculate the current month count based on the loop date
-                $monthCount = $date->diffInMonths($startDate) + 1;
-                $endDate = Carbon::parse($data->start_date)->addMonth($monthCount);
-    
-                // Calculate ROI per day
-                $daysDifference = $endDate->diffInDays($startDate) + 1;
+                if($data->month_count == 0){
+                    $startDate = Carbon::parse($data->start_date);
+                    $endDate = Carbon::parse($data->start_date)->addMonth($data->month_count+1);
+                }else{
+                    $m = $data->month_count + 1;
+                    $startDate = Carbon::parse($data->start_date)->addMonth($m-1);
+                    $endDate = Carbon::parse($data->start_date)->addMonth($m);
+                }
+                // $daysDifference = $endDate->diffInDays($startDate) + 1;
+                $daysDifference = $endDate->diffInDays($startDate);
+
                 $user_per_day_roi = round(($data->installment_amount_per_month / $daysDifference),2);
-    
-                // Update user account balance
+
                 $user = User::find($data->user_id);
                 $user->account_balance += $user_per_day_roi;
                 $user->update();
@@ -160,9 +166,7 @@ class CornJobs extends Controller
         
                 $top_up->save();
         
-                if($user->agent_id != null){
-                    $this->levelBonusService->level_bonus($user->agent_id,$data->total_amount,$data->total_installment_month,$data->start_date);
-                }
+                $this->levelBonusService->level_bonus($user->agent_id,$data->total_amount,$data->total_installment_month,$data->start_date,$daysDifference, 1);
             }
     
         }
@@ -304,4 +308,64 @@ class CornJobs extends Controller
             }
         }
     }
+
+
+
+
+    // public function level_bonus_in_saturday_to_friday(){
+    //     $today = Carbon::now();
+    //     $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+    //     $current_day = Carbon::now();
+
+    //     // $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'),[format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+    //     //                                         ->where('which_for', 'ROI Daily')
+    //     //                                         ->distinct() // Ensure distinct user_id
+    //     //                                         ->pluck('user_id');
+
+    //     $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+    //                                             ->where('which_for', 'ROI Daily')
+    //                                             ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
+    //                                             ->distinct()
+    //                                             ->get()
+    //                                             ->groupBy('user_id')
+    //                                             ->map(function ($transactions) {
+    //                                                 return $transactions->pluck('payment_date')->unique()->count();
+    //                                             });
+
+
+    //     foreach ($acc_transactions as $key => $value) {
+
+    //         $income_data = TopUp::where('user_id',$key)->get();
+
+    //         foreach($income_data as $data){
+    //             $user = User::find($data->user_id);
+    //             $weeklyPayment = ($data->installment_amount_per_month / get_days_in_this_month()) * $value;
+    //             $weeklyPayment = round($weeklyPayment, 2);
+
+    //             // Output the weekly payment
+    //             // echo "<br>".$weeklyPayment."<br>";
+    //             $this->levelBonusService->weekly_level_bonus($user->agent_id,$weeklyPayment,1);
+    //         }
+    //     }
+    // }
+
+    public function level_bonus_in_saturday_to_friday() {
+        $today = Carbon::now();
+        $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+        $current_day = Carbon::now();
+    
+        // Process in chunks and dispatch each chunk to a queue job
+        $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+            ->where('which_for', 'ROI Daily')
+            ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
+            ->distinct()
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($transactions) {
+                return $transactions->pluck('payment_date')->unique()->count();
+            });
+
+        ProcessWeeklyLevelBonusJob::dispatch($acc_transactions);
+    }    
+    
 }

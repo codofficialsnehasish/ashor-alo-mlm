@@ -10,6 +10,8 @@ Route::get('forcely-disburse-roi',[CornJobs::class,'forcely_disburse_roi']);
 Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
 Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
 
+Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']);
+
 
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
 Route::post('get-city-list',[LocationController::class,'get_city_list'])->name('get-city-list');
