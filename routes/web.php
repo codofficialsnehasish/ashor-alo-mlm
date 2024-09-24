@@ -293,6 +293,8 @@ Route::middleware('auth.admin')->group(function () {
         Route::prefix('kyc')->group(function(){
             Route::get("/pendings",[KycController::class,"pending_kycs"])->name('kyc.pendings');
             Route::get("/all",[KycController::class,"all_kycs"])->name('kyc.all');
+            Route::get("/cancelled",[KycController::class,"cancelled_kycs"])->name('kyc.cancelled');
+            Route::get("/completed",[KycController::class,"completed_kycs"])->name('kyc.completed');
             Route::get("/{id}/kyc-details",[KycController::class,"kyc_details"])->name('kyc.kyc-details');
             Route::post("update-identy-proof-status",[KycController::class,"update_identy_proof_status"])->name('kyc.update-identy-proof-status');
             Route::post("update-address-proof-status",[KycController::class,"update_address_proof_status"])->name('kyc.update-address-proof-status');

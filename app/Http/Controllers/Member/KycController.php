@@ -146,6 +146,18 @@ class KycController extends Controller
         return view('admin.kyc.pending_kyc')->with($data);
     }
 
+    public function cancelled_kycs(){
+        $data['title'] = 'Cancelled KYC';
+        $data['kycs'] = Kyc::where('is_confirmed',2)->get();
+        return view('admin.kyc.pending_kyc')->with($data);
+    }
+
+    public function completed_kycs(){
+        $data['title'] = 'Completed KYC';
+        $data['kycs'] = Kyc::where('is_confirmed',1)->get();
+        return view('admin.kyc.pending_kyc')->with($data);
+    }
+
     public function all_kycs(){
         $data['title'] = 'All KYC';
         $data['kycs'] = Kyc::all();

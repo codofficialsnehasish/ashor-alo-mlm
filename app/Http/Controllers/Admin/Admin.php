@@ -73,7 +73,7 @@ class Admin extends Controller
             if($np == $conpass){
                 $obj = User::find(Auth::user()->id);
                 $obj->password = bcrypt($np);
-                $user->decoded_password = $np;
+                $obj->decoded_password = $np;
                 $obj->update();
                 Auth::logout();
                 return redirect(url('/'));
@@ -112,26 +112,4 @@ class Admin extends Controller
 
 
 
-    //===================== Dashboard Notification =========================
-    
-    // public function get_notification(){
-    //     $custo = User::where("is_seen_admin","=",0)->count();
-    //     if($custo > 0){
-    //         return $custo;
-    //     }
-    // }
-
-    // public function get_request(){
-    //     $req = Requestt::all()->count();
-    //     if($req > 0){
-    //         return $req;
-    //     }
-    // }
-
-    // public function get_notifi(){
-    //     $not = Notifications::where("seen","=",0)->count();
-    //     if($not > 0){
-    //         return $not;
-    //     }
-    // }
 }

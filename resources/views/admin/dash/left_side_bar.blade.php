@@ -67,6 +67,8 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="{{ route('kyc.pendings') }}">Pending KYC</a></li>
+                        <li><a href="{{ route('kyc.cancelled') }}">Cancelled KYC</a></li>
+                        <li><a href="{{ route('kyc.completed') }}">Completed KYC</a></li>
                         <li><a href="{{ route('kyc.all') }}">All KYC</a></li>
                     </ul>
                 </li>

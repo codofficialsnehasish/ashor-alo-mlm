@@ -18,7 +18,7 @@
                                     <h6 class="page-title">KYC</h6>
                                     <ol class="breadcrumb m-0">
                                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                                        <li class="breadcrumb-item active" aria-current="page">Pending Kyc</li>
+                                        <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                                     </ol>
                                 </div>
                             </div>
@@ -35,6 +35,7 @@
                                                 <tr>
                                                     <th>Sl No</th>
                                                     <th>User Name</th>
+                                                    <th>User ID</th>
                                                     <th>Status</th>
                                                     <th>Created At</th>
                                                     <th>Action</th>
@@ -45,6 +46,7 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ get_name($kyc->user_id) }}</td>
+                                                    <td>{{ get_user_id($kyc->user_id) }}</td>
                                                     <td>
                                                         @if($kyc->is_confirmed == 0) Pending
                                                         @elseif($kyc->is_confirmed == 1) Completed

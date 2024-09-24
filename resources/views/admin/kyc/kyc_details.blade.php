@@ -242,8 +242,9 @@
                         if(status == 2){
                             $('#staticBackdrop').modal('show');
                             $('#staticBackdropLabel').html('Identy Proof Cancelled Remarks');
-                            $('#submit_remarks').on('click',function(){
+                            $('#submit_remarks').off('click').on('click',function(){
                                 let remarks = $('#remarks').val();
+                                $('#remarks').val('');
                                 if(remarks != ''){
                                     $('#staticBackdrop').modal('hide');
                                     $('#identy_remarks').html(remarks);
@@ -265,8 +266,9 @@
                         if(status == 2){
                             $('#staticBackdrop').modal('show');
                             $('#staticBackdropLabel').html('Address Proof Cancelled Remarks');
-                            $('#submit_remarks').on('click',function(){
+                            $('#submit_remarks').off('click').on('click',function(){
                                 let remarks = $('#remarks').val();
+                                $('#remarks').val('');
                                 if(remarks != ''){
                                     $('#staticBackdrop').modal('hide');
                                     $('#address_remarks').html(remarks);
@@ -288,8 +290,9 @@
                         if(status == 2){
                             $('#staticBackdrop').modal('show');
                             $('#staticBackdropLabel').html('Bank A/C Proof Cancelled Remarks');
-                            $('#submit_remarks').on('click',function(){
+                            $('#submit_remarks').off('click').on('click',function(){
                                 let remarks = $('#remarks').val();
+                                $('#remarks').val('');
                                 if(remarks != ''){
                                     $('#staticBackdrop').modal('hide');
                                     $('#bank_remarks').html(remarks);
@@ -311,8 +314,9 @@
                         if(status == 2){
                             $('#staticBackdrop').modal('show');
                             $('#staticBackdropLabel').html('Pan Card Proof Cancelled Remarks');
-                            $('#submit_remarks').on('click',function(){
+                            $('#submit_remarks').off('click').on('click',function(){
                                 let remarks = $('#remarks').val();
+                                $('#remarks').val('');
                                 if(remarks != ''){
                                     $('#staticBackdrop').modal('hide');
                                     $('#pan_remarks').html(remarks);

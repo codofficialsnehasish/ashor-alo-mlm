@@ -18,8 +18,8 @@ class Home extends Controller
     public function home(){
         $data['title'] = 'Home';
         $data['products'] = Products::where('is_visible', 1)->limit(3)->get();
-        // return view($this->view_path.'home')->with($data);
-        return view($this->view_path.'maintenance');
+        return view($this->view_path.'home')->with($data);
+        // return view($this->view_path.'maintenance');
     }
 
     public function site_terms_and_conditions(){
