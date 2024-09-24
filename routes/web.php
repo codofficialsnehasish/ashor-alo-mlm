@@ -351,20 +351,21 @@ Route::middleware('auth.admin')->group(function () {
         //============================ Report Routes ========================
 
         Route::prefix('reports')->group(function () {
+            // Sell Report
             Route::get("/income-report",[Report_Controller::class,"income_report"])->name('report.income-report');
             Route::post("/generate-income-report",[Report_Controller::class,"generate_income_report"])->name('report.generate-income-report');
 
             Route::get("/investor-return-report",[Report_Controller::class,"investor_return_report"])->name('report.investor-return-report');
             Route::post("/generate-investor-return-report",[Report_Controller::class,"generate_investor_return_report"])->name('report.generate-investor-return-report');
 
-            // direct bonus
+            // Direct Bonus
             Route::get("/direct-bonus-report",[Report_Controller::class,"direct_bonus_report"])->name('report.direct-bonus-report');
             Route::post("/generate-direct-bonus-report",[Report_Controller::class,"generate_direct_bonus_report"])->name('report.generate-direct-bonus-report');
             Route::get("/{userid}/direct-bonus-full-details",[Report_Controller::class,"direct_bonus_full_details"])->name('report.direct-bonus-full-details');
             Route::post("/{userid}/generate-direct-bonus-full-details",[Report_Controller::class,"generate_direct_bonus_full_details"])->name('report.generate-direct-bonus-full-details');
             
 
-            // level bonus
+            // Level Bonus
             Route::get("/level-bonus-report",[Report_Controller::class,"level_bonus_report"])->name('report.level-bonus-report');
             Route::post("/generate-level-bonus-report",[Report_Controller::class,"generate_level_bonus_report"])->name('report.generate-level-bonus-report');
             Route::get("/{userid}/level-bonus-full-details",[Report_Controller::class,"level_bonus_full_details"])->name('report.level-bonus-full-details');
@@ -379,9 +380,13 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/repurchase-report",[Report_Controller::class,"repurchase_report"])->name('report.repurchase-report');
             Route::post("/generate-repurchase-report",[Report_Controller::class,"generate_repurchase_report"])->name('report.generate-repurchase-report');
 
+            // Product Return Report
             Route::get("/product-return-report",[Report_Controller::class,"product_return_report"])->name('report.product-return-report');
             Route::post("/generate-product-return-report",[Report_Controller::class,"generate_product_return_report"])->name('report.generate-product-return-report');
+            Route::get("/{userid}/product-return-full-details",[Report_Controller::class,"product_return_full_details"])->name('report.product-return-full-details');
+            Route::post("/{userid}/generate-product-return-full-details",[Report_Controller::class,"generate_product_return_full_details"])->name('report.generate-product-return-full-details');
 
+            // ID Activation Report
             Route::get("/id-activation-report",[Report_Controller::class,"id_activation_report"])->name('report.id-activation-report');
             Route::post("/generate-id-activation-report",[Report_Controller::class,"generate_id_activation_report"])->name('report.generate-id-activation-report');
         });

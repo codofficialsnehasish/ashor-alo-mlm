@@ -68,7 +68,7 @@
                                         <th class="text-wrap">Name</th>
                                         <th>ID</th>
                                         <th class="text-wrap">Amount</th>
-                                        <th class="text-wrap">Date</th>
+                                        <th class="text-wrap">Activation Date</th>
                                         <th class="text-wrap">Activated By</th>
                                     </tr>
                                 </thead>

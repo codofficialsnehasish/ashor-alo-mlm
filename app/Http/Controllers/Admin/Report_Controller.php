@@ -20,7 +20,8 @@ class Report_Controller extends Controller
 
     public function income_report(){
         $data['title'] = 'Sell Report';
-        $data['items'] = TopUp::whereDate('start_date',date('Y-m-d'))->get();
+        // $data['items'] = TopUp::whereDate('start_date',date('Y-m-d'))->get();
+        $data['items'] = TopUp::all();
         return view('admin.reports.income_report')->with($data);
     }
 
@@ -221,7 +222,11 @@ class Report_Controller extends Controller
 
     public function product_return_report(){
         $data['title'] = 'Product Return Report';
-        $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')->get();
+        // $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')->get();
+        $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'))
+                        ->groupBy('user_id')
+                        ->get();
         return view('admin.reports.product_return_report')->with($data);
     }
 
@@ -230,10 +235,34 @@ class Report_Controller extends Controller
         $startDate = $r->start_date;
         $endDate = $r->end_date;
         $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')
+                        ->select('user_id', DB::raw('SUM(amount) as total_amount'))
+                        ->whereDate('created_at', '>=', $startDate)
+                        ->whereDate('created_at', '<=', $endDate)
+                        ->groupBy('user_id')
+                        ->get();
+        return view('admin.reports.product_return_report')->with($data);
+    }
+
+    public function product_return_full_details(Request $r){
+        $data['title'] = 'Product Return Full Report';
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')
+                        ->where('user_id',get_id_using_user_id($r->userid))
+                        ->get();
+        return view('admin.reports.product_return_full_report',compact('user_id'))->with($data);
+    }
+
+    public function generate_product_return_full_details(Request $r){
+        $data['title'] = 'Product Return Full Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $user_id = $r->userid;
+        $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')
+                        ->where('user_id',get_id_using_user_id($r->userid))
                         ->whereDate('created_at', '>=', $startDate)
                         ->whereDate('created_at', '<=', $endDate)
                         ->get();
-        return view('admin.reports.product_return_report')->with($data);
+        return view('admin.reports.product_return_full_report',compact('user_id'))->with($data);
     }
 
     // End of Product Return Report
