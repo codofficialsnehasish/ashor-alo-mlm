@@ -4,10 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CornJobs;
 use App\Http\Controllers\LocationController;
 
-Route::get('disburse-product-support',[CornJobs::class,'disburse_product_support']);
-Route::get('disburse-roi',[CornJobs::class,'disburse_roi']);
+// Route::get('disburse-product-support',[CornJobs::class,'disburse_product_support']);
+
+Route::get('disburse-roi',[CornJobs::class,'disburse_roi']); //main route for ROI & Direct Bonus
+
 Route::get('forcely-disburse-roi',[CornJobs::class,'forcely_disburse_roi']);
+
 Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
+
 Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
 
 Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']);

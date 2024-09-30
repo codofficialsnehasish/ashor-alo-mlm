@@ -43,6 +43,7 @@ class LevelBonusService
             $bonus = round(($total_bonus / $daydiff),2);
             // echo $bonus; die;
 
+            $user->account_balance += $bonus;
             $transactionAdded = $this->transaction->make_transaction(
                 $user->id,
                 $bonus,
@@ -125,43 +126,53 @@ class LevelBonusService
             $user_lavel_persentage = number_format($user_lavel_persentage, 1);
             $bonus = $amount * ($user_lavel_persentage/100);
 
-            if(check_limit($user->id)){
-                if(get_user_limit($user->id) > ($user->account_balance + $bonus) ){
-                    $user->account_balance += $bonus;
-                    // Level Bonus transaction
-                    $transactionAdded = $this->transaction->make_transaction(
-                        $user->id,
-                        $bonus,
-                        'Level Bonus',
-                        1
-                    );
-                }else{
-                    $gap = get_user_limit($user->id) - $user->account_balance;
-                    $user->account_balance += $gap;
-                    $transactionAdded = $this->transaction->make_transaction(
-                        $user->id,
-                        $gap,
-                        'Level Bonus',
-                        1
-                    );
-                    $bonus = abs($bonus - $gap); 
-                    $user->hold_balance += $bonus;
-                    $transactionAdded = $this->transaction->make_transaction(
-                        $user->id,
-                        $bonus,
-                        'Level Bonus on Hold',
-                        1
-                    );
-                }
-            }else{
-                $user->hold_balance += $bonus;
-                $transactionAdded = $this->transaction->make_transaction(
-                    $user->id,
-                    $bonus,
-                    'Level Bonus on Hold',
-                    1
-                );
-            }
+            $user->account_balance += $bonus;
+            // Level Bonus transaction
+            $transactionAdded = $this->transaction->make_transaction(
+                $user->id,
+                $bonus,
+                'Level Bonus',
+                1
+            );
+
+            // if(check_limit($user->id)){
+            //     if(get_user_limit($user->id) > ($user->account_balance + $bonus) ){
+            //         $user->account_balance += $bonus;
+            //         // Level Bonus transaction
+            //         $transactionAdded = $this->transaction->make_transaction(
+            //             $user->id,
+            //             $bonus,
+            //             'Level Bonus',
+            //             1
+            //         );
+            //     }else{
+            //         $gap = get_user_limit($user->id) - $user->account_balance;
+            //         $user->account_balance += $gap;
+            //         $transactionAdded = $this->transaction->make_transaction(
+            //             $user->id,
+            //             $gap,
+            //             'Level Bonus',
+            //             1
+            //         );
+            //         $bonus = abs($bonus - $gap); 
+            //         $user->hold_balance += $bonus;
+            //         $transactionAdded = $this->transaction->make_transaction(
+            //             $user->id,
+            //             $bonus,
+            //             'Level Bonus on Hold',
+            //             1
+            //         );
+            //     }
+            // }else{
+            //     $user->hold_balance += $bonus;
+            //     $transactionAdded = $this->transaction->make_transaction(
+            //         $user->id,
+            //         $bonus,
+            //         'Level Bonus on Hold',
+            //         1
+            //     );
+            // }
+            
             $user->update();
         }
 
