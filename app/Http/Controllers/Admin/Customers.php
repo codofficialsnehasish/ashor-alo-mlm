@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\View;
 use App\Services\BinaryTreeService;
 use App\Services\LevelBonusService;
+use Illuminate\Validation\Rule;
 use App\Models\User; 
 use App\Models\TopUp; 
 use App\Models\AccountTransaction;
@@ -220,16 +221,35 @@ class Customers extends Controller
 
     public function update_customer(Request $r){
         $obj = User::find($r->customer_id);
-        // $customer->reg_date = $r->date;
-        $obj->name = $r->name;
-        $obj->phone = $r->phone;
-        $obj->email = $r->email;
-        $obj->status = $r->status;
-        $res = $obj->update();
-        if($res){
-            return redirect()->back()->with(['success'=>'Data Updated Successfully']);
+        $validator = Validator::make($r->all(), [
+            'name' => 'required|string|max:255',
+            'phone' => [
+                'required',
+                'digits:10',
+                'regex:/^[6789]/',
+                Rule::unique('users', 'phone')->ignore($obj->id, 'id'), // Ignore current record by ID
+            ],
+            // 'email' => 'required|email|unique:users,email',
+            // 'password' => 'required|min:4',
+            'agentid' => 'exists:users,user_id',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
         }else{
-            return redirect()->back()->with(['error'=>'Query Error']);
+            $obj = User::find($r->customer_id);
+            // $customer->reg_date = $r->date;
+            $obj->name = $r->name;
+            if($obj->phone != $r->phone){
+                $obj->phone = $r->phone;
+            }
+            $obj->email = $r->email;
+            $obj->status = $r->status;
+            $res = $obj->update();
+            if($res){
+                return redirect()->back()->with(['success'=>'Data Updated Successfully']);
+            }else{
+                return redirect()->back()->with(['error'=>'Query Error']);
+            }
         }
     }
 

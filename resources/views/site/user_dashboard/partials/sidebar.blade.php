@@ -108,6 +108,19 @@
             <hr class="sidebar-divider">
 
             <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#payouts"
+                    aria-expanded="true" aria-controls="payouts">
+                    <i class="fas fa-wallet"></i>
+                    <span>Payouts</span>
+                </a>
+                <div id="payouts" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('payout.all') }}">Payouts</a>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reports"
                     aria-expanded="true" aria-controls="reports">
                     <i class="fas fa-chart-line"></i>

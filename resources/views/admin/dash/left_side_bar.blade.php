@@ -120,6 +120,7 @@
                         <li><a href="{{ route('report.level-bonus-report') }}">Level Bonus Report</a></li>
                         <li><a href="{{ route('report.investor-return-report') }}">Investor Return Report</a></li>
                         <li><a href="{{ route('report.product-return-report') }}">Product Return Report</a></li>
+                        <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
                     </ul>
                 </li>
 

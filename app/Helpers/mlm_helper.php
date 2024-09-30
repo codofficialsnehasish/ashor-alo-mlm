@@ -7,6 +7,8 @@
     use App\Models\User;
     use App\Models\OrderProducts;
     use App\Models\TopUp;
+    use App\Models\MLMSettings;
+    use App\Models\AccountTransaction;
 
 
     // generate password
@@ -103,6 +105,47 @@
                 return $per_month_installment_amount;
             }
 
+        }
+    }
+
+
+
+    if(!function_exists('calculate_total_commission')){
+        function calculate_total_commission($type, $user_id){
+            $mlm_settings = MLMSettings::first();
+            $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
+
+            $direct_bonus = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                                                ->where('user_id', $user_id)
+                                                ->sum('amount');
+
+            $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                                                ->where('user_id', $user_id)
+                                                ->sum('amount');
+
+            $comission = $direct_bonus + $lavel_bonus;
+            $deduction = ($comission * $total_deduction) / 100; // 15% of the commission
+            $final_commission = $comission - $deduction;
+    
+            // $total_top_up_amount = TopUp::where('user_id',$user_id)->sum('total_amount');
+            $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',$user_id)->sum('amount');
+            $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
+            $product_return = $product_return - $product_return_deduction;
+            
+            if($final_commission >= ($total_top_up_amount * 10)){
+                if($type == 'comission'){
+                    return ($total_top_up_amount * 10) + $product_return;
+                }elseif($type == 'hold'){
+                    return round($final_commission - ($total_top_up_amount * 10),2);
+                }
+            }else{
+                if($type == 'comission'){
+                    return round(($final_commission + $product_return),2);
+                }
+                if($type == 'hold'){
+                    return 0.00;
+                }
+            }
         }
     }
 

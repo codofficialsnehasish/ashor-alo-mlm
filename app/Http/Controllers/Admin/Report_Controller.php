@@ -10,6 +10,7 @@ use App\Models\AccountTransaction;
 use App\Models\MLMSettings;
 use App\Models\TDSAccount;
 use App\Models\RepurchaseAccount;
+use App\Models\Payout;
 
 use Illuminate\Support\Facades\DB;
 
@@ -299,4 +300,22 @@ class Report_Controller extends Controller
     }
 
     // End of ID Activation Report
+
+
+    // Payout Report
+
+    public function payout_report(){
+        $data['title'] = 'Payout Report';
+        $data['items'] = Payout::all();
+        return view('admin.reports.payout_report')->with($data);
+    }
+
+    public function payout_report_details($id){
+        $data['title'] = 'Payout Report';
+        $data['payout'] = Payout::find($id);
+        return view('admin.reports.payout_report_details')->with($data);
+    }
+
+    // End of Payout Report
+
 }

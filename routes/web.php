@@ -11,6 +11,8 @@ Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
 Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
 
 Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']);
+Route::get('generate-payout-in-saturday-to-friday',[CornJobs::class,'generate_payout_in_saturday_to_friday']);
+Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']);
 
 
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
@@ -62,6 +64,7 @@ use App\Http\Controllers\Member\{
     KycController,
     Documents,
     ReportController,
+    PayoutController,
 };
 
 
@@ -151,6 +154,14 @@ Route::middleware('auth')->group(function () {
         Route::prefix('my-documents')->group(function(){
             Route::get("/welcome-letter",[Documents::class,"welcome_letter"])->name('my-documents.welcome-letter');
             Route::get("/id-card",[Documents::class,"id_card"])->name('my-documents.id-card');
+        });
+
+        Route::prefix('payouts')->group(function () {
+            Route::controller(PayoutController::class)->group( function () {
+                Route::get('all-payout','all_payouts')->name('payout.all');
+                Route::get('/{id}/payout-details','payout_details')->name('payout.payout-details');
+                Route::get('/{id}/payout-statement','payout_statement')->name('payout.payout-statement');
+            });
         });
 
         Route::prefix('reports')->group(function () {
@@ -389,6 +400,10 @@ Route::middleware('auth.admin')->group(function () {
             // ID Activation Report
             Route::get("/id-activation-report",[Report_Controller::class,"id_activation_report"])->name('report.id-activation-report');
             Route::post("/generate-id-activation-report",[Report_Controller::class,"generate_id_activation_report"])->name('report.generate-id-activation-report');
+
+            // Payout Report
+            Route::get("/payout-report",[Report_Controller::class,"payout_report"])->name('report.payout-report');
+            Route::get("/{id}/payout-report-details",[Report_Controller::class,"payout_report_details"])->name('report.payout-report-details');
         });
 
         Route::get('/contact-us-massages',[ContactUsController::class,'index'])->name('admin.contact-us');
