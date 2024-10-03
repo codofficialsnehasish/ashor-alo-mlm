@@ -268,7 +268,7 @@ class User_dashboard extends Controller
             'account_number' => 'required',
             'account_type' => 'required',
             'ifsc_code' => 'required',
-            'pan_number' => 'required',
+            'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
