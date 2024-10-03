@@ -89,7 +89,7 @@ Route::get("/login",[Authentication::class,"login"])->name('site-login');
 Route::get("/sign-up",[Authentication::class,"signup"]);
 Route::get("/site-logout",[Authentication::class,"logout"]);
 Route::get("/get-sponsor-name/{sponsorid}",[Authentication::class,"get_sponsor_name"]);
-Route::post("/process-signup",[Authentication::class,"process_signup"]);
+Route::post("/process-signup",[Authentication::class,"process_signup"])->name('process-signup');
 Route::post("/login-process",[Authentication::class,"login_process"]);
 
 Route::get("/member-register",[Authentication::class,"member_register"]);
@@ -124,6 +124,8 @@ Route::middleware('auth')->group(function () {
         Route::get("/direct",[User_management::class,"direct"]);
         Route::get("/tree-view/{userId?}",[User_management::class,"tree_view"])->name('member.tree-view');
         Route::get("/level-view",[User_management::class,"level_view"]);
+
+        Route::get("/register-member",[User_management::class,"register_member"])->name('register-member');
 
 
         Route::get("/add-top-up-requests",[Top_Up_Requests::class,"add_requests"])->name('add.top-up-requests');

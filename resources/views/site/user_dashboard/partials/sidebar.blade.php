@@ -18,13 +18,11 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="{{ route('kyc.index') }}">
-                    <i class="fas fa-hands-helping"></i>
-                    <span>KYC</span>
-                    {!! check_kyc_status(Auth::id()) !!}
-                </a>
-            </li> -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('register-member') }}">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Register Member</span></a>
+            </li>
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#profilekyc"

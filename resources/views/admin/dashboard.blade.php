@@ -38,11 +38,9 @@
                                                 <div class="float-start mini-stat-img me-4">
                                                     <img src="{{ asset('dashboard_assets/images/services-icon/14.1.png') }}" alt="">
                                                 </div>
-                                                <h5 class="font-size-16 text-uppercase text-white-50">Total Agents</h5>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Total Member</h5>
                                                 <h5 class="fw-medium font-size-24" style="color:white;">
                                                     {{ $customer_count }}
-                                                    <!-- <span class="badge rounded-pill bg-success"><?= $active_customer_count; ?></span>
-                                                    <span class="badge rounded-pill bg-danger"><?= $inactive_customer_count; ?></span> -->
                                                 </h5>
                                             </div>
                                         </div>
@@ -51,14 +49,16 @@
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card mini-stat bg-primary text-white">
-                                    <a href="{{ route('products') }}">
+                                    <a href="{{ route('customer.show') }}">
                                         <div class="card-body">
                                             <div class="mb-4">
                                                 <div class="float-start mini-stat-img me-4">
-                                                    <img src="{{ asset('dashboard_assets/images/services-icon/22.png') }}" alt="">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/25.png') }}" alt="">
                                                 </div>
-                                                <h5 class="font-size-16 text-uppercase text-white-50">Total Products</h5>
-                                                <h4 class="fw-medium font-size-24" style="color:white;">{{ $products_count }}</h4>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Active Member</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $active_count }}
+                                                </h5>
                                             </div>
                                         </div>
                                     </a>
@@ -66,14 +66,135 @@
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card mini-stat bg-primary text-white">
-                                    <a href="{{ route('orders') }}">
+                                    <a href="{{ route('customer.show') }}">
                                         <div class="card-body">
                                             <div class="mb-4">
                                                 <div class="float-start mini-stat-img me-4">
-                                                    <img src="{{ asset('dashboard_assets/images/services-icon/09.png') }}" alt="">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/24.png') }}" alt="">
                                                 </div>
-                                                <h5 class="font-size-16 text-uppercase text-white-50">Today's Orders</h5>
-                                                <h4 class="fw-medium font-size-24" style="color:white;">{{ $todays_orders }}</h4>
+                                                <h6 class="font-size-16 text-uppercase text-white-50">Today Business</h6>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $todays_business }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/26.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Total Business</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $total_business }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/27.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Total Payment</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $total_payment }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/28.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Last Week Payment</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $last_week_payment }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/29.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Hold Amount</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $hold_amount }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/31.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">TDS</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $tds }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/31.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Repurchase Wallet</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $repurchase_wallet }}
+                                                </h5>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="{{ route('customer.show') }}">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/32.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Service Charge</h5>
+                                                <h5 class="fw-medium font-size-24" style="color:white;">
+                                                    {{ $service_charge }}
+                                                </h5>
                                             </div>
                                         </div>
                                     </a>

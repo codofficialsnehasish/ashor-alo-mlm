@@ -248,4 +248,11 @@ class User_management extends Controller
         $data['members'] = array_merge($left_side_members,$right_side_members);
         return view($this->view_path."level_view")->with($data);
     }
+
+
+
+    public function register_member(){
+        $data['title'] = 'Register Member';
+        return view("site/user_dashboard/add_member/create")->with($data);
+    }
 }

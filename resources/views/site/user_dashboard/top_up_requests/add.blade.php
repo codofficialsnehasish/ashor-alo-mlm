@@ -57,5 +57,22 @@
 
             </div>
             <!-- End of Main Content -->
+            <script>
+                function get_sponcor_name(){
+                    $("#sponsor_name").val("");
+                    var sponcor_id = $("#agentid").val();
+                    // alert(sponcor_id);
+                    $.ajax({
+                        url: "{{ url('/get-sponsor-name') }}/"+sponcor_id,
+                        type: "GET",
+                        data: {},
+                        dataType: "json",
+                        success: function (response) { 
+                            // alert(response);
+                            $("#sponsor_name").val(response);
+                        }
+                    });
+                }
+            </script>
 
             @include('site.user_dashboard.partials.footer')

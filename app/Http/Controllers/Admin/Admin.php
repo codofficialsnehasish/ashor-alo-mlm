@@ -12,6 +12,11 @@ use App\Models\Lavel_masters;
 use App\Models\Products;
 use App\Models\Orders;
 use App\Models\Kyc;
+use App\Models\TopUp; 
+use App\Models\Payout;
+use App\Models\Account;
+
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\DB;
 
@@ -91,20 +96,28 @@ class Admin extends Controller
     //============================Dashboard======================
 
     public function dashboard(){
-        // $wallet = Wallets::all()->count();
-        // $req = Requestt::all()->count();
-        // $slider = Slider::all()->count();
-        // $result = Results::where("date","=",date("d-m-Y"))->count();
-        // $play_details = On_Game::where("date","=",date("Y-m-d"))->count();
+        $today = Carbon::now();
+        $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+        $current_day = Carbon::now();
         
         $data['title'] = 'Dashboard';
         $data['customer_count'] = User::where("role","=","agent")->count();
-        $data['active_customer_count'] = User::where("role","=","agent")->where('status',1)->count();
-        $data['inactive_customer_count'] = User::where("role","=","agent")->where('status',0)->count();
-        $data['lavel_count'] = Lavel_masters::all()->count();
-        $data['products_count'] = Products::all()->count();
-        $data['todays_orders'] = Orders::whereDate('created_at',date('Y-m-d'))->count();
-        $data['pending_kyc'] = Kyc::where('is_confirmed',0)->orWhere('is_confirmed',2)->count();
+        $data['active_count'] = User::where("role","=","agent")->where('status',1)->count();
+        $data['todays_business'] = TopUp::whereDate("created_at",date('Y-m-d'))->sum('total_amount');
+        $data['total_business'] = TopUp::all()->sum('total_amount');
+        $data['total_payment'] = Payout::all()->sum('total_payout');
+        $data['last_week_payment'] = Payout::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])->sum('total_payout');
+        $data['hold_amount'] = User::all()->sum('hold_balance');
+        $account = Account::first();
+        $data['tds'] = $account->tds_balance;
+        $data['repurchase_wallet'] = $account->repurchase_balance;
+        $data['service_charge'] = 0;
+        // $data['active_customer_count'] = User::where("role","=","agent")->where('status',1)->count();
+        // $data['inactive_customer_count'] = User::where("role","=","agent")->where('status',0)->count();
+        // $data['lavel_count'] = Lavel_masters::all()->count();
+        // $data['products_count'] = Products::all()->count();
+        // $data['todays_orders'] = Orders::whereDate('created_at',date('Y-m-d'))->count();
+        $data['pending_kyc'] = Kyc::where('is_confirmed',0)->count();
         return view("admin/dashboard")->with($data);
     }
 
