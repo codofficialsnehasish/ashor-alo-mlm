@@ -59,7 +59,7 @@
                                         <div class="input-group input-group-merge">
                                             <div class="input-icon"><i class="ti-user"></i></div>
                                             <!-- <input type="text" name="membername" id="membername" class="form-control" placeholder="Enter your name" required=""> -->
-                                            <select name="position" id="" class="form-control">
+                                            <select name="position" id="positionselect" class="form-control">
                                                 <option value="left">Left</option>
                                                 <option value="right">Right</option>
                                             </select>
@@ -82,7 +82,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
+                                    {{--<div class="form-group">
                                         <label class="font-weight-bold" for="password">Password</label>
                                         <div class="input-group input-group-merge">
                                             <div class="input-icon"><i class="ti-lock"></i></div>
@@ -96,7 +96,7 @@
                                             <div class="input-icon"><i class="ti-lock"></i></div>
                                             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" placeholder="Re-Enter your password" required="">
                                         </div>
-                                    </div>
+                                    </div>--}}
 
                                     <div class="my-4">
                                         <div class="form-check square-check">
@@ -137,9 +137,17 @@
                     $.each(response , function(index, item) { 
                         var html='';
                         if(index == 'msg'){
-                            form[0].reset();
-                            showToast('success', 'Success', item);
-                            window.location.href = "{{ url('/member-dashboard') }}";
+                            form[0].reset();   
+                            Swal.fire({
+                                title: item.title,
+                                text: item.text,
+                                icon: "success",
+                                showCancelButton: !0,
+                                confirmButtonColor: "#556ee6",
+                                cancelButtonColor: "#f46a6a"
+                            });
+                            showToast('success', 'Success', item.title);
+                            // window.location.href = "{{ url('/member-dashboard') }}";
                         }else{
                             showToast('error', 'Warning!', item);
                         }
@@ -152,6 +160,8 @@
         $(document).ready(function() {
             const urlParams = new URLSearchParams(window.location.search);
             const sponsorID = urlParams.get('sponsorid');
+            const position = urlParams.get('position');
+            console.log(position)
             $.ajax({
                 url: "{{ url('/get-sponsor-name') }}/"+sponsorID,
                 type: "GET",
@@ -160,6 +170,9 @@
                 success: function (response) {
                     $("#sponsor_name").val("");
                     $("#sponsor_name").val(response);
+                    if (position) {
+                        $('#positionselect option[value="' + position + '"]').attr('selected', 'selected');
+                    }
                 }
             });
             const agentIdInput = document.querySelector('input[name="agentid"]');

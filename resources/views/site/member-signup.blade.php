@@ -157,6 +157,8 @@
 
                 const urlParams = new URLSearchParams(window.location.search);
                 const agentId = urlParams.get('agentid');
+                const position = urlParams.get('position');
+                console.log(position);
 
                 $.ajax({
                     url: "/get-sponsor-name/"+agentId,

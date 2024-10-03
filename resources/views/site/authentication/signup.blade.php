@@ -59,7 +59,7 @@
                                         <div class="input-group input-group-merge">
                                             <div class="input-icon"><i class="ti-user"></i></div>
                                             <!-- <input type="text" name="membername" id="membername" class="form-control" placeholder="Enter your name" required=""> -->
-                                            <select name="position" id="" class="form-control">
+                                            <select name="position" id="position" class="form-control">
                                                 <option value="left">Left</option>
                                                 <option value="right">Right</option>
                                             </select>
