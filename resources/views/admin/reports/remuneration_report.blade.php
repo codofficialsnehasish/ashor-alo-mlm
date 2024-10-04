@@ -22,23 +22,14 @@
                             <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                         </ol>
                     </div>
-                    <div class="col-md-4">
-                        <div class="float-end d-none d-md-block">
-                            <div class="dropdown">
-                                <a onclick="history.back()" class="btn btn-primary  dropdown-toggle" aria-expanded="false">
-                                    <i class="fas fa-arrow-left me-2"></i> Back
-                                </a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             <!-- end page title -->
-            {{--<div class="row">
+            <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('report.generate-level-bonus-report') }}" method="post">
+                            <form action="{{ route('report.generate-remuneration-report') }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="mb-0 col-md-10">
@@ -56,9 +47,8 @@
                         </div>
                     </div>
                 </div>
-            </div>--}}
-
-            <!-- show data --> 
+            </div>
+            <!-- show data -->
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -67,30 +57,45 @@
                                 <thead>
                                     <tr>
                                         <th class="text-wrap">Name</th>
-                                        <th class="text-wrap">ID</th>
-                                        <th class="text-wrap">Total Payout Amount</th>
-                                        <th class="text-wrap">Account Name (As Per Bank)</th>
-                                        <th class="text-wrap">Bank Name</th>
-                                        <th class="text-wrap">Account Number</th>
-                                        <th class="text-wrap">IFSC</th>
-                                        <th class="text-wrap">Account Type</th>
+                                        <th>ID</th>
+                                        <th>Rank</th>
+                                        <th class="text-wrap">Target Achived</th>
+                                        <th class="text-wrap">Amount</th>
+                                        <th class="text-wrap">Month Validity</th>
+                                        <th class="text-wrap">Month Paid</th>
+                                        <th class="text-wrap">Start Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php $user = 0 @endphp
+                                    @php $amount = 0 @endphp
                                     @foreach($items as $item)
-                                    @php $user = get_user_details($item->user_id) @endphp
+                                    @php $user++ @endphp
+                                    @php $amount += $item->amount @endphp
                                     <tr>
-                                        <td class="text-wrap"><a href="{{ route('report.view-payout-statement',$item->id) }}">{{ get_name($item->user_id) }}</a></td>
-                                        <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
-                                        <td class="text-wrap">{{ $item->total_payout }}</td>
-                                        <td class="text-wrap">{{ $user->account_name }}</td>
-                                        <td class="text-wrap">{{ $user->bank_name }}</td>
-                                        <td class="text-wrap">{{ $user->account_number }}</td>
-                                        <td class="text-wrap">{{ $user->ifsc_code }}</td>
-                                        <td class="text-wrap">{{ $user->account_type }}</td>
+                                        <td>{{ get_name($item->user_id) }}</td>
+                                        <td>{{ get_user_id($item->user_id) }}</td>
+                                        <td>{{ $item->rank }}</td>
+                                        <td>{{ $item->target }}</td>
+                                        <td>{{ $item->amount }}</td>
+                                        <td>{{ $item->month_validity }}</td>
+                                        <td>{{ $item->month_count }}</td>
+                                        <td>{{ formated_date($item->start_date) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td><b>Total User - {{ $user }}</b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>

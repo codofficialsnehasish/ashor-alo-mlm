@@ -29,7 +29,21 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary"><a href="{{ route('payout.payout-statement',$payout->id) }}" class="btn btn-info">View Statement</a></h6>
+                            
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                <h6 class="m-0 font-weight-bold text-primary"><a href="{{ route('payout.payout-statement',$payout->id) }}" class="btn btn-info">View Statement</a></h6>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="float-end d-none d-md-block" style="float: inline-end;">
+                                        <div class="dropdown">
+                                            <a onclick="history.back()" class="btn btn-primary" aria-expanded="false">
+                                                <i class="fas fa-arrow-left me-2"></i> Back
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">

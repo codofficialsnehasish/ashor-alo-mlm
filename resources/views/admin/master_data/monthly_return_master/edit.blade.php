@@ -13,11 +13,11 @@
             <div class="page-title-box">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h6 class="page-title">Lavel Master</h6>
+                        <h6 class="page-title">Monthly Return</h6>
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('lavel-master') }}">Lavel Master</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Add new Lavel</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Master Data</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Edit Monthly Return</li>
                         </ol>
                     </div>
                     <div class="col-md-4">
@@ -49,7 +49,7 @@
                                         <select class="form-select" name="category" id="cat_id" aria-label="Default select example" required>
                                             <option value="" disabled selected>Choose...</option>
                                             @foreach($categories as $categorie)
-                                            <option value="{{ $categorie->id }}">{{ $categorie->name }}</option>
+                                            <option value="{{ $categorie->id }}" @if($item->category == $categorie->id) selected @endif>{{ $categorie->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -58,7 +58,10 @@
                                     <label class="form-label">Choose Product</label>
                                     <div>
                                         <select class="form-select" name="product" id="product" aria-label="Default select example" required>
-                                            <option value="" disabled selected>None</option>
+                                            <option value disabled selected>Choose...</option>
+                                            @foreach($products as $product)
+                                            <option value="{{ $product->id }}" @if($item->product == $product->id) selected @endif>{{ $product->title }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -147,7 +150,7 @@
             data:{"category_id":$(this).val(),"_token":"{{ csrf_token() }}"},
             success:function(response){
                 $("#product").html('');
-                $("#product").append('<option value="">Select Product</option>');
+                $("#product").append('<option value selected disabled>Select Product</option>');
                 $.each(response, function(index, item) {
                     $("#product").append('<option value="' + item.id + '">' + item.title + '</option>');
                 });

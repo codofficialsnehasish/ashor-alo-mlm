@@ -25,11 +25,11 @@
                 </div>
             </div>
             <!-- end page title -->
-            <div class="row">
+            {{--<div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            {{--<form action="{{ route('report.generate-level-bonus-report') }}" method="post">
+                            <form action="{{ route('report.generate-level-bonus-report') }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="mb-0 col-md-10">
@@ -43,12 +43,13 @@
                                         <button class="btn btn-primary" type="submit">Search Report</button>
                                     </div>
                                 </div>
-                            </form>--}}
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- show data -->
+            </div> --}}
+
+            <!-- show data --> 
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -56,34 +57,22 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-wrap">Name</th>
-                                        <th>ID</th>
-                                        <th class="text-wrap">Amount</th>
-                                        <!-- <th class="text-wrap">Date</th> -->
+                                        <th class="text-wrap">Sl. No.</th>
+                                        <th class="text-wrap">Payout Date</th>
+                                        <th>Total Payout Amount</th>
+                                        <th class="text-wrap">Total User</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @php $user = 0 @endphp
-                                    @php $amount = 0 @endphp
                                     @foreach($items as $item)
-                                    @php $user++ @endphp
-                                    @php $amount += $item->total_payout @endphp
                                     <tr>
-                                        <td><a href="{{ route('report.payout-report-details',$item->id) }}">{{ get_name($item->user_id) }}</a></td>
-                                        <td>{{ get_user_id($item->user_id) }}</td>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td><a href="{{ route('report.payout-report-details',[$item->start_date,$item->end_date]) }}">{{ $item->start_date }} - {{ $item->end_date }}</a></td>
                                         <td>{{ $item->total_payout }}</td>
-                                        <!-- <td>{{-- format_datetime($item->created_at) --}}</td> -->
+                                        <td>{{ $item->total_user_count }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td><b>Total User - {{ $user }}</b></td>
-                                        <td></td>
-                                        <td><b>Total Amount - {{ $amount }}</b></td>
-                                        <!-- <td></td> -->
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     </div>

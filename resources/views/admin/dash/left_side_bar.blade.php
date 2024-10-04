@@ -121,6 +121,7 @@
                         <li><a href="{{ route('report.investor-return-report') }}">Investor Return Report</a></li>
                         <li><a href="{{ route('report.product-return-report') }}">Product Return Report</a></li>
                         <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
+                        <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li>
                     </ul>
                 </li>
 

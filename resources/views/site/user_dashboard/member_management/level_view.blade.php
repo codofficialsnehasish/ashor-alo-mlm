@@ -45,7 +45,7 @@
                         $html .= '</div>';
                         $html .= '<div class="card-body">';
                         $html .= '<div class="table-responsive">';
-                        $html .= '<table class="table table-bordered" width="100%" cellspacing="0">';
+                        $html .= '<table class="table table-bordered datatable-buttons" width="100%" cellspacing="0">';
                         $html .= '<thead>';
                         $html .= '<tr>';
                         $html .= '<th>Reg Date</th>';
@@ -79,9 +79,10 @@
                     }
 
                     $maxLevels = 40; 
+                    $total_members = 0;
                     foreach ($levels as $level => $customers) {
                         //echo render_customer_table($customers, substr($level, 5));
-
+                        $total_members += count($customers);
                         $currentLevel = substr($level, 5);
                         if ($currentLevel <= $maxLevels) {
                             echo render_customer_table($customers, $currentLevel);
@@ -89,9 +90,13 @@
                     }
                     @endphp
 
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <b>Total Level Member : <strong>@php echo $total_members; @endphp</strong></b>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 

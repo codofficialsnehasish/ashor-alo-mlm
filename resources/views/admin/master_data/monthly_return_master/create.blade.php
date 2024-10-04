@@ -13,11 +13,11 @@
             <div class="page-title-box">
                 <div class="row align-items-center">
                     <div class="col-md-8">
-                        <h6 class="page-title">Lavel Master</h6>
+                        <h6 class="page-title">Monthly Return</h6>
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('lavel-master') }}">Lavel Master</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Add new Lavel</li>
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Master Data</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Add new Monthly Return</li>
                         </ol>
                     </div>
                     <div class="col-md-4">
@@ -146,7 +146,7 @@
             data:{"category_id":$(this).val(),"_token":"{{ csrf_token() }}"},
             success:function(response){
                 $("#product").html('');
-                $("#product").append('<option value="">Select Product</option>');
+                $("#product").append('<option value selected disabled>Select Product</option>');
                 $.each(response, function(index, item) {
                     $("#product").append('<option value="' + item.id + '">' + item.title + '</option>');
                 });

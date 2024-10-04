@@ -9,6 +9,8 @@
     use App\Models\TopUp;
     use App\Models\MLMSettings;
     use App\Models\AccountTransaction;
+    use App\Models\RemunerationBenefit;
+    use App\Models\SalaryBonus;
 
 
     // generate password
@@ -145,6 +147,19 @@
                 if($type == 'hold'){
                     return 0.00;
                 }
+            }
+        }
+    }
+
+    if(!function_exists('get_member_rank')){
+        function get_member_rank($user_id){
+            $salary = SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
+                                    ->where('user_id',$user_id)
+                                    ->first();
+            if($salary){
+                return $salary->rank;
+            }else{
+                return '';
             }
         }
     }

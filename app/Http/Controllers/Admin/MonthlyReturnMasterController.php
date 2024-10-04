@@ -82,8 +82,10 @@ class MonthlyReturnMasterController extends Controller
     public function edit(string $id)
     {
         $data['title'] = 'Monthly Return';
-        $data['item'] = MonthlyReturn::find($id);
+        $monthly_return = MonthlyReturn::find($id);
+        $data['item'] = $monthly_return;
         $data['categories'] = Categorie::where('visibility',1)->get();
+        $data['products'] = Products::where('category_id',$monthly_return->category)->get();
         return view($this->view_path."edit")->with($data);
     }
 

@@ -174,6 +174,8 @@ Route::middleware('auth')->group(function () {
             Route::controller(ReportController::class)->group( function (){
                 Route::get("/topup-report","topup_report")->name('userreport.top-report');
                 Route::post("/generate-income-report","generate_income_report")->name('report.generate-income-report');
+
+                Route::get("/remuneration-report","remuneration_report")->name('userreport.remuneration-report');
             });
         });
     });
@@ -409,7 +411,12 @@ Route::middleware('auth.admin')->group(function () {
 
             // Payout Report
             Route::get("/payout-report",[Report_Controller::class,"payout_report"])->name('report.payout-report');
-            Route::get("/{id}/payout-report-details",[Report_Controller::class,"payout_report_details"])->name('report.payout-report-details');
+            Route::get("/payout-report-details/{start_date}/{end_date}",[Report_Controller::class,"payout_report_details"])->name('report.payout-report-details');
+            Route::get("/{id}/payout-statement",[Report_Controller::class,"view_payout_statement"])->name('report.view-payout-statement');
+
+            // Remuneration Report
+            Route::get("/remuneration-report",[Report_Controller::class,"remuneration_report"])->name('report.remuneration-report');
+            Route::post("/generate-remuneration-report",[Report_Controller::class,"generate_remuneration_report"])->name('report.generate-remuneration-report');
         });
 
         Route::get('/contact-us-massages',[ContactUsController::class,'index'])->name('admin.contact-us');

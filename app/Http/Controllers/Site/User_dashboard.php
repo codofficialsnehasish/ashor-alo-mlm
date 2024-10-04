@@ -15,6 +15,7 @@ use App\Models\AccountTransaction;
 use App\Models\LocationCountries;
 use App\Models\LocationStates;
 use App\Models\LocationCities;
+use App\Models\RepurchaseAccount;
 
 class User_dashboard extends Controller
 {
@@ -65,6 +66,9 @@ class User_dashboard extends Controller
         $data['total_topup_amount'] = TopUp::where('user_id',Auth::id())->sum('total_amount');
         $data['total_left_business'] = calculate_left_business(Auth::id());
         $data['total_right_business'] = calculate_right_business(Auth::id());
+        $data['rank'] = get_member_rank(Auth::id());
+        $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
+        $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
         return view($this->view_path."dashboard")->with($data);
     }
 
@@ -265,7 +269,7 @@ class User_dashboard extends Controller
             'user_id' => 'required|numeric|exists:users,id',
             'account_name' => 'required',
             'bank_name' => 'required',
-            'account_number' => 'required',
+            'account_number' => 'required|unique:users,account_number',
             'account_type' => 'required',
             'ifsc_code' => 'required',
             'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',

@@ -11,6 +11,8 @@ use App\Models\MLMSettings;
 use App\Models\TDSAccount;
 use App\Models\RepurchaseAccount;
 use App\Models\Payout;
+use App\Models\RemunerationBenefit;
+use App\Models\SalaryBonus;
 
 use Illuminate\Support\Facades\DB;
 
@@ -306,16 +308,48 @@ class Report_Controller extends Controller
 
     public function payout_report(){
         $data['title'] = 'Payout Report';
-        $data['items'] = Payout::all();
+        // $data['items'] = Payout::all();
+        $data['items'] = Payout::select('start_date','end_date',DB::raw('SUM(total_payout) as total_payout'),DB::raw('COUNT(DISTINCT user_id) as total_user_count'))
+                                ->groupBy('start_date', 'end_date')
+                                ->get();
         return view('admin.reports.payout_report')->with($data);
     }
 
-    public function payout_report_details($id){
+    public function payout_report_details($start_date, $end_date){
         $data['title'] = 'Payout Report';
-        $data['payout'] = Payout::find($id);
+        $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->get();
         return view('admin.reports.payout_report_details')->with($data);
     }
 
+    public function view_payout_statement($id){
+        $data['title'] = 'Payout Report';
+        $data['payout'] = Payout::find($id);
+        return view('admin.reports.payout_statement')->with($data);
+    }
+
     // End of Payout Report
+
+
+    // Remuneration Report
+
+    public function remuneration_report(){
+        $data['title'] = 'Remuneration Report';
+        $data['items'] = SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
+                                        ->get();
+        return view('admin.reports.remuneration_report')->with($data);
+    }
+
+    public function generate_remuneration_report(Request $r){
+        $data['title'] = 'Remuneration Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $data['items'] = SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
+                        ->whereDate('start_date', '>=', $startDate)
+                        ->whereDate('start_date', '<=', $endDate)
+                        ->get();
+        return view('admin.reports.remuneration_report')->with($data);
+    }
+
+    // End of Remuneration Report
 
 }
