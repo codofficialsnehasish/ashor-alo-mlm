@@ -15,6 +15,7 @@ use App\Models\Kyc;
 use App\Models\TopUp; 
 use App\Models\Payout;
 use App\Models\Account;
+use App\Models\ContactUs;
 
 use Carbon\Carbon;
 
@@ -111,13 +112,14 @@ class Admin extends Controller
         $account = Account::first();
         $data['tds'] = $account->tds_balance;
         $data['repurchase_wallet'] = $account->repurchase_balance;
-        $data['service_charge'] = 0;
+        $data['service_charge'] = $account->service_charge_balance;
         // $data['active_customer_count'] = User::where("role","=","agent")->where('status',1)->count();
         // $data['inactive_customer_count'] = User::where("role","=","agent")->where('status',0)->count();
         // $data['lavel_count'] = Lavel_masters::all()->count();
         // $data['products_count'] = Products::all()->count();
         // $data['todays_orders'] = Orders::whereDate('created_at',date('Y-m-d'))->count();
         $data['pending_kyc'] = Kyc::where('is_confirmed',0)->count();
+        $data['contac_us'] = ContactUs::all()->count();
         return view("admin/dashboard")->with($data);
     }
 

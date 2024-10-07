@@ -10,6 +10,9 @@ class Settings extends Controller
 {
     public function __construct() {
         $this->view_path = 'admin.settings.';
+
+        $this->middleware('role_or_permission:Settings', ['only' => ['content','add_content']]);
+        $this->middleware('role_or_permission:MLM Settings', ['only' => ['mlm_settings','process_mlm_settings','terms_and_conditions','process_policy']]);
     }
 
     //================================ Site Settings ======================

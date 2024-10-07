@@ -47,12 +47,12 @@
                                 <div class="form-row">
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" name="name" placeholder="Enter name" required="required">
+                                            <input type="text" class="form-control" name="name" placeholder="Enter name" required>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-group">
-                                            <input type="text" class="form-control" name="email_or_phone" placeholder="Enter Email or Phone" required="required">
+                                            <input type="text" class="form-control" name="email_or_phone" placeholder="Enter Email or Phone" required>
                                         </div>
                                     </div>
                                     <div class="col-12">
@@ -82,11 +82,12 @@
                             <address>
                                 <!-- Fortuna Tower 23A, NETAJI SUBASH ROAD
                                 (ROOM No. 9B ) FLOOR : 08 KOLKATA 700001  -->
-                                Thacker House, 35, Chittaranjan Avenue, 4th Floor, Kolkata 700012, Near 5 No Gate Chandni Metro, West Bengal
+                                <!-- Thacker House, 35, Chittaranjan Avenue, 4th Floor, Kolkata 700012, Near 5 No Gate Chandni Metro, West Bengal -->
+                                {{ $settings->contact_address }}
                             </address>
                             <br>
                             <!-- <span>Phone: +1234567890123</span> <br> -->
-                            <span>Email: <a href="mailto:ashoralo12@gmail.com" class="link-color">ashoralo12@gmail.com</a></span>
+                            <span>Email: <a href="mailto:{{ $settings->contact_email }}" class="link-color">{{ $settings->contact_email }}</a></span>
 
                         </div>
                     </div>

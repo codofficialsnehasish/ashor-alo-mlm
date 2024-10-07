@@ -26,6 +26,13 @@ class Customers extends Controller
     public function __construct(BinaryTreeService $binaryTreeService,LevelBonusService $levelBonusService){
         $this->binaryTreeService = $binaryTreeService;
         $this->levelBonusService = $levelBonusService;
+
+        $this->middleware('role_or_permission:Member Show', ['only' => ['showcustomer']]);
+        $this->middleware('role_or_permission:Member Create', ['only' => ['customer','addcustomer']]);
+        $this->middleware('role_or_permission:Member Edit', ['only' => ['edit_customer','update_customer']]);
+        $this->middleware('role_or_permission:Member Delete', ['only' => ['customerdel']]);
+        $this->middleware('role_or_permission:Member Tree View', ['only' => ['tree_view','generateTreeHtml']]);
+        $this->middleware('role_or_permission:Member Block', ['only' => ['block_user']]);
     }
     
     public function customer(){

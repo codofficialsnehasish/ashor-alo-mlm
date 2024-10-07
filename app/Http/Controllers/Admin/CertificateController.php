@@ -10,6 +10,11 @@ class CertificateController extends Controller
 {
     public function __construct(){
         $this->view_path = 'admin.legal_data.certificate.';
+
+        $this->middleware('role_or_permission:Certificate Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Certificate Create', ['only' => ['create','store']]);
+        $this->middleware('role_or_permission:Certificate Edit', ['only' => ['edit','update']]);
+        $this->middleware('role_or_permission:Certificate Delete', ['only' => ['destroy']]);
     }
 
     public function index()

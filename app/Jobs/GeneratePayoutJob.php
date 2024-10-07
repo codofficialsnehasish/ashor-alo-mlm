@@ -16,6 +16,7 @@ use App\Models\TopUp;
 use App\Models\MonthlyReturn;
 use App\Models\AccountTransaction;
 use App\Models\TDSAccount;
+use App\Models\ServiceChargeAccount;
 use App\Models\RepurchaseAccount;
 use App\Models\Account;
 use App\Models\MLMSettings;
@@ -45,6 +46,8 @@ class GeneratePayoutJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $transaction = app(AccountTransaction::class);
+
         foreach($this->transactions as $user_id){
             $mlm_settings = MLMSettings::first();
             $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
@@ -73,6 +76,13 @@ class GeneratePayoutJob implements ShouldQueue
                                     $salary->month_count += 1;
                                     $remuneration_salary = $achieved_target->bonus;
                                     $salary->update();
+
+                                    $transaction->make_transaction(
+                                        $user_id,
+                                        $achieved_target->bonus,
+                                        'Salary Bonus',
+                                        1
+                                    );
                                 }
                             }else{
                                 $salary = new SalaryBonus();
@@ -83,6 +93,13 @@ class GeneratePayoutJob implements ShouldQueue
                                 $salary->month_count = 1;
                                 $salary->save();
                                 $remuneration_salary = $achieved_target->bonus;
+
+                                $transaction->make_transaction(
+                                    $user_id,
+                                    $achieved_target->bonus,
+                                    'Salary Bonus',
+                                    1
+                                );
                             }
                         }
                     }
@@ -112,7 +129,7 @@ class GeneratePayoutJob implements ShouldQueue
                     $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
                     $final_commission = $comission - $deduction;
     
-                    $current_payout = $user->hold_balance + $final_commission;
+                    $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
 
                     
                     
@@ -155,6 +172,14 @@ class GeneratePayoutJob implements ShouldQueue
     
                     // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
                     $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+                    
+                    if($payout->total_payout < 200){
+                        $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
+                        $payout->total_payout = 0.00;
+                    }else{
+                        $payout->hold_wallet_added = $user->hold_wallet;
+                        $user->hold_wallet = 0.00;
+                    }
 
                     $payout->save();
 
@@ -165,6 +190,7 @@ class GeneratePayoutJob implements ShouldQueue
                     $account = Account::first();
                     $account->tds_balance += $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction;
                     $account->repurchase_balance += $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
+                    $account->service_charge_balance += $payout->roi_tds_deduction;
                     $account->update();
 
                     TDSAccount::create([
@@ -176,6 +202,12 @@ class GeneratePayoutJob implements ShouldQueue
                     RepurchaseAccount::create([
                         'user_id'=>$user->id,
                         'amount'=>$payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction,
+                        'which_for'=>'Deducting from Payout',
+                        'status'=>1
+                    ]);
+                    ServiceChargeAccount::create([
+                        'user_id'=>$user->id,
+                        'amount'=>$payout->roi_tds_deduction,
                         'which_for'=>'Deducting from Payout',
                         'status'=>1
                     ]);

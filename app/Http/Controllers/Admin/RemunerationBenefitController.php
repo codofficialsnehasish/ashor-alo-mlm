@@ -11,10 +11,13 @@ class RemunerationBenefitController extends Controller
 
     public function __construct(){
         $this->view_path = 'admin.master_data.remuneration_benefit.';
+
+        $this->middleware('role_or_permission:Remuneration Benefit Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Remuneration Benefit Create', ['only' => ['create','store']]);
+        $this->middleware('role_or_permission:Remuneration Benefit Edit', ['only' => ['edit','update']]);
+        $this->middleware('role_or_permission:Remuneration Benefit Delete', ['only' => ['destroy']]);
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         $data['title'] = 'Remuneration Benefit';
@@ -22,18 +25,12 @@ class RemunerationBenefitController extends Controller
         return view($this->view_path."index")->with($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $data['title'] = 'Remuneration Benefit';
         return view($this->view_path."create")->with($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -56,17 +53,11 @@ class RemunerationBenefitController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $data['title'] = 'Remuneration Benefit';
@@ -74,9 +65,6 @@ class RemunerationBenefitController extends Controller
         return view($this->view_path."edit")->with($data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -99,9 +87,6 @@ class RemunerationBenefitController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $remuneration_benefit = RemunerationBenefit::find($id);

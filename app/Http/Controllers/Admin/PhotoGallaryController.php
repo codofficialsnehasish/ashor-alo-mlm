@@ -11,6 +11,11 @@ class PhotoGallaryController extends Controller
 {
     public function __construct(){
         $this->view_path = 'admin.photo_gallary.';
+
+        $this->middleware('role_or_permission:Photo Gallary Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Photo Gallary Create', ['only' => ['create','store']]);
+        $this->middleware('role_or_permission:Photo Gallary Edit', ['only' => ['edit','update']]);
+        $this->middleware('role_or_permission:Photo Gallary Delete', ['only' => ['destroy']]);
     }
 
     public function index()

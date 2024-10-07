@@ -9,6 +9,9 @@ class ContactUsController extends Controller
 {
     public function __construct() {
         $this->view_path = 'admin.contact_us.';
+
+        $this->middleware('role_or_permission:ContactUs Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:ContactUs Delete', ['only' => ['destroy']]);
     }
 
     public function index(){

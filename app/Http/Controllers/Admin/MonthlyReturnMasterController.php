@@ -13,6 +13,11 @@ class MonthlyReturnMasterController extends Controller
 
     public function __construct(){
         $this->view_path = 'admin.master_data.monthly_return_master.';
+
+        $this->middleware('role_or_permission:Monthly Return Master Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Monthly Return Master Create', ['only' => ['create','store']]);
+        $this->middleware('role_or_permission:Monthly Return Master Edit', ['only' => ['edit','update']]);
+        $this->middleware('role_or_permission:Monthly Return Master Delete', ['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.

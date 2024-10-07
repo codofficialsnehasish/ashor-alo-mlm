@@ -19,6 +19,19 @@ use Illuminate\Support\Facades\DB;
 class Report_Controller extends Controller
 {
 
+    public function __construct(){
+        $this->middleware('role_or_permission:Income Report', ['only' => ['income_report','generate_income_report']]);
+        $this->middleware('role_or_permission:Investor Return Report', ['only' => ['investor_return_report','generate_investor_return_report']]);
+        $this->middleware('role_or_permission:Direct Bonus Report', ['only' => ['direct_bonus_report','generate_direct_bonus_report','direct_bonus_full_details','generate_direct_bonus_full_details']]);
+        $this->middleware('role_or_permission:Lavel Bonus Report', ['only' => ['level_bonus_report','generate_level_bonus_report','level_bonus_full_details','generate_level_bonus_full_details']]);
+        $this->middleware('role_or_permission:TDS Report', ['only' => ['tds_report','generate_tds_report','tds_deduction_full_details','generate_tds_deduction_full_details']]);
+        $this->middleware('role_or_permission:Repurchase Report', ['only' => ['repurchase_report','generate_repurchase_report']]);
+        $this->middleware('role_or_permission:Product Return Report', ['only' => ['product_return_report','generate_product_return_report','product_return_full_details','generate_product_return_full_details']]);
+        $this->middleware('role_or_permission:ID Activation Report', ['only' => ['id_activation_report','generate_id_activation_report']]);
+        $this->middleware('role_or_permission:Payout Report', ['only' => ['payout_report','payout_report_details','view_payout_statement']]);
+        $this->middleware('role_or_permission:Remuneration Report', ['only' => ['remuneration_report','generate_remuneration_report']]);
+    }
+
     // Income Report
 
     public function income_report(){
@@ -317,7 +330,7 @@ class Report_Controller extends Controller
 
     public function payout_report_details($start_date, $end_date){
         $data['title'] = 'Payout Report';
-        $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->get();
+        $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->where('total_payout','>',0)->get();
         return view('admin.reports.payout_report_details')->with($data);
     }
 

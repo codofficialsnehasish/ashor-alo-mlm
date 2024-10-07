@@ -13,6 +13,11 @@ class UsersController extends Controller
 {
     public function __construct(){
         $this->view_path = 'admin/users/';
+
+        $this->middleware('role_or_permission:User Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:User Create', ['only' => ['add_new','process']]);
+        $this->middleware('role_or_permission:User Edit', ['only' => ['edit','update_process']]);
+        $this->middleware('role_or_permission:User Delete', ['only' => ['delete']]);
     }
 
     public function index(){

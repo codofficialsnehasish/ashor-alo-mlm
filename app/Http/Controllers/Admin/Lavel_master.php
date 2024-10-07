@@ -13,6 +13,11 @@ class Lavel_master extends Controller
 {
     public function __construct(){
         $this->view_path='admin.master_data.lavel_master.';
+
+        $this->middleware('role_or_permission:Level Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Level Create', ['only' => ['add_new','process']]);
+        $this->middleware('role_or_permission:Level Edit', ['only' => ['edit','process_edit']]);
+        $this->middleware('role_or_permission:Level Delete', ['only' => ['delete']]);
     }
 
     public function index(){

@@ -67,6 +67,10 @@
                                         <td>{{ $payout->hold_amount_added }}</td>
                                     </tr>
                                     <tr>
+                                        <td colspan="2">Hold Wallet Added</td>
+                                        <td>{{ $payout->hold_wallet_added }}</td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="2" style="text-align: right;">Gross Incentive</td>
                                         <td>{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added }}</td>
                                     </tr>
@@ -86,6 +90,10 @@
                                     <tr>
                                         <td colspan="2">Hold Amount</td>
                                         <td>{{ $payout->hold_amount }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Hold Wallet</td>
+                                        <td>{{ $payout->hold_wallet }}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="2" style="text-align: right;"><b>Net Payable Amount</b></td>

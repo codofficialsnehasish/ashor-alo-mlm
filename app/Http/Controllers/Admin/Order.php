@@ -26,6 +26,11 @@ class Order extends Controller
     public function __construct(AccountTransaction $transaction){
         $this->view_path = 'admin/order/';
         $this->transaction = $transaction;
+
+        $this->middleware('role_or_permission:Order Show', ['only' => ['index','order_details']]);
+        $this->middleware('role_or_permission:Order Create', ['only' => ['add_new','process','make_id_green']]);
+        $this->middleware('role_or_permission:Order Edit', ['only' => ['edit','update_process','update_payment_status','update_payment_status']]);
+        $this->middleware('role_or_permission:Order Delete', ['only' => ['delete']]);
     }
 
     public function index(){

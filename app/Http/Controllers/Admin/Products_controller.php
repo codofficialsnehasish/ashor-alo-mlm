@@ -12,6 +12,11 @@ class Products_controller extends Controller
 {
     public function __construct() {
         $this->view_path = 'admin.products.';
+
+        $this->middleware('role_or_permission:Product Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Product Create', ['only' => ['add_new','process']]);
+        $this->middleware('role_or_permission:Product Edit', ['only' => ['edit','update_process']]);
+        $this->middleware('role_or_permission:Product Delete', ['only' => ['delete']]);
     }
 
     public function index(){

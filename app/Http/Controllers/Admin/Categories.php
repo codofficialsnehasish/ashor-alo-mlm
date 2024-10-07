@@ -11,6 +11,11 @@ class Categories extends Controller
 {
     public function __construct() {
         $this->view_path = 'admin.categories.';
+
+        $this->middleware('role_or_permission:Category Show', ['only' => ['index']]);
+        $this->middleware('role_or_permission:Category Create', ['only' => ['create','store']]);
+        $this->middleware('role_or_permission:Category Edit', ['only' => ['edit','update']]);
+        $this->middleware('role_or_permission:Category Delete', ['only' => ['destroy']]);
     }
 
     public function index(){

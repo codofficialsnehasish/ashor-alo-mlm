@@ -36,9 +36,9 @@ class PermissionController extends Controller
         }else{
             $permission = Permission::create(['name' => $r->name]);
             if($permission){
-                return back()->with(['success'=>'Role Created Successfully']);
+                return back()->with(['success'=>'Permission Created Successfully']);
             }else{
-                return back()->with(['error'=>'Role Not Created']);
+                return back()->with(['error'=>'Permission Not Created']);
             }
         }
     }

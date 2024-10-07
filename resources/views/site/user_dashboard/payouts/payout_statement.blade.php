@@ -123,6 +123,10 @@
                                                                     <td style="width: 630px;padding: 10px;">Previous Hold Amount</td>
                                                                     <td style="padding: 10px;width: 170px;border-left: 1px solid #ccc;">{{ $payout->hold_amount_added }}</td>
                                                                 </tr>
+                                                                <tr>
+                                                                    <td style="width: 630px;padding: 10px;">Previous Hold Wallet Amount</td>
+                                                                    <td style="padding: 10px;width: 170px;border-left: 1px solid #ccc;">{{ $payout->hold_wallet_added }}</td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </td>
@@ -152,6 +156,10 @@
                                                                 <tr>
                                                                     <td style="width: 630px;padding: 10px;">Hold Amount</td>
                                                                     <td style="padding: 10px;width: 170px;border-left: 1px solid #ccc;">{{ $payout->hold_amount }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td style="width: 630px;padding: 10px;">Hold Wallet Amount</td>
+                                                                    <td style="padding: 10px;width: 170px;border-left: 1px solid #ccc;">{{ $payout->hold_wallet }}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

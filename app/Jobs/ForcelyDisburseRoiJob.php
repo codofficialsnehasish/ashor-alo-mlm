@@ -38,7 +38,8 @@ class ForcelyDisburseRoiJob implements ShouldQueue
             // Initialize variables for iteration
             // $startDate = Carbon::parse($data->start_date);
             $startDate = Carbon::parse($data->start_date)->addDay();
-            $currentDate = Carbon::now()->subDay(); // Current date minus one day
+            // $currentDate = Carbon::now()->subDay(); // Current date minus one day
+            $currentDate = Carbon::now(); // Current date
 
             if ($startDate->greaterThanOrEqualTo($currentDate)) {
                 continue;
