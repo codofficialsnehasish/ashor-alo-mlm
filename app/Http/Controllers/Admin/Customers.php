@@ -16,6 +16,9 @@ use App\Models\MLMSettings;
 use App\Models\TDSAccount;
 use App\Models\RepurchaseAccount;
 use App\Models\Account;
+use App\Models\LocationCountries;
+use App\Models\LocationStates;
+use App\Models\LocationCities;
 
 
 class Customers extends Controller
@@ -223,6 +226,19 @@ class Customers extends Controller
         $obj = User::find($r->id);
         $data['title'] = 'Edit Customer';
         $data['customer'] = $obj;
+        $data['countries'] = LocationCountries::where('is_visible',1)->get();
+        $data['nominee_states'] = LocationStates::where('country_id',99)->get();
+        if(!empty($obj->nominee_state_id)){
+            $data['nominee_cities'] = LocationCities::where('is_visible',1)->where('state_id',$obj->nominee_state_id)->get();
+        }
+
+        if(!empty($obj->country)){
+            $data['states'] = LocationStates::where('is_visible',1)->where('country_id',$obj->country)->get();
+        }
+
+        if(!empty($obj->state)){
+            $data['cities'] = LocationCities::where('is_visible',1)->where('state_id',$obj->state)->get();
+        }
         return view("admin/customer/edit")->with($data);
     }
 
@@ -238,7 +254,7 @@ class Customers extends Controller
             ],
             // 'email' => 'required|email|unique:users,email',
             // 'password' => 'required|min:4',
-            'agentid' => 'exists:users,user_id',
+            // 'agentid' => 'exists:users,user_id',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
@@ -251,6 +267,39 @@ class Customers extends Controller
             }
             $obj->email = $r->email;
             $obj->status = $r->status;
+
+
+            $obj->father_or_husband_name = $r->father_or_husband_name;
+            $obj->date_of_birth = $r->date_of_birth;
+            $obj->gender = $r->gender;
+            $obj->marital_status = $r->marital_status;
+            // $obj->phone = $r->phone;
+            // $obj->email = $r->email;
+            $obj->qualification = $r->qualification;
+            $obj->occupation = $r->occupation;
+            $obj->pin_code = $r->pin_code;
+            $obj->shipping_address = $r->shipping_address;
+            $obj->address = $r->address;
+            $obj->country = $r->country ? $r->country : 0;
+            $obj->state = $r->state ? $r->state : 0;
+            $obj->city = $r->city ? $r->city : 0;
+
+            // nominee details
+            $obj->nominee_name = $r->nominee_name;
+            $obj->nominee_relation = $r->nominee_relation;
+            $obj->nominee_dob = $r->nominee_dob;
+            $obj->nominee_address = $r->nominee_address;
+            $obj->nominee_state_id = $r->nominee_state_id ? $r->nominee_state_id : 0 ;
+            $obj->nominee_city_id = $r->nominee_city_id ? $r->nominee_city_id : 0 ;
+
+            //account details
+            $obj->account_name = $r->account_name;
+            $obj->bank_name = $r->bank_name;
+            $obj->account_number = $r->account_number;
+            $obj->account_type = $r->account_type;
+            $obj->ifsc_code = $r->ifsc_code;
+            $obj->pan_number = $r->pan_number;
+
             $res = $obj->update();
             if($res){
                 return redirect()->back()->with(['success'=>'Data Updated Successfully']);
