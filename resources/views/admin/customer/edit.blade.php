@@ -51,7 +51,7 @@
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Father / Husband Name</label>
-                                            <input type="text" class="form-control" value="{{ $customer->father_or_husband_name }}" name="father_or_husband_name" required>
+                                            <input type="text" class="form-control" value="{{ $customer->father_or_husband_name }}" name="father_or_husband_name">
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Date Of Birth (Ex DD/MM/YYYY)</label>
@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="gender">Gender</label>
-                                            <select class="form-control" id="gender" name="gender" required>
+                                            <select class="form-control" id="gender" name="gender">
                                                 <option value selected disabled>Choose...</option>
                                                 <option @if($customer->gender == 'Male') selected @endif value="Male">Male</option>
                                                 <option @if($customer->gender == 'Female') selected @endif value="Female">Female</option>
@@ -80,7 +80,7 @@
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Email</label>
-                                            <input type="email" class="form-control" value="{{ $customer->email }}" name="email" required>
+                                            <input type="email" class="form-control" value="{{ $customer->email }}" name="email">
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Qualification</label>
@@ -92,7 +92,7 @@
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Pincode</label>
-                                            <input type="number" class="form-control" value="{{ $customer->pin_code }}" name="pin_code" required>
+                                            <input type="number" class="form-control" value="{{ $customer->pin_code }}" name="pin_code">
                                         </div>
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Shipping Address</label>
