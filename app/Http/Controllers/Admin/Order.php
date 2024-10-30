@@ -164,11 +164,14 @@ class Order extends Controller
 
     public function delete(Request $r){
         $order = Orders::find($r->id);
-        $res = $order->delete();
-        if($res){
-            return redirect()->back()->with(['success'=>'Data deleted successfully']);
-        }else{
-            return redirect()->back()->with(['error'=>'Query Error']);
+        if($order){
+            $top_up = TopUp::where('order_id',$order->id)->delete();
+            $res = $order->delete();
+            if($res){
+                return redirect()->back()->with(['success'=>'Order And Topup Deleted Successfully']);
+            }else{
+                return redirect()->back()->with(['error'=>'Query Error']);
+            }
         }
     }
 
