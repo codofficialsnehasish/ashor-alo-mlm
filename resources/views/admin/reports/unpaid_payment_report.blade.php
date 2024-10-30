@@ -34,19 +34,27 @@
                 </div>
             </div>
             <!-- end page title -->
-            {{--<div class="row">
+            <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <form action="{{ route('report.generate-level-bonus-report') }}" method="post">
+                            <form action="{{ route('report.generate-paid-unpaid-payment-report') }}" method="post">
                                 @csrf
                                 <div class="row">
-                                    <div class="mb-0 col-md-10">
+                                    <div class="mb-0 col-md-8">
                                         <label class="form-label">Search Using Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                             <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
                                             <input type="text" class="form-control" required name="end_date" placeholder="End Date" value="" autocomplete="off" />
                                         </div>
+                                    </div>
+                                    <div class="mb-0 col-md-2">
+                                        <label class="form-label">Choose Status</label>
+                                        <select class="form-control" name="status">
+                                            <option value="all">All</option>
+                                            <option value="paid">Paid</option>
+                                            <option value="unpaid">Unpaid</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-2" style="margin-top: 29px !important;">
                                         <button class="btn btn-primary" type="submit">Search Report</button>
@@ -56,7 +64,7 @@
                         </div>
                     </div>
                 </div>
-            </div>--}}
+            </div>
 
             <!-- show data --> 
             <div class="row">

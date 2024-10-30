@@ -122,7 +122,7 @@
                         <li><a href="{{ route('report.product-return-report') }}">Product Return Report</a></li>
                         <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
                         <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li>
-                        <li><a href="{{ route('report.unpaid-payment-report') }}">Unpaid Payment Report</a></li>
+                        <li><a href="{{ route('report.paid-unpaid-payment-report') }}">Paid Unpaid Payment Report</a></li>
                         <li><a href="{{ route('report.less-than-two-hundred-commission-repoet') }}">Commission Report of > 200</a></li>
                     </ul>
                 </li>

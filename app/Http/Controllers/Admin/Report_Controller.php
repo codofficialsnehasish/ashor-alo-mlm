@@ -355,9 +355,30 @@ class Report_Controller extends Controller
 
     // End of Payout Report
 
-    public function unpaid_payment_report(){
-        $data['title'] = 'Unpaid Payment Report';
-        $data['items'] = Payout::where('paid_unpaid','0')->get();
+    public function paid_unpaid_payment_report(){
+        $data['title'] = 'Paid Unpaid Payment Report';
+        // $data['items'] = Payout::where('paid_unpaid','0')->get();
+        $data['items'] = Payout::all();
+        return view('admin.reports.unpaid_payment_report')->with($data);
+    }
+
+    public function generate_paid_unpaid_payment_report(Request $r){
+        $data['title'] = 'Paid Unpaid Payment Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        if(!empty($r->status) && $r->status == 'paid'){
+            $data['items'] = Payout::where('paid_unpaid','1')
+                            ->whereDate('created_at', '>=', $startDate)
+                            ->whereDate('created_at', '<=', $endDate)
+                            ->get();
+        }elseif(!empty($r->status) && $r->status == 'unpaid'){
+            $data['items'] = Payout::where('paid_unpaid','0')
+                                ->whereDate('created_at', '>=', $startDate)
+                                ->whereDate('created_at', '<=', $endDate)
+                                ->get();
+        }else{
+            $data['items'] = Payout::all();
+        }
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
 

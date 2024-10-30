@@ -416,7 +416,9 @@ Route::middleware('auth.admin')->group(function () {
 
             Route::post("/update-paid-unpaid-status",[Report_Controller::class,"update_paid_unpaid_status"])->name('report.update-paid-unpaid-status');
 
-            Route::get("/unpaid-payment-report",[Report_Controller::class,"unpaid_payment_report"])->name('report.unpaid-payment-report');
+            Route::get("/paid-unpaid-payment-report",[Report_Controller::class,"paid_unpaid_payment_report"])->name('report.paid-unpaid-payment-report');
+            Route::post("/generate-paid-unpaid-payment-report",[Report_Controller::class,"generate_paid_unpaid_payment_report"])->name('report.generate-paid-unpaid-payment-report');
+
             Route::get("/less-than-two-hundred-commission-repoet",[Report_Controller::class,"less_than_two_hundred_commission_repoet"])->name('report.less-than-two-hundred-commission-repoet');
 
             // Remuneration Report
