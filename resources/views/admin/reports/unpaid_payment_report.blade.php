@@ -22,7 +22,7 @@
                             <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                         </ol>
                     </div>
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <div class="float-end d-none d-md-block">
                             <div class="dropdown">
                                 <a onclick="history.back()" class="btn btn-primary  dropdown-toggle" aria-expanded="false">
@@ -30,7 +30,7 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
             <!-- end page title -->
@@ -66,7 +66,6 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-wrap">Paid / Unpaid</th>
                                         <th class="text-wrap">Name</th>
                                         <th class="text-wrap">ID</th>
                                         <th class="text-wrap">Total Payout Amount</th>
@@ -81,8 +80,7 @@
                                     @foreach($items as $item)
                                     @php $user = get_user_details($item->user_id) @endphp
                                     <tr>
-                                        <td><input type="checkbox" class="status-toggle" id="" data-item-id="{{ $item->id }}" {{ $item->paid_unpaid == 1 ? 'checked' : '' }}></td>
-                                        <td class="text-wrap"><a href="{{ route('report.view-payout-statement',$item->id) }}">{{ get_name($item->user_id) }}</a></td>
+                                        <td class="text-wrap">{{ get_name($item->user_id) }}</td>
                                         <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
                                         <td class="text-wrap">{{ $item->total_payout }}</td>
                                         <td class="text-wrap">{{ $user->account_name }}</td>
@@ -102,30 +100,5 @@
         </div> <!-- container-fluid -->
     </div>
     <!-- End Page-content -->
-
-    @section('script')
-        <script>
-            $(document).on('change', '.status-toggle', function() {
-                let itemId = $(this).data('item-id');
-                let isChecked = $(this).is(':checked') ? 1 : 0;
-
-                $.ajax({
-                    url: "{{ route('report.update-paid-unpaid-status') }}",
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        item_id: itemId,
-                        status: isChecked
-                    },
-                    success: function(response) {
-                        showToast('success', 'Success', response.message);
-                    },
-                    error: function() {
-                        showToast('error', 'Error', 'Error updating status');
-                    }
-                });
-            });
-        </script>
-    @endsection
 
     @include("admin.dash.footer")

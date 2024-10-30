@@ -334,6 +334,19 @@ class Report_Controller extends Controller
         return view('admin.reports.payout_report_details')->with($data);
     }
 
+    public function update_paid_unpaid_status(Request $request)
+    {
+        $item = Payout::find($request->item_id);
+        // return $item;
+        if ($item) {
+            $item->paid_unpaid = $request->status;
+            $item->save();
+            return response()->json(['message' => 'Updated successfully']);
+        }
+        return response()->json(['message' => 'Item not found'], 404);
+    }
+
+
     public function view_payout_statement($id){
         $data['title'] = 'Payout Report';
         $data['payout'] = Payout::find($id);
@@ -341,6 +354,18 @@ class Report_Controller extends Controller
     }
 
     // End of Payout Report
+
+    public function unpaid_payment_report(){
+        $data['title'] = 'Unpaid Payment Report';
+        $data['items'] = Payout::where('paid_unpaid','0')->get();
+        return view('admin.reports.unpaid_payment_report')->with($data);
+    }
+
+    public function less_than_two_hundred_commission_repoet(){
+        $data['title'] = 'Commission Report of > 200';
+        $data['items'] = Payout::where('hold_wallet','!=','0.00')->get();
+        return view('admin.reports.less_than_two_hundred_commission_repoet')->with($data);
+    }
 
 
     // Remuneration Report

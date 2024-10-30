@@ -414,6 +414,11 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/payout-report-details/{start_date}/{end_date}",[Report_Controller::class,"payout_report_details"])->name('report.payout-report-details');
             Route::get("/{id}/payout-statement",[Report_Controller::class,"view_payout_statement"])->name('report.view-payout-statement');
 
+            Route::post("/update-paid-unpaid-status",[Report_Controller::class,"update_paid_unpaid_status"])->name('report.update-paid-unpaid-status');
+
+            Route::get("/unpaid-payment-report",[Report_Controller::class,"unpaid_payment_report"])->name('report.unpaid-payment-report');
+            Route::get("/less-than-two-hundred-commission-repoet",[Report_Controller::class,"less_than_two_hundred_commission_repoet"])->name('report.less-than-two-hundred-commission-repoet');
+
             // Remuneration Report
             Route::get("/remuneration-report",[Report_Controller::class,"remuneration_report"])->name('report.remuneration-report');
             Route::post("/generate-remuneration-report",[Report_Controller::class,"generate_remuneration_report"])->name('report.generate-remuneration-report');
