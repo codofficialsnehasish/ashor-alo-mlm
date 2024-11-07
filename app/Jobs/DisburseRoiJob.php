@@ -18,12 +18,14 @@ class DisburseRoiJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $income_data;
+    protected $date;
     /**
      * Create a new job instance.
      */
-    public function __construct($income_data)
+    public function __construct($income_data,$date)
     {
         $this->income_data = $income_data;
+        $this->date = $date;
     }
 
     /**
@@ -55,7 +57,9 @@ class DisburseRoiJob implements ShouldQueue
                 $data->user_id,
                 $user_per_day_roi,
                 'ROI Daily',
-                1
+                1,
+                Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                Carbon::parse($this->date)->format('Y-m-d H:i:s'),
             );
 
             $top_up = TopUp::find($data->id);

@@ -68,7 +68,8 @@
                                     <tr>
                                         <th class="text-wrap">Name</th>
                                         <th class="text-wrap">ID</th>
-                                        <th class="text-wrap">Total Payout Amount</th>
+                                        <th class="text-wrap">Total Hold Wallet Amount</th>
+                                        <th class="text-wrap">Payout Date</th>
                                         <th class="text-wrap">Account Name (As Per Bank)</th>
                                         <th class="text-wrap">Bank Name</th>
                                         <th class="text-wrap">Account Number</th>
@@ -82,7 +83,8 @@
                                     <tr>
                                         <td class="text-wrap">{{ get_name($item->user_id) }}</td>
                                         <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
-                                        <td class="text-wrap">{{ $item->total_payout }}</td>
+                                        <td class="text-wrap">{{ $item->hold_wallet }}</td>
+                                        <td class="text-wrap">{{ $item->start_date }} - {{ $item->end_date }}</td>
                                         <td class="text-wrap">{{ $user->account_name }}</td>
                                         <td class="text-wrap">{{ $user->bank_name }}</td>
                                         <td class="text-wrap">{{ $user->account_number }}</td>

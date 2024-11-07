@@ -37,6 +37,9 @@ class KycController extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         }else{
+            if(Auth::user()->status != 1){
+                return back()->with(['error'=>'KYC not submitted. You Need to active First.']);
+            }
             $kyc = Kyc::where('user_id',Auth::id())->first();
             if(!empty($kyc)){
                 // return back()->with(['error'=>'this user kyc already exists']);

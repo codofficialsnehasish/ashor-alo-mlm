@@ -217,7 +217,7 @@
                                         <div class="mb-3 col-md-6">
                                             <label for="usr">Account Type</label>
                                             <select class="form-control" name="account_type">
-                                                <option value selected disabled>Choose...</option>
+                                                <option value="" selected>Choose...</option>
                                                 <option value="Current" @if($customer->account_type == 'Current') selected @endif>Current</option>
                                                 <option value="Saving" @if($customer->account_type == 'Saving') selected @endif>Saving</option>
                                             </select>

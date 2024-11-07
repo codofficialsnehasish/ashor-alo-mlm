@@ -121,7 +121,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center mt-3">
-                                    <button class="btn btn-primary" {{ check_kyc_submit_button(Auth::id()) }} type="submit">Submit KYC</button>
+                                    <button class="btn btn-primary" {{ check_kyc_submit_button(Auth::id()) }} @auth @if(Auth::user()->status != 1) disabled @endif @endauth type="submit">Submit KYC</button>
                                 </div>
                             </form>
                         </div>

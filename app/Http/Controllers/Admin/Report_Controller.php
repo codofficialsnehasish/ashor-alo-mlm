@@ -368,13 +368,17 @@ class Report_Controller extends Controller
         $endDate = $r->end_date;
         if(!empty($r->status) && $r->status == 'paid'){
             $data['items'] = Payout::where('paid_unpaid','1')
-                            ->whereDate('created_at', '>=', $startDate)
-                            ->whereDate('created_at', '<=', $endDate)
+                            ->whereDate('end_date', '>=', $startDate)
+                            ->whereDate('start_date', '<=', $endDate)
                             ->get();
         }elseif(!empty($r->status) && $r->status == 'unpaid'){
             $data['items'] = Payout::where('paid_unpaid','0')
-                                ->whereDate('created_at', '>=', $startDate)
-                                ->whereDate('created_at', '<=', $endDate)
+                                ->whereDate('end_date', '>=', $startDate)
+                                ->whereDate('start_date', '<=', $endDate)
+                                ->get();
+        }elseif(!empty($r->status) && $r->status == 'all'){
+            $data['items'] = Payout::whereDate('end_date', '>=', $startDate)
+                                ->whereDate('start_date', '<=', $endDate)
                                 ->get();
         }else{
             $data['items'] = Payout::all();

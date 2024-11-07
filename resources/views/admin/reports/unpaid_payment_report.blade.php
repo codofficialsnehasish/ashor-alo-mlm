@@ -42,10 +42,10 @@
                                 @csrf
                                 <div class="row">
                                     <div class="mb-0 col-md-8">
-                                        <label class="form-label">Search Using Date</label>
+                                        <label class="form-label">Search Using Payout Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
-                                            <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
-                                            <input type="text" class="form-control" required name="end_date" placeholder="End Date" value="" autocomplete="off" />
+                                            <input type="text" class="form-control" required name="start_date" placeholder="Payout Start Date" value="" autocomplete="off" />
+                                            <input type="text" class="form-control" required name="end_date" placeholder="Payout End Date" value="" autocomplete="off" />
                                         </div>
                                     </div>
                                     <div class="mb-0 col-md-2">
@@ -77,6 +77,7 @@
                                         <th class="text-wrap">Name</th>
                                         <th class="text-wrap">ID</th>
                                         <th class="text-wrap">Total Payout Amount</th>
+                                        <th class="text-wrap">Payout Date</th>
                                         <th class="text-wrap">Account Name (As Per Bank)</th>
                                         <th class="text-wrap">Bank Name</th>
                                         <th class="text-wrap">Account Number</th>
@@ -91,6 +92,7 @@
                                         <td class="text-wrap">{{ get_name($item->user_id) }}</td>
                                         <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
                                         <td class="text-wrap">{{ $item->total_payout }}</td>
+                                        <td class="text-wrap">{{ $item->start_date }} - {{ $item->end_date }}</td>
                                         <td class="text-wrap">{{ $user->account_name }}</td>
                                         <td class="text-wrap">{{ $user->bank_name }}</td>
                                         <td class="text-wrap">{{ $user->account_number }}</td>

@@ -15,6 +15,8 @@ Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
 Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
 
 Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']);
+Route::get('forcely-level-bonus-in-saturday-to-friday',[CornJobs::class,'forcely_level_bonus_in_saturday_to_friday']);
+
 Route::get('generate-payout-in-saturday-to-friday',[CornJobs::class,'generate_payout_in_saturday_to_friday']);
 Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']);
 
