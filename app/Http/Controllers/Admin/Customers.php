@@ -65,6 +65,7 @@ class Customers extends Controller
     //     return view("admin.customer.tree_view")->with($data);
     // }
 
+    //my generated tree view code
     public function tree_view($userId = null) {
         $title = 'Tree View';
         if(empty($userId)){
@@ -157,7 +158,8 @@ class Customers extends Controller
                             </div>
                         </div>
                     </a>';
-        }else{
+        }
+        else{ 
             $html .= '<a href="javascript:void(0);">
             <div class="member-view-box">
                 <div class="member-header">
@@ -182,6 +184,7 @@ class Customers extends Controller
         }
         return $html;
     }
+    
 
 
 

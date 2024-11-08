@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 
 use Illuminate\Support\Facades\DB;
 
-
+use Carbon\Carbon;
 use App\Models\User; 
 use App\Models\TopUp; 
 use App\Models\MonthlyReturn;
@@ -23,6 +23,7 @@ use App\Models\MLMSettings;
 use App\Models\Payout;
 use App\Models\RemunerationBenefit;
 use App\Models\SalaryBonus;
+use Illuminate\Support\Facades\Log;
 
 class ForcelyGeneratePayoutJob implements ShouldQueue
 {
@@ -60,7 +61,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
 
                     $remuneration_salary = 0;
                     // Remuneration Benefits or Salary Income
-                    // if ($current_day->day <= 7) {
+                    if (Carbon::parse($this->lastFriday)->day <= 7) {
                         $total_left_business = calculate_left_business($user_id);
                         $total_right_business = calculate_right_business($user_id);
 
@@ -102,10 +103,23 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                                 );
                             }
                         }
-                    // }
+                    }
     
-                    $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
+                    $total_paid_payout = Payout::where('user_id',$user_id)->where('paid_unpaid','1')->sum('total_payout');
+                    // $total_unpaid_payout = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->sum('total_payout');
+                    // $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
+                    $total_payout_roi = Payout::where('user_id',$user_id)->sum('roi');
+                    $total_payout_roi_tds = Payout::where('user_id',$user_id)->sum('roi_tds_deduction');
+
+                    $previous_unpaid_amount = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->latest()->value('total_payout') ?? 0.00;
+
+                    $total_payout = $total_paid_payout + $previous_unpaid_amount;
+                    $total_payout -= ($total_payout_roi - $total_payout_roi_tds);
+
         
+                    Log::info('previous_unpaid_amount :', ['count' => $previous_unpaid_amount]);
+                    Log::info('user_id :', ['user_id' => $user_id]);
+
                     $product_return = AccountTransaction::where('which_for','ROI Daily')
                                                             ->whereBetween(DB::raw('DATE(created_at)'), [$this->start_date,$this->lastFriday])
                                                             ->where('user_id',$user_id)
@@ -129,6 +143,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                     $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
                     $final_commission = $comission - $deduction;
     
+                    // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet + $previous_unpaid_amount;
                     $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
 
                     
@@ -156,8 +171,13 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $user->hold_balance = 0;
                     }else{
                         // after limit hold
-                        $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
-                        $user->hold_balance = $payout->hold_amount;
+                        if($limit <= $total_payout){
+                            $payout->hold_amount = $user->hold_balance + $final_commission;
+                            $user->hold_balance += $final_commission;
+                        }else{
+                            $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
+                            $user->hold_balance = $payout->hold_amount;
+                        }
                     }
 
                     $payout->remuneration_bonus = $remuneration_salary;
@@ -166,8 +186,11 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
     
                     $payout->roi = $product_return;
                     $payout->roi_tds_deduction = $product_return_deduction;
+
+                    $payout->previous_unpaid_amount = $previous_unpaid_amount;
     
-                    $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+                    // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0; //+ $previous_unpaid_amount
+                    $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
                     
                     if($payout->total_payout < 200){
                         $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;

@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'parent_id');
     }
+
+    public function kyc()
+    {
+        return $this->hasOne(Kyc::class, 'user_id', 'id');
+    }
 }

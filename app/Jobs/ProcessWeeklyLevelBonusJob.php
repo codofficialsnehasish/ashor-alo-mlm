@@ -17,6 +17,7 @@ class ProcessWeeklyLevelBonusJob implements ShouldQueue
 
     protected $transactions;
     protected $levelBonusService;
+    // protected $end_date;
 
     /**
      * Create a new job instance.
@@ -24,9 +25,10 @@ class ProcessWeeklyLevelBonusJob implements ShouldQueue
      * @param $transactions
      * @param LevelBonusService $levelBonusService
      */
-    public function __construct($transactions)
+    public function __construct($transactions) //, $end_date
     {
         $this->transactions = $transactions;
+        // $this->end_date = $end_date;
         $this->levelBonusService = app(LevelBonusService::class); // Using Laravel's service container to resolve the service
     }
 
@@ -43,12 +45,13 @@ class ProcessWeeklyLevelBonusJob implements ShouldQueue
 
             foreach($income_data as $data){
                 $user = User::find($data->user_id);
-                $weeklyPayment = ($data->installment_amount_per_month / get_days_in_this_month()) * $value;
+                // $weeklyPayment = ($data->installment_amount_per_month / get_days_in_this_month()) * $value;
+                $weeklyPayment = ($data->total_amount / get_days_in_this_month()) * $value;
                 $weeklyPayment = round($weeklyPayment, 2);
 
                 // Output the weekly payment
                 // echo "<br>".$weeklyPayment."<br>";
-                $this->levelBonusService->weekly_level_bonus($user->agent_id,$weeklyPayment,1);
+                $this->levelBonusService->weekly_level_bonus($user->agent_id,$weeklyPayment,1); //,$this->end_date
             }
         }
     }

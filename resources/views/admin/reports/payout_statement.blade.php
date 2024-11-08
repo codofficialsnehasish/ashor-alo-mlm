@@ -193,8 +193,7 @@
                                                             <tbody>
                                                                 <tr style="text-align: left;">
                                                                     <th style="width: 630px;background: #cccccc59;padding: 10px;">Gross incentive</th>
-                                                                    <th style="background: #cccccc59;padding: 10px;">{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus }}
-                                                                </th>
+                                                                    <th style="background: #cccccc59;padding: 10px;">{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus }}</th>
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="width: 630px;padding: 10px;">Less Repurchase Wallet {{ $payout->repurchase_persentage }}% </td>
@@ -215,6 +214,10 @@
                                                                 <tr>
                                                                     <td style="width: 630px;padding: 10px;">Hold Wallet Amount</td>
                                                                     <td style="padding: 10px;width: 170px;border-left: 1px solid #ccc;">{{ $payout->hold_wallet }}</td>
+                                                                </tr>
+                                                                <tr style="text-align: left;">
+                                                                    <th style="width: 630px;background: #cccccc59;padding: 10px;">Previous Unpaid Amount</th>
+                                                                    <th style="background: #cccccc59;padding: 10px;">{{ $payout->previous_unpaid_amount }}</th>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

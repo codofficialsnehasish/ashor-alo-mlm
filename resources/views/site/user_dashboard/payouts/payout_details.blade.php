@@ -105,6 +105,10 @@
                                             <td>{{ $payout->hold_wallet }}</td>
                                         </tr>
                                         <tr>
+                                            <td colspan="2">Previous Unpaid Amount</td>
+                                            <td>{{ $payout->previous_unpaid_amount }}</td>
+                                        </tr>
+                                        <tr>
                                             <td colspan="2" style="text-align: right;"><b>Net Payable Amount</b></td>
                                             <td><b>{{ $payout->total_payout }}</b></td>
                                         </tr>

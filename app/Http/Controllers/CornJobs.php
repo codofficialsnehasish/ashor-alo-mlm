@@ -91,7 +91,7 @@ class CornJobs extends Controller
                     ->get();
 
         DisburseRoiJob::dispatch($income_data);
-    }
+    } // tested 07-11-2024
 
     /*public function forcely_disburse_roi() {
         $income_data = TopUp::where('is_completed', 0)
@@ -434,188 +434,177 @@ class CornJobs extends Controller
                     });
 
                 ProcessWeeklyLevelBonusJob::dispatch($acc_transactions);
+        }else{
+            return 'today in not friday';
         }
-    }   
+    }  // tested 07-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
-        // if (Carbon::now()->isFriday()) {
-                // $today = Carbon::now();
-                // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-                // $current_day = Carbon::now();
-        // $today = Carbon::create(2024, 10, 05); // Set your current date statically
-        // $lastSaturday = Carbon::create(2024, 10, 11); // Set last Saturday's date statically
+        $start_date = '2024-10-26';
+        $lastFriday = '2024-11-01';
+        $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
+            ->where('which_for', 'ROI Daily')
+            ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
+            ->distinct()
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($transactions) {
+                return $transactions->pluck('payment_date')->unique()->count();
+            });
+        // return $acc_transactions; die;
 
-        // $current_day = $today;
-        // echo format_date_for_db($lastSaturday);
-            
-                // Process in chunks and dispatch each chunk to a queue job
-                $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), ['2024-10-12', '2024-10-18'])
-                    ->where('which_for', 'ROI Daily')
-                    ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
-                    ->distinct()
-                    ->get()
-                    ->groupBy('user_id')
-                    ->map(function ($transactions) {
-                        return $transactions->pluck('payment_date')->unique()->count();
-                    });
-// return $acc_transactions;die;
-                ProcessWeeklyLevelBonusJob::dispatch($acc_transactions);
-        // }
+        ProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $lastFriday);
     }   
     
     public function generate_payout_in_saturday_to_friday() {
         if (Carbon::now()->isFriday()) {
-            if(date('Y-m-d')!= '2024-10-04'){
-                $today = Carbon::now();
-                $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-                $current_day = Carbon::now();
-    
-                $mlm_settings = MLMSettings::first();
-                $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
-            
-                $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
-                ->groupBy('user_id')
-                ->pluck('user_id');
-    
-                /*foreach($transactions as $user_id){
-                    $user = User::find($user_id);
-                    if($user){
-                        $total_top_up_amount = TopUp::where('user_id',$user_id)->sum('total_amount');
-                        // if($total_top_up_amount > 0){
-                            $limit = $total_top_up_amount * 10;
-    
-                            $remuneration_salary = 0;
-                            // Remuneration Benefits or Salary Income
-                            if ($current_day->day <= 7) {
-                                $total_left_business = calculate_left_business($user_id);
-                                $total_right_business = calculate_right_business($user_id);
-    
-                                $achieved_target = RemunerationBenefit::where('target', '<=', $total_left_business)
-                                                    ->where('target', '<=', $total_right_business)
-                                                    ->orderBy('target', 'DESC')
-                                                    ->first();
-    
-                                if($achieved_target){
-                                    if(SalaryBonus::where('user_id',$user_id)->exists()){
-                                        $salary = SalaryBonus::where('user_id',$user_id)->first();
-                                        if($achieved_target->id == $salary->remuneration_benefit_id && $salary->month_count <= $achieved_target->month_validity){
-                                            $salary->month_count += 1;
-                                            $remuneration_salary = $achieved_target->bonus;
-                                            $salary->update();
-                                        }
-                                    }else{
-                                        $salary = new SalaryBonus();
-                                        $salary->user_id = $user_id;
-                                        $salary->remuneration_benefit_id = $achieved_target->id;
-                                        $salary->start_date = date('Y-m-d');
-                                        $salary->amount = $achieved_target->bonus;
-                                        $salary->month_count = 1;
-                                        $salary->save();
+            $today = Carbon::now();
+            $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            $current_day = Carbon::now();
+
+            $mlm_settings = MLMSettings::first();
+            $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
+        
+            $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+            ->groupBy('user_id')
+            ->pluck('user_id');
+
+            /*foreach($transactions as $user_id){
+                $user = User::find($user_id);
+                if($user){
+                    $total_top_up_amount = TopUp::where('user_id',$user_id)->sum('total_amount');
+                    // if($total_top_up_amount > 0){
+                        $limit = $total_top_up_amount * 10;
+
+                        $remuneration_salary = 0;
+                        // Remuneration Benefits or Salary Income
+                        if ($current_day->day <= 7) {
+                            $total_left_business = calculate_left_business($user_id);
+                            $total_right_business = calculate_right_business($user_id);
+
+                            $achieved_target = RemunerationBenefit::where('target', '<=', $total_left_business)
+                                                ->where('target', '<=', $total_right_business)
+                                                ->orderBy('target', 'DESC')
+                                                ->first();
+
+                            if($achieved_target){
+                                if(SalaryBonus::where('user_id',$user_id)->exists()){
+                                    $salary = SalaryBonus::where('user_id',$user_id)->first();
+                                    if($achieved_target->id == $salary->remuneration_benefit_id && $salary->month_count <= $achieved_target->month_validity){
+                                        $salary->month_count += 1;
                                         $remuneration_salary = $achieved_target->bonus;
+                                        $salary->update();
                                     }
+                                }else{
+                                    $salary = new SalaryBonus();
+                                    $salary->user_id = $user_id;
+                                    $salary->remuneration_benefit_id = $achieved_target->id;
+                                    $salary->start_date = date('Y-m-d');
+                                    $salary->amount = $achieved_target->bonus;
+                                    $salary->month_count = 1;
+                                    $salary->save();
+                                    $remuneration_salary = $achieved_target->bonus;
                                 }
                             }
+                        }
+        
+                        $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
             
-                            $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
-                
-                            $product_return = AccountTransaction::where('which_for','ROI Daily')
-                                                                    ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
-                                                                    ->where('user_id',$user_id)
-                                                                    ->sum('amount');
-    
-                            $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
-                            $total_product_return = $product_return - $product_return_deduction;
-                
-                            $direct_bonus = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                        $product_return = AccountTransaction::where('which_for','ROI Daily')
                                                                 ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
-                                                                ->where('user_id', $user_id)
+                                                                ->where('user_id',$user_id)
                                                                 ->sum('amount');
-                
-                            
-                            $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
-                                                                ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
-                                                                ->where('user_id', $user_id)
-                                                                ->sum('amount');
-                            
-                            $comission = $direct_bonus + $lavel_bonus + $remuneration_salary;
-                            $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
-                            $final_commission = $comission - $deduction;
+
+                        $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
+                        $total_product_return = $product_return - $product_return_deduction;
             
-                            $current_payout = $user->hold_balance + $final_commission;
-    
-                            
-                            
-                            $payout = new Payout();
-                            $payout->user_id = $user_id;
-                            $payout->start_date = $lastSaturday;
-                            $payout->end_date = $current_day;
-                            $payout->tds_persentage = $mlm_settings->tds;
-                            $payout->repurchase_persentage = $mlm_settings->repurchase;
-                            $payout->service_charge_persentage = $mlm_settings->tds;
-    
-                            $payout->direct_bonus = $direct_bonus;
-                            $payout->direct_bonus_tds_deduction = $direct_bonus * ($mlm_settings->tds/100);
-                            $payout->direct_bonus_repurchase_deduction = $direct_bonus * ($mlm_settings->repurchase/100);
-    
-                            $payout->lavel_bonus = $lavel_bonus;
-                            $payout->lavel_bonus_tds_deduction = $lavel_bonus * ($mlm_settings->tds/100);
-                            $payout->lavel_bonus_repurchase_deduction = $lavel_bonus * ($mlm_settings->repurchase/100);
-    
-                            // Checking for hold amount
-                            if(($limit - ($current_payout + $total_payout)) >= 0){
-                                // if($user->id == 4){
-                                //     echo $user->hold_balance; die;
-                                // }
-                                // then pay the hold amount
-                                $payout->hold_amount_added = $user->hold_balance;
-                                $user->hold_balance = 0;
-                            }else{
-                                // after limit hold
-                                $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
-                                $user->hold_balance += $payout->hold_amount;
-                            }
-    
-                            $payout->remuneration_bonus = $remuneration_salary;
-                            $payout->remuneration_bonus_tds_deduction = $remuneration_salary * ($mlm_settings->tds/100);
-                            $payout->remuneration_bonus_repurchase_deduction = $remuneration_salary * ($mlm_settings->repurchase/100);
+                        $direct_bonus = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                                                            ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+                                                            ->where('user_id', $user_id)
+                                                            ->sum('amount');
             
-                            $payout->roi = $product_return;
-                            $payout->roi_tds_deduction = $product_return_deduction;
-            
-                            // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
-                            $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
-    
-                            $payout->save();
-    
-                            $user->repurchase_wallet = $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
-    
-                            $user->update();
-    
-                            $account = Account::first();
-                            $account->tds_balance += $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction;
-                            $account->repurchase_balance += $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
-                            $account->update();
-    
-                            TDSAccount::create([
-                                'user_id'=>$user->id,
-                                'amount'=>$payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction,
-                                'which_for'=>'Deducting from Payout',
-                                'status'=>1
-                            ]);
-                            RepurchaseAccount::create([
-                                'user_id'=>$user->id,
-                                'amount'=>$payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction,
-                                'which_for'=>'Deducting from Payout',
-                                'status'=>1
-                            ]);
-                        // }
-                    }
-                }*/
-    
-                GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
-            }else{
-                return 'generate_payout_in_saturday_to_friday not worked';
-            }
+                        
+                        $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                                                            ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+                                                            ->where('user_id', $user_id)
+                                                            ->sum('amount');
+                        
+                        $comission = $direct_bonus + $lavel_bonus + $remuneration_salary;
+                        $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
+                        $final_commission = $comission - $deduction;
+        
+                        $current_payout = $user->hold_balance + $final_commission;
+
+                        
+                        
+                        $payout = new Payout();
+                        $payout->user_id = $user_id;
+                        $payout->start_date = $lastSaturday;
+                        $payout->end_date = $current_day;
+                        $payout->tds_persentage = $mlm_settings->tds;
+                        $payout->repurchase_persentage = $mlm_settings->repurchase;
+                        $payout->service_charge_persentage = $mlm_settings->tds;
+
+                        $payout->direct_bonus = $direct_bonus;
+                        $payout->direct_bonus_tds_deduction = $direct_bonus * ($mlm_settings->tds/100);
+                        $payout->direct_bonus_repurchase_deduction = $direct_bonus * ($mlm_settings->repurchase/100);
+
+                        $payout->lavel_bonus = $lavel_bonus;
+                        $payout->lavel_bonus_tds_deduction = $lavel_bonus * ($mlm_settings->tds/100);
+                        $payout->lavel_bonus_repurchase_deduction = $lavel_bonus * ($mlm_settings->repurchase/100);
+
+                        // Checking for hold amount
+                        if(($limit - ($current_payout + $total_payout)) >= 0){
+                            // if($user->id == 4){
+                            //     echo $user->hold_balance; die;
+                            // }
+                            // then pay the hold amount
+                            $payout->hold_amount_added = $user->hold_balance;
+                            $user->hold_balance = 0;
+                        }else{
+                            // after limit hold
+                            $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
+                            $user->hold_balance += $payout->hold_amount;
+                        }
+
+                        $payout->remuneration_bonus = $remuneration_salary;
+                        $payout->remuneration_bonus_tds_deduction = $remuneration_salary * ($mlm_settings->tds/100);
+                        $payout->remuneration_bonus_repurchase_deduction = $remuneration_salary * ($mlm_settings->repurchase/100);
+        
+                        $payout->roi = $product_return;
+                        $payout->roi_tds_deduction = $product_return_deduction;
+        
+                        // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
+                        $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+
+                        $payout->save();
+
+                        $user->repurchase_wallet = $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
+
+                        $user->update();
+
+                        $account = Account::first();
+                        $account->tds_balance += $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction;
+                        $account->repurchase_balance += $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
+                        $account->update();
+
+                        TDSAccount::create([
+                            'user_id'=>$user->id,
+                            'amount'=>$payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction,
+                            'which_for'=>'Deducting from Payout',
+                            'status'=>1
+                        ]);
+                        RepurchaseAccount::create([
+                            'user_id'=>$user->id,
+                            'amount'=>$payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction,
+                            'which_for'=>'Deducting from Payout',
+                            'status'=>1
+                        ]);
+                    // }
+                }
+            }*/
+
+            GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
         }
     }
 

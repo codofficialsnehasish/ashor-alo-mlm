@@ -330,7 +330,27 @@ class Report_Controller extends Controller
 
     public function payout_report_details($start_date, $end_date){
         $data['title'] = 'Payout Report';
-        $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->where('total_payout','>',0)->get();
+        // $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->where('total_payout','>',0)->get();
+        // $data['items'] = Payout::where('start_date', $start_date)
+        //                         ->where('end_date', $end_date)
+        //                         ->where('total_payout', '>', 0)
+        //                         ->whereHas('user', function ($query) {
+        //                             $query->where('block', 0); // assuming 'is_blocked' is the field name
+        //                         })
+        //                         ->whereHas('kyc', function ($query) {
+        //                             $query->where('is_completed', 1); // assuming 'is_completed' is the field name for KYC status
+        //                         })
+        //                         ->get();
+        $data['items'] = Payout::where('start_date', $start_date)
+                                ->where('end_date', $end_date)
+                                ->where('total_payout', '>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                })
+                                ->get();
         return view('admin.reports.payout_report_details')->with($data);
     }
 

@@ -106,7 +106,7 @@ class LevelBonusService
 
     } 
 
-    public function weekly_level_bonus($user_id, $amount, $user_level){
+    public function weekly_level_bonus($user_id, $amount, $user_level){ //, $date
         $user = User::where('user_id', $user_id)->first();
         if($user_id == null) { return; }
         if (empty($user)) {
@@ -122,9 +122,9 @@ class LevelBonusService
 
         if($user->status == 1){
 
-            $user_lavel_persentage = Lavel_masters::where('level_number', $user->lavel)->value('lavel_persentage');
+            $user_lavel_persentage = Lavel_masters::where('level_number', $user_level)->value('lavel_persentage');
             $user_lavel_persentage = number_format($user_lavel_persentage, 1);
-            $bonus = $amount * ($user_lavel_persentage/100);
+            $bonus = round($amount * ($user_lavel_persentage/100),2);
 
             $user->account_balance += $bonus;
             // Level Bonus transaction
@@ -132,7 +132,9 @@ class LevelBonusService
                 $user->id,
                 $bonus,
                 'Level Bonus',
-                1
+                1,
+                // Carbon::parse($date)->format('Y-m-d H:i:s'),
+                // Carbon::parse($date)->format('Y-m-d H:i:s')
             );
 
             // if(check_limit($user->id)){
@@ -176,7 +178,7 @@ class LevelBonusService
             $user->update();
         }
 
-        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1);
+        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1); //, $date
     }
     
 }
