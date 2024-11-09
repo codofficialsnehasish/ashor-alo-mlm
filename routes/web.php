@@ -308,6 +308,9 @@ Route::middleware('auth.admin')->group(function () {
             
             Route::get("/user-of-leaders",[Customers::class,"user_of_leaders"])->name('customer.user-of-leaders');
             Route::post("/get-user-of-leaders",[Customers::class,"get_users_of_leaders"])->name('customer.get-user-of-leaders');
+
+            Route::get("/exportPdf",[Customers::class,"exportPdf"])->name('customer.exportPdf');
+            Route::get("/exportExcel",[Customers::class,"exportExcel"])->name('customer.exportExcel');
         });
 
         //=========================== KYC Admin Part ========================
