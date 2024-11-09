@@ -64,7 +64,7 @@
                                                     <th class="text-wrap">Total Price</th>
                                                     <th class="text-wrap">Payment Method</th>
                                                     <th class="text-wrap">Payment Status</th>
-                                                    <!-- <th>Shipping Status</th> -->
+                                                    <th>Shipping Status</th>
                                                     <th>Created By</th>
                                                     <th>Action</th>
                                                 </tr>
@@ -74,7 +74,7 @@
                                                 <tr>
                                                     <td class="text-wrap">{{ format_datetime($order->created_at)  }}</td>
                                                     <td>#{{ $order->order_number  }}</td>
-                                                    <td>{{ $order->user->name  }}</td>
+                                                    <td class="text-wrap">{{ $order->user->name  }}</td>
                                                     <td>{{ get_user_id($order->buyer_id) }}</td>
                                                     <!-- <td>
                                                         <span class="label">Subtotal Price :</span><span class="value">{{ $order->price_subtotal }}</span><br>
@@ -102,7 +102,7 @@
                                                         <b class="btn btn-success">{{ $order->payment_status }}</b>
                                                         @endif
                                                     </td>
-                                                    {{-- <td>
+                                                    <td>
                                                         @if($order->status != 1)
                                                         <div class="col-md-12">
                                                             <select class="form-select" required="" onchange="change_order_status('{{$order->id}}',this.value)">
@@ -118,7 +118,7 @@
                                                         @else
                                                         <b class="btn btn-success">{{ $order->order_status }}</b>
                                                         @endif
-                                                    </td> --}}
+                                                    </td>
                                                     <td class="text-wrap">{{ $order->placed_by }}</td>
                                                     <td>
                                                         @if($order->status == 1)

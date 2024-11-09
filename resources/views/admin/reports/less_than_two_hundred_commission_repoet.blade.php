@@ -78,7 +78,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php $amount = 0 @endphp
                                     @foreach($items as $item)
+                                    @php $amount += $item->hold_wallet @endphp
                                     @php $user = get_user_details($item->user_id) @endphp
                                     <tr>
                                         <td class="text-wrap">{{ get_name($item->user_id) }}</td>
@@ -93,6 +95,19 @@
                                     </tr>
                                     @endforeach
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
