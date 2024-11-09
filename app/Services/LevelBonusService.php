@@ -118,6 +118,11 @@ class LevelBonusService
         //     return;
         // }
 
+        $highest_level = Lavel_masters::latest()->first();
+        if($user_level > $highest_level->level_number){
+            return;
+        }
+
         // if($user->status != 1){ return; }
 
         if($user->status == 1){

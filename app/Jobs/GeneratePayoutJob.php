@@ -104,7 +104,17 @@ class GeneratePayoutJob implements ShouldQueue
                         }
                     }
     
-                    $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
+                    // $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
+                    $total_paid_payout = Payout::where('user_id',$user_id)->where('paid_unpaid','1')->sum('total_payout');
+                    // $total_unpaid_payout = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->sum('total_payout');
+                    // $total_payout = Payout::where('user_id',$user_id)->sum('total_payout');
+                    $total_payout_roi = Payout::where('user_id',$user_id)->sum('roi');
+                    $total_payout_roi_tds = Payout::where('user_id',$user_id)->sum('roi_tds_deduction');
+
+                    $previous_unpaid_amount = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->latest()->value('total_payout') ?? 0.00;
+
+                    $total_payout = $total_paid_payout + $previous_unpaid_amount;
+                    $total_payout -= ($total_payout_roi - $total_payout_roi_tds);
         
                     $product_return = AccountTransaction::where('which_for','ROI Daily')
                                                             ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($this->lastSaturday), format_date_for_db($this->current_day)])
@@ -159,8 +169,16 @@ class GeneratePayoutJob implements ShouldQueue
                         $user->hold_balance = 0;
                     }else{
                         // after limit hold
-                        $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
-                        $user->hold_balance += $payout->hold_amount;
+                        // $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
+                        // $user->hold_balance += $payout->hold_amount;
+
+                        if($limit <= $total_payout){
+                            $payout->hold_amount = $user->hold_balance + $final_commission;
+                            $user->hold_balance += $final_commission;
+                        }else{
+                            $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
+                            $user->hold_balance = $payout->hold_amount;
+                        }
                     }
 
                     $payout->remuneration_bonus = $remuneration_salary;
@@ -169,9 +187,12 @@ class GeneratePayoutJob implements ShouldQueue
     
                     $payout->roi = $product_return;
                     $payout->roi_tds_deduction = $product_return_deduction;
+
+                    $payout->previous_unpaid_amount = $previous_unpaid_amount;
     
                     // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
-                    $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+                    // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+                    $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
                     
                     if($payout->total_payout < 200){
                         $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;

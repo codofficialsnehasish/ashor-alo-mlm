@@ -91,7 +91,7 @@ class CornJobs extends Controller
                     ->get();
 
         DisburseRoiJob::dispatch($income_data);
-    } // tested 07-11-2024
+    } // tested 09-11-2024
 
     /*public function forcely_disburse_roi() {
         $income_data = TopUp::where('is_completed', 0)
@@ -177,13 +177,17 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 10, 5);
+        $startDate = Carbon::create(2024, 11, 8);
         $endDate = Carbon::now();
         $dates = [];
-        while ($startDate->lte($endDate)) {
+        // while ($startDate->lte($endDate)) {
+        while ($startDate->lt($endDate)) {
             $dates[] = $startDate->toDateString(); // Add the current date to the array
+            break;
             $startDate->addDay(); // Move to the next day
         }
+
+        // return $dates;
 
         // Output the dates
         foreach ($dates as $date) {
@@ -196,14 +200,10 @@ class CornJobs extends Controller
                         ->whereDate('start_date', '<', $date)
                         ->get();
 
-            DisburseRoiJob::dispatch($income_data,$date);
+            // DisburseRoiJob::dispatch($income_data,$date);
+            ForcelyDisburseRoiJob::dispatch($income_data,$date);
+            
         }
-        // die;
-        // $income_data = TopUp::where('is_completed', 0)
-        //             ->Where('total_installment_month', '>', 'month_count')
-        //             ->get();
-
-        // ForcelyDisburseRoiJob::dispatch($income_data);
     }
     
 
@@ -440,8 +440,8 @@ class CornJobs extends Controller
     }  // tested 07-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
-        $start_date = '2024-10-26';
-        $lastFriday = '2024-11-01';
+        $start_date = '2024-11-02';
+        $lastFriday = '2024-11-08';
         $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
             ->where('which_for', 'ROI Daily')
             ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
@@ -605,12 +605,14 @@ class CornJobs extends Controller
             }*/
 
             GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
+        }else{
+            return 'today in not friday';
         }
     }
 
     public function forcely_generate_payout() {
-        $start_date = '2024-10-05';
-        $lastFriday = '2024-10-11';
+        $start_date = '2024-11-02';
+        $lastFriday = '2024-11-08';
         $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
                                             ->groupBy('user_id')
                                             ->pluck('user_id');
