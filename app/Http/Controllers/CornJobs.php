@@ -611,8 +611,8 @@ class CornJobs extends Controller
     }
 
     public function forcely_generate_payout() {
-        $start_date = '2024-11-02';
-        $lastFriday = '2024-11-08';
+        $start_date = '2024-10-26';
+        $lastFriday = '2024-11-01';
         $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
                                             ->groupBy('user_id')
                                             ->pluck('user_id');

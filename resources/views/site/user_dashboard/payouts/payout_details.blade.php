@@ -81,7 +81,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="text-align: right;">Gross Incentive</td>
-                                            <td>{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus }}</td>
+                                            <td>{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus + $payout->hold_wallet_added }}</td>
                                         </tr>
                                         <tr><td colspan="3"></td></tr>
                                         <tr>

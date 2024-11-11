@@ -188,15 +188,17 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                     $payout->roi_tds_deduction = $product_return_deduction;
 
                     $payout->previous_unpaid_amount = $previous_unpaid_amount;
+
+                    $payout->hold_wallet_added = $user->hold_wallet;
     
                     // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0; //+ $previous_unpaid_amount
-                    $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                    $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission + $payout->hold_wallet_added) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
                     
                     if($payout->total_payout < 200){
                         $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
                         $payout->total_payout = 0.00;
                     }else{
-                        $payout->hold_wallet_added = $user->hold_wallet;
+                        // $payout->hold_wallet_added = $user->hold_wallet;
                         $user->hold_wallet = 0.00;
                     }
                     
