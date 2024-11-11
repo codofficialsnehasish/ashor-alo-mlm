@@ -177,7 +177,7 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 11, 8);
+        $startDate = Carbon::create(2024, 11, 9);
         $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
@@ -462,8 +462,8 @@ class CornJobs extends Controller
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
             $current_day = Carbon::now();
 
-            $mlm_settings = MLMSettings::first();
-            $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
+            // $mlm_settings = MLMSettings::first();
+            // $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
         
             $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
             ->groupBy('user_id')
@@ -618,6 +618,35 @@ class CornJobs extends Controller
                                             ->pluck('user_id');
 
         ForcelyGeneratePayoutJob::dispatch($transactions, $start_date, $lastFriday);
+    }
+
+
+
+
+
+
+
+
+    public function hold_wallet_replace_for_one_time(){
+        // Query 1
+        // SELECT user_id,SUM(hold_wallet) as total_hold, COUNT(*) AS row_count FROM `payouts` GROUP BY user_id;
+
+        // Query 2
+        // SELECT user_id, SUM(hold_wallet) AS total_hold, COUNT(*) AS row_count FROM payouts GROUP BY user_id HAVING total_hold > 0 AND row_count > 1;
+
+        $results = Payout::selectRaw('user_id, SUM(hold_wallet) as total_hold, COUNT(*) as row_count')
+                        ->groupBy('user_id')
+                        ->havingRaw('total_hold > 0')
+                        ->havingRaw('row_count > 1')
+                        ->get();
+        // return $results;
+        foreach($results as $result){
+            $user = User::find($result->user_id);
+            $user->hold_wallet = $result->total_hold;
+            $user->update();
+        }
+
+        echo 'success';
     }
     
 }
