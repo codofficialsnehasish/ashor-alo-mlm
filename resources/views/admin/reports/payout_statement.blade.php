@@ -193,7 +193,7 @@
                                                             <tbody>
                                                                 <tr style="text-align: left;">
                                                                     <th style="width: 630px;background: #cccccc59;padding: 10px;">Gross incentive</th>
-                                                                    <th style="background: #cccccc59;padding: 10px;">{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus }}</th>
+                                                                    <th style="background: #cccccc59;padding: 10px;">{{ $payout->direct_bonus + $payout->lavel_bonus + $payout->roi + $payout->hold_amount_added + $payout->remuneration_bonus + $payout->hold_wallet_added }}</th>
                                                                 </tr>
                                                                 <tr>
                                                                     <td style="width: 630px;padding: 10px;">Less Repurchase Wallet {{ $payout->repurchase_persentage }}% </td>
