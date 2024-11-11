@@ -205,7 +205,7 @@ class Order extends Controller
         $order->order_status = $r->order_status;
         if($r->order_status == 'Order Completed'){
             $order->status = 1;
-            $this->make_id_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
+            // $this->make_id_green(get_product_category_by_order_id($order->id), $order->id,$order->buyer_id,$order->price_total,date('Y-m-d'));
             // $product_income = new ProductSectorIncome();
             // $product_income->user_id = $order->buyer_id;
             // $product_income->order_id  = $order->id;
