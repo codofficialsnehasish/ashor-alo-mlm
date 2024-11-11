@@ -347,6 +347,8 @@
             }
         }
     }
+    
+    
 
     if(!function_exists('getRightSideMembers')){
         function getRightSideMembers($user_id) {
@@ -372,6 +374,7 @@
             }
         }
     }
+    
 
 
     if(!function_exists('calculate_left_business')){

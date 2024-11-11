@@ -52,4 +52,27 @@
         </div>
         <!-- End Page-content -->
         
+
+        @section('script')
+            <script>
+                function MemberDetails(val) {
+
+                    $.ajax({
+                        type: "POST",
+                        data: { "U_ID": val , _token:"{{ csrf_token() }}"},
+                        url: "{{ route('customer.get-member-details-on-hover') }}",
+                        success: function (resp) {
+                            console.log(resp);
+                            $('#u'+val).html(resp);
+                        },
+                        error: function () {
+
+                        }
+                    });
+                }
+            </script>
+        @endsection
+
+
+
         @include("admin/dash/footer")

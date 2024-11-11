@@ -69,10 +69,11 @@
                                                 <thead>
                                                     <tr>
                                                         <th class="text-wrap">Reg Date</th>
+                                                        <th class="text-wrap">Active Date</th>
                                                         <th>Name</th>
                                                         <!-- <th>Referral Code</th> -->
                                                         <th>Position</th>
-                                                        <th>Level</th>
+                                                        {{-- <th>Level</th> --}}
                                                         <th>Mobile</th>
                                                         <th>Password</th>
                                                         <th>Email</th>
@@ -85,10 +86,11 @@
                                                     @foreach($customer as $c)
                                                     <tr>
                                                         <td class="text-wrap">{!! format_datetime($c->created_at) !!}</td>
+                                                        <td class="text-wrap">{!! $c->join_amount_put_date ? format_datetime($c->join_amount_put_date) : '' !!}</td>
                                                         <td class="text-wrap">{{$c->name}} ( {{$c->user_id}} )</td>
                                                         <!-- <td>{{$c->referral_code}}</td> -->
                                                         <td>@if($c->is_left == 1) Left @else Right @endif</td>
-                                                        <td>{{-- find_customer_level($c->user_id) --}} {{ $c->lavel}}</td>
+                                                        {{-- <td>find_customer_level($c->user_id) {{ $c->lavel}}</td> --}}
                                                         <td>{{$c->phone}}</td>
                                                         <td>{{$c->decoded_password}}</td>
                                                         <td class="text-wrap">{{$c->email}}</td>

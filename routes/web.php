@@ -302,6 +302,7 @@ Route::middleware('auth.admin')->group(function () {
             Route::post("/update-customer",[Customers::class,"update_customer"])->name('customer.update');
             
             Route::get("/tree-view/{userId?}",[Customers::class,"tree_view"])->name('customer.tree-view');
+            Route::post("/get-member-details-on-hover",[Customers::class,"get_member_details_on_hover"])->name('customer.get-member-details-on-hover');
             
             Route::post("/make-id-green",[Customers::class,"make_it_green"])->name('customer.make-id-green');
             
