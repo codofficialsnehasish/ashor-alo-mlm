@@ -177,7 +177,7 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 11, 10);
+        $startDate = Carbon::create(2024, 11, 12);
         $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
