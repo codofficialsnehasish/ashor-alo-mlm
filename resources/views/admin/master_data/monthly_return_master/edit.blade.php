@@ -95,7 +95,7 @@
                                     <label for="percentage" class="form-label">Return Persentage</label>
                                     <div class="input-group has-validation">
                                         <span class="input-group-text"><i class="fas fa-percent"></i></span>
-                                        <input type="number" class="form-control" placeholder="" value="" id="percentage" aria-describedby="inputGroupPrepend" name="return_percentage" required>
+                                        <input type="number" class="form-control" placeholder="" value="{{ $item->return_persentage }}" id="percentage" aria-describedby="inputGroupPrepend" name="return_percentage" required>
                                         <div class="invalid-feedback">
                                             This field is required
                                         </div>
