@@ -237,6 +237,7 @@ class Order extends Controller
             $top_up->total_installment_month = $ROI['total_installment_month'];
             $top_up->total_paying_amount = $ROI['total_paying_amount'];
             $top_up->installment_amount_per_month = $ROI['installment_amount_per_month'];
+            $top_up->is_provide_direct = $ROI['is_provide_direct'];
             $top_up->save();
     
             $custo = User::find($user_id);

@@ -89,6 +89,10 @@
                 $data_array['total_paying_amount'] = $total_amount * ($percentage->return_persentage/100);
                 $data_array['return_percentage'] = $percentage->return_persentage;
                 $data_array['percentage'] = $percentage->percentage;
+                
+                // for add on product, not provide direct bonus
+                $data_array['is_provide_direct'] = $category == 10? 0 : 1;
+                
                 return $data_array;
             }else{
                 return array();

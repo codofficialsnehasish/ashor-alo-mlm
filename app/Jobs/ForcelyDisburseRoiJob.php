@@ -138,14 +138,34 @@ class ForcelyDisburseRoiJob implements ShouldQueue
             $user->account_balance += $user_per_day_roi;
             $user->update();
 
-            $transaction->make_transaction(
-                $data->user_id,
-                $user_per_day_roi,
-                'ROI Daily',
-                1,
-                Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-                Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-            );
+            // $transaction->make_transaction(
+            //     $data->user_id,
+            //     $user_per_day_roi,
+            //     'ROI Daily',
+            //     1,
+            //     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+            //     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+            // );
+
+            if($data->is_provide_direct == 0){
+                $transaction->make_transaction(
+                    $data->user_id,
+                    $user_per_day_roi,
+                    'ROI Dailys',
+                    1,
+                    Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                    Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                );
+            }else{
+                $transaction->make_transaction(
+                    $data->user_id,
+                    $user_per_day_roi,
+                    'ROI Daily',
+                    1,
+                    Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                    Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                );
+            }
 
             $top_up = TopUp::find($data->id);
             if(Carbon::now()->day == Carbon::parse($data->start_date)->day){

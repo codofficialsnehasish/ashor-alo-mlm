@@ -116,7 +116,10 @@ class GeneratePayoutJob implements ShouldQueue
                     $total_payout = $total_paid_payout + $previous_unpaid_amount;
                     $total_payout -= ($total_payout_roi - $total_payout_roi_tds);
         
-                    $product_return = AccountTransaction::where('which_for','ROI Daily')
+                    $product_return = AccountTransaction::where(function ($query) {
+                                                                $query->where('which_for', 'ROI Daily')
+                                                                    ->orWhere('which_for', 'ROI Dailys');
+                                                            })
                                                             ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($this->lastSaturday), format_date_for_db($this->current_day)])
                                                             ->where('user_id',$user_id)
                                                             ->sum('amount');

@@ -3,6 +3,7 @@
     use Carbon\Carbon;
     use App\Models\User;
     use App\Models\Orders;
+    use App\Models\TopUp;
     
     // first version
     // if (!function_exists('render_customer_tree')) {
@@ -387,8 +388,11 @@
             
             $buyer_ids = array_column($left_side_members, 'id');
             
-            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
-                                ->sum('price_total');
+            // $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+            //                     ->sum('price_total');
+
+            $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
+            ->sum('total_amount');
             
             return $total_business;
         }
@@ -424,8 +428,11 @@
             
             $buyer_ids = array_column($right_side_members, 'id');
             
-            $total_business = Orders::whereIn('buyer_id', $buyer_ids)
-                                ->sum('price_total');
+            // $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+            //                         ->sum('price_total');
+
+            $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
+                                    ->sum('total_amount');
             
             return $total_business;
         }
@@ -446,6 +453,7 @@
             $total_business = Orders::whereIn('buyer_id', $buyer_ids)
                                 ->whereBetween('created_at', [$last_saturday, $today])
                                 ->sum('price_total');
+
             
             return $total_business;
         }

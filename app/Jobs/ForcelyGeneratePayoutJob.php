@@ -120,7 +120,10 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                     Log::info('previous_unpaid_amount :', ['count' => $previous_unpaid_amount]);
                     Log::info('user_id :', ['user_id' => $user_id]);
 
-                    $product_return = AccountTransaction::where('which_for','ROI Daily')
+                    $product_return = AccountTransaction::where(function ($query) {
+                                                                $query->where('which_for', 'ROI Daily')
+                                                                    ->orWhere('which_for', 'ROI Dailys');
+                                                            })
                                                             ->whereBetween(DB::raw('DATE(created_at)'), [$this->start_date,$this->lastFriday])
                                                             ->where('user_id',$user_id)
                                                             ->sum('amount');

@@ -209,7 +209,7 @@ class CornJobs extends Controller
 
 
     public function process_direct_bonus(){
-        $today_join_users = TopUp::whereDate('created_at',date('Y-m-d'))->get();
+        $today_join_users = TopUp::whereDate('created_at',date('Y-m-d'))->where('is_provide_direct',1)->get();
 
         foreach($today_join_users as $join_data){
             $custo = User::find($join_data->user_id);
@@ -220,6 +220,7 @@ class CornJobs extends Controller
                     //Direct Bonus
                     $mlm_settings = MLMSettings::first();
                     $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
+
                     // $tds_amount = $user_bonus * ($mlm_settings->tds/100);
                     // $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
                     // $user_bonus -= $tds_amount+$repurchase_amount;
@@ -296,7 +297,7 @@ class CornJobs extends Controller
     
     public function forcely_process_direct_bonus($date){
         // $today_join_users = TopUp::all();
-        $today_join_users = TopUp::whereDate('created_at',$date)->get();
+        $today_join_users = TopUp::whereDate('created_at',$date)->where('is_provide_direct',1)->get();
 
         foreach($today_join_users as $join_data){
             $custo = User::find($join_data->user_id);
