@@ -111,7 +111,10 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                     $total_payout_roi = Payout::where('user_id',$user_id)->sum('roi');
                     $total_payout_roi_tds = Payout::where('user_id',$user_id)->sum('roi_tds_deduction');
 
-                    $previous_unpaid_amount = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->latest()->value('total_payout') ?? 0.00;
+                    // $previous_unpaid_amount = Payout::where('user_id',$user_id)->where('paid_unpaid','0')->latest()->value('total_payout') ?? 0.00;
+                    $lastPayout = Payout::where('user_id', $user_id)->latest()->first();
+
+                    $previous_unpaid_amount = $lastPayout ? ($lastPayout->paid_unpaid == '0' ? $lastPayout->total_payout : 0.00) : 0.00;
 
                     $total_payout = $total_paid_payout + $previous_unpaid_amount;
                     $total_payout -= ($total_payout_roi - $total_payout_roi_tds);
