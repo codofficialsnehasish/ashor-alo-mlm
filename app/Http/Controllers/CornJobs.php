@@ -441,8 +441,8 @@ class CornJobs extends Controller
     }  // tested 07-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
-        $start_date = '2024-11-02';
-        $lastFriday = '2024-11-08';
+        $start_date = '2024-11-09';
+        $lastFriday = '2024-11-15';
         $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
             ->where('which_for', 'ROI Daily')
             ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
@@ -612,8 +612,8 @@ class CornJobs extends Controller
     }
 
     public function forcely_generate_payout() {
-        $start_date = '2024-10-26';
-        $lastFriday = '2024-11-01';
+        $start_date = '2024-11-09';
+        $lastFriday = '2024-11-15';
         $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
                                             ->groupBy('user_id')
                                             ->pluck('user_id');
