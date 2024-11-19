@@ -106,7 +106,7 @@ class LevelBonusService
 
     } 
 
-    public function weekly_level_bonus($user_id, $amount, $user_level, $date){ //
+    public function weekly_level_bonus($user_id, $amount, $user_level){ //, $date
         $user = User::where('user_id', $user_id)->first();
         if($user_id == null) { return; }
         if (empty($user)) {
@@ -138,8 +138,8 @@ class LevelBonusService
                 $bonus,
                 'Level Bonus',
                 1,
-                Carbon::parse($date)->format('Y-m-d H:i:s'),
-                Carbon::parse($date)->format('Y-m-d H:i:s')
+                // Carbon::parse($date)->format('Y-m-d H:i:s'),
+                // Carbon::parse($date)->format('Y-m-d H:i:s')
             );
 
             // if(check_limit($user->id)){
@@ -183,7 +183,7 @@ class LevelBonusService
             $user->update();
         }
 
-        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1, $date); //
+        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1); //, $date
     }
     
 }

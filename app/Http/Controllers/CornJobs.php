@@ -418,7 +418,7 @@ class CornJobs extends Controller
     }*/
 
     public function level_bonus_in_saturday_to_friday() {
-        if (Carbon::now()->isFriday()) {
+        // if (Carbon::now()->isFriday()) {
                 $today = Carbon::now();
                 $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
                 $current_day = Carbon::now();
@@ -435,10 +435,10 @@ class CornJobs extends Controller
                     });
 
                 ProcessWeeklyLevelBonusJob::dispatch($acc_transactions);
-        }else{
-            return 'today in not friday';
-        }
-    }  // tested 07-11-2024
+        // }else{
+        //     return 'today in not friday';
+        // }
+    }  // tested 19-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
         $start_date = '2024-11-09';
@@ -458,7 +458,7 @@ class CornJobs extends Controller
     }   
     
     public function generate_payout_in_saturday_to_friday() {
-        if (Carbon::now()->isFriday()) {
+        // if (Carbon::now()->isFriday()) {
             $today = Carbon::now();
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
             $current_day = Carbon::now();
@@ -606,10 +606,10 @@ class CornJobs extends Controller
             }*/
 
             GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
-        }else{
-            return 'today in not friday';
-        }
-    }
+        // }else{
+        //     return 'today in not friday';
+        // }
+    } // tested 19-11-2024
 
     public function forcely_generate_payout() {
         $start_date = '2024-11-09';
