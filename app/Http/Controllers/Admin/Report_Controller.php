@@ -396,7 +396,18 @@ class Report_Controller extends Controller
     public function paid_unpaid_payment_report(){
         $data['title'] = 'Paid Unpaid Payment Report';
         // $data['items'] = Payout::where('paid_unpaid','0')->get();
-        $data['items'] = Payout::all();
+        $data['items'] = Payout::all();                      
+        // $lastDates = Payout::select('start_date', 'end_date')
+        //                     ->orderBy('end_date', 'desc')
+        //                     ->first();
+
+        // if ($lastDates) {
+        //     $data['items'] = Payout::where('start_date', $lastDates->start_date)
+        //         ->where('end_date', $lastDates->end_date)
+        //         ->get();
+        // } else {
+        //     $data['items'] = collect();
+        // }
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
 
@@ -404,6 +415,7 @@ class Report_Controller extends Controller
         $data['title'] = 'Paid Unpaid Payment Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
+
         if(!empty($r->status) && $r->status == 'paid'){
             $data['items'] = Payout::where('paid_unpaid','1')
                             ->whereDate('end_date', '>=', $startDate)
@@ -426,7 +438,20 @@ class Report_Controller extends Controller
 
     public function less_than_two_hundred_commission_repoet(){
         $data['title'] = 'Commission Report of > 200';
-        $data['items'] = Payout::where('hold_wallet','!=','0.00')->get();
+        // $data['items'] = Payout::where('hold_wallet','!=','0.00')->get();
+        $lastDates = Payout::select('start_date', 'end_date')
+                            ->orderBy('end_date', 'desc')
+                            ->first();
+
+        if ($lastDates) {
+            $data['items'] = Payout::where('start_date', $lastDates->start_date)
+                ->where('end_date', $lastDates->end_date)
+                ->where('hold_wallet', '!=', '0.00')
+                ->get();
+        } else {
+            $data['items'] = collect();
+        }
+
         return view('admin.reports.less_than_two_hundred_commission_repoet')->with($data);
     }
 
