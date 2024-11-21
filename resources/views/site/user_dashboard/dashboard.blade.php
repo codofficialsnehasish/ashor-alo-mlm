@@ -129,7 +129,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Product Return</div>
+                                                Product Support</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $product_return }}</div>
                                         </div>
                                         <div class="col-auto">
@@ -163,7 +163,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Repurchase Bonus</div>
+                                                Repurchase Wallet</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $repurchase_bonus }}</div>
                                         </div>
                                         <div class="col-auto">

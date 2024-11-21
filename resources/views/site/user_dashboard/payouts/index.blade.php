@@ -43,9 +43,13 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @php
+                                            $total = $payouts->count();
+                                        @endphp
+
                                         @foreach($payouts as $payout)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $total - $loop->iteration + 1 }}</td>
                                             <td>{{ $payout->start_date }} - {{ $payout->end_date }}</td>
                                             <td>{{ $payout->total_payout }}</td>
                                             <td>
