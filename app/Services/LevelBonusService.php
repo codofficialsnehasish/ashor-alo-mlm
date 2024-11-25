@@ -185,5 +185,47 @@ class LevelBonusService
 
         $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1); //, $date
     }
+
+    public function forcefully_weekly_level_bonus($user_id, $amount, $user_level, $date){ //
+        $user = User::where('user_id', $user_id)->first();
+        if($user_id == null) { return; }
+        if (empty($user)) {
+            return;
+        }
+
+        // $highest_level = Lavel_masters::latest()->first();
+        // if($user->lavel > $highest_level->level_number){
+        //     return;
+        // }
+
+        $highest_level = Lavel_masters::latest()->first();
+        if($user_level > $highest_level->level_number){
+            return;
+        }
+
+        // if($user->status != 1){ return; }
+
+        if($user->status == 1){
+
+            $user_lavel_persentage = Lavel_masters::where('level_number', $user_level)->value('lavel_persentage');
+            $user_lavel_persentage = number_format($user_lavel_persentage, 1);
+            $bonus = round($amount * ($user_lavel_persentage/100),2);
+
+            $user->account_balance += $bonus;
+            // Level Bonus transaction
+            $transactionAdded = $this->transaction->make_transaction(
+                $user->id,
+                $bonus,
+                'Level Bonus',
+                1,
+                Carbon::parse($date)->format('Y-m-d H:i:s'),
+                Carbon::parse($date)->format('Y-m-d H:i:s')
+            );
+            
+            $user->update();
+        }
+
+        $this->forcefully_weekly_level_bonus($user->agent_id, $amount, $user_level += 1, $date); //
+    }
     
 }
