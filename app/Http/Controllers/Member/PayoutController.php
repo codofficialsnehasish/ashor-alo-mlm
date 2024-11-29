@@ -14,6 +14,7 @@ class PayoutController extends Controller
     public function __construct(){
         $this->view_path = "site.user_dashboard.payouts.";
     }
+
     public function all_payouts(){
         $data['title'] = 'Payouts';
         $data['payouts'] = Payout::where('user_id',Auth::id())->orderBy('id','desc')->get();
@@ -30,5 +31,11 @@ class PayoutController extends Controller
         $data['title'] = 'Payout Statement';
         $data['payout'] = Payout::where('user_id',Auth::id())->where('id',$id)->first();
         return view($this->view_path.'payout_statement')->with($data);
+    }
+
+    public function payout_history(){
+        $data['title'] = 'Payout History';
+        $data['payouts'] = Payout::where('user_id',Auth::id())->orderBy('id','desc')->get();
+        return view($this->view_path.'payout_history')->with($data);
     }
 }

@@ -172,6 +172,8 @@ Route::middleware('auth')->group(function () {
                 Route::get('all-payout','all_payouts')->name('payout.all');
                 Route::get('/{id}/payout-details','payout_details')->name('payout.payout-details');
                 Route::get('/{id}/payout-statement','payout_statement')->name('payout.payout-statement');
+
+                Route::get('payout-history','payout_history')->name('payout.history');
             });
         });
 

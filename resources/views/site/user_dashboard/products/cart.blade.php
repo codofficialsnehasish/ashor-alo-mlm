@@ -73,7 +73,7 @@
                                                     <div class="card bg-primary text-white rounded-3">
                                                         <div class="card-body">
                                                             
-                                                            <h5>Payment Method</h5>
+                                                            {{-- <h5>Payment Method</h5>
                                                             <h6>Online(Bank)</h6>
 
                                                             <div class="card">
@@ -87,7 +87,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            <hr class="my-4">
+                                                            <hr class="my-4"> --}}
 
                                                             <div class="d-flex justify-content-between">
                                                                 <p class="mb-2">Subtotal</p>
@@ -108,11 +108,11 @@
                                                             </div>
                                                             <form action="{{ route('process-checkout') }}" class="needs-validation" method="post" enctype="multipart/form-data">
                                                             @csrf
-                                                            <div class="custom-file mb-3">
+                                                            {{-- <div class="custom-file mb-3">
                                                                 <input type="file" class="custom-file-input" id="inputfile" name="payment_proof" required>
                                                                 <label class="custom-file-label validate" for="inputfile">Upload Payment Proof</label>
                                                                 <div class="invalid-feedback">Please Upload Payment Proof</div>
-                                                            </div>
+                                                            </div> --}}
                                                             <button  type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-block btn-lg">
                                                                 <div class="d-flex justify-content-between">
                                                                     <span>₹ {{ $cart_total }}</span>

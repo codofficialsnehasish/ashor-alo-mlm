@@ -90,11 +90,13 @@
     }
 
     if (!function_exists('formated_date')) {
-        function formated_date($datetime)
+        function formated_date($datetime,$type = '/')
         {
             // Parse the datetime string into a Carbon instance
             $carbonDatetime = \Illuminate\Support\Carbon::parse($datetime);
-            
+            if($type == '-'){
+                return $carbonDatetime->format('d-m-Y');
+            }
             // Format the datetime using the desired format
             return $carbonDatetime->format('d/m/Y');
         }
@@ -176,6 +178,18 @@
                 $str='<span class="btn btn-success btn-sm"><i class="fas fa-eye" data-bs-toggle="tooltip" data-bs-placement="top" title="Visible"></i></span>';
             }else{
                 $str='<span class="btn btn-danger btn-sm"><i class="fas fa-eye-slash" data-bs-toggle="tooltip" data-bs-placement="top" title="Not Visible"></i></span>';
+            }
+            return $str;
+        }
+    }
+
+    if (!function_exists('paid_unpaid')) {
+        function paid_unpaid($val)
+        {
+            if($val==1){
+                $str='<span class="badge rounded-pill bg-success text-white">Paid</span>';
+            }else{
+                $str='<span class="badge rounded-pill bg-warning text-white">Pending</span>';
             }
             return $str;
         }

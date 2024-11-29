@@ -20,7 +20,7 @@ class Checkout_Controller extends Controller
 
     public function process_checkout(Request $r){
         $validator = Validator::make($r->all(), [
-            'payment_proof.*' => 'required|mimes:jpeg,png|max:25600',
+            'payment_proof.*' => 'nullable|mimes:jpeg,png|max:25600',
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());

@@ -67,7 +67,7 @@
                                     @foreach($items as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td><a href="{{ route('report.payout-report-details',[$item->start_date,$item->end_date]) }}">{{ $item->start_date }} - {{ $item->end_date }}</a></td>
+                                        <td><a href="{{ route('report.payout-report-details',[$item->start_date,$item->end_date]) }}">{{ formated_date($item->start_date) }} - {{ formated_date($item->end_date) }}</a></td>
                                         <td>{{ $item->total_payout }}</td>
                                         <td>{{ $item->total_user_count }}</td>
                                     </tr>

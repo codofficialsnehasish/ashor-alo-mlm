@@ -74,7 +74,7 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td align="center">
-                                                                        <h2 style="margin: 10px;font-size: 16px;">STATEMENT DATED ON {{ $payout->end_date }} </h2>
+                                                                        <h2 style="margin: 10px;font-size: 16px;">STATEMENT DATED ON {{ formated_date($payout->end_date,'-') }} </h2>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>

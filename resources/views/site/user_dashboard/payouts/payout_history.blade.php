@@ -23,13 +23,13 @@
                     <!-- Page Heading -->
 
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">All Payouts</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Payout History</h1>
                     </div>
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">List of All Payouts</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Payout History</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -37,9 +37,11 @@
                                     <thead>
                                         <tr>
                                             <th>Sl. No.</th>
-                                            <th>Payout Date</th>
-                                            <th>Payable Amount</th>
-                                            <th>Details</th>
+                                            <th>Issue Date</th>
+                                            <th>Amount</th>
+                                            <th>Paid Date</th>
+                                            <th>Mode</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -49,12 +51,13 @@
 
                                         @foreach($payouts as $payout)
                                         <tr>
-                                            <td>{{ $total - $loop->iteration + 1 }}</td>
-                                            <td>{{ formated_date($payout->start_date) }} - {{ formated_date($payout->end_date) }}</td>
+                                            {{-- <td>{{ $total - $loop->iteration + 1 }}</td> --}}
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ formated_date($payout->end_date,'-') }}</td>
                                             <td>{{ $payout->total_payout }}</td>
-                                            <td>
-                                                <a href="{{ route('payout.payout-details',$payout->id) }}" class="btn btn-info">View Details</a>
-                                            </td>
+                                            <td>{{ formated_date($payout->updated_at,'-') }}</td>
+                                            <td>{{ 'NEFT' }}</td>
+                                            <td>{!! paid_unpaid($payout->paid_unpaid) !!}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

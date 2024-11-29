@@ -114,6 +114,7 @@
                 <div id="payouts" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('payout.all') }}">Payouts</a>
+                        <a class="collapse-item" href="{{ route('payout.history') }}">Payout History</a>
                     </div>
                 </div>
             </li>
