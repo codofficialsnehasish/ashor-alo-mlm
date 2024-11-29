@@ -76,6 +76,7 @@
                                             <th class="text-wrap">Reg Date</th>
                                             <th>Name</th>
                                             <th>ID</th>
+                                            <th>Phone Number</th>
                                             <!-- <th>Referral Code</th> -->
                                             <!-- <th>Level</th> -->
                                             <th>Position</th>
@@ -94,6 +95,7 @@
                                             <td class="text-wrap">{{$c->name}}</td>
                                             <!-- <td>{{$c->referral_code}}</td> -->
                                             <td>{{$c->user_id}}</td>
+                                            <td>{{$c->phone}}</td>
                                             <!-- <td>{{-- find_customer_level($c->user_id) --}} {{ $c->lavel}}</td> -->
                                             <!-- <td>{{$c->decoded_password}}</td> -->
                                             <td>@if($c->is_left == 1) Left @else Right @endif</td>

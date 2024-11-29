@@ -22,6 +22,8 @@ Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']
 
 Route::get('hold-wallet-replace-for-one-time',[CornJobs::class,'hold_wallet_replace_for_one_time']);
 
+Route::get('dummy-corn-test',[CornJobs::class,'dummy_corn_test']);
+
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
 Route::post('get-city-list',[LocationController::class,'get_city_list'])->name('get-city-list');
 

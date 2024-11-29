@@ -17,6 +17,9 @@ use App\Models\Payout;
 use App\Models\RemunerationBenefit;
 use App\Models\SalaryBonus;
 
+
+use App\Models\DummyCornTest;
+
 use App\Services\LevelBonusService;
 use App\Jobs\ProcessWeeklyLevelBonusJob;
 use App\Jobs\ForcelyDisburseRoiJob;
@@ -24,6 +27,8 @@ use App\Jobs\DisburseRoiJob;
 use App\Jobs\ForcelyGeneratePayoutJob;
 use App\Jobs\GeneratePayoutJob;
 use App\Jobs\ForcelyProcessWeeklyLevelBonusJob;
+
+use App\Jobs\DummyJob;
 
 class CornJobs extends Controller
 {
@@ -652,4 +657,8 @@ class CornJobs extends Controller
         echo 'success';
     }
     
+
+    public function dummy_corn_test(){
+        DummyJob::dispatch();
+    }
 }
