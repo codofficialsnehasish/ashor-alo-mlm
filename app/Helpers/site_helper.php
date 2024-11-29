@@ -7,6 +7,7 @@
     use App\Models\User;
     use App\Models\OrderProducts;
     use App\Models\General_settings;
+    use App\Models\Payout;
 
     if (!function_exists('get_logo')) {
         function get_logo(){
@@ -184,12 +185,22 @@
     }
 
     if (!function_exists('paid_unpaid')) {
-        function paid_unpaid($val)
+        function paid_unpaid($payout_id)
         {
-            if($val==1){
-                $str='<span class="badge rounded-pill bg-success text-white">Paid</span>';
+            $lastPayout = Payout::where('user_id', Auth::id())->latest()->first();
+            if($lastPayout->id == $payout_id){
+                if($lastPayout->paid_unpaid == 1){
+                    $str='<span class="badge rounded-pill bg-success text-white">Paid</span>';
+                }else{
+                    $str='<span class="badge rounded-pill bg-warning text-white">Pending</span>';
+                }
             }else{
-                $str='<span class="badge rounded-pill bg-warning text-white">Pending</span>';
+                $payout = Payout::find($payout_id);
+                if($payout->paid_unpaid == 1){
+                    $str='<span class="badge rounded-pill bg-success text-white">Paid</span>';
+                }else{
+                    $str='<span class="badge rounded-pill bg-info text-white">Forrowed to Next Payout</span>';
+                }
             }
             return $str;
         }

@@ -57,7 +57,7 @@
                                             <td>{{ $payout->total_payout }}</td>
                                             <td>{{ formated_date($payout->updated_at,'-') }}</td>
                                             <td>{{ 'NEFT' }}</td>
-                                            <td>{!! paid_unpaid($payout->paid_unpaid) !!}</td>
+                                            <td>{!! paid_unpaid($payout->id) !!}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>
