@@ -6,7 +6,7 @@
                         <a class="footer-brand mr-lg-5 d-flex" href="{{ url('/') }}">
                             <img src="{{ asset('site_assets/img/logo-white.png') }}" class="mr-3" alt="Footer logo">
                         </a>
-                        <p class="my-4">Interactively unleash interactive best practices before technically sound portals.</p>
+                        <p class="my-4">{{ optional(general_settings())->contact_address ?? '' }}</p>
                         <div class="btn-wrapper mt-4">
                             <button class="btn btn-icon-only btn-pill btn-twitter mr-2 icon icon-xs icon-shape" type="button" data-toggle="tooltip" data-placement="top" title="" data-original-title="40k Followers">
                                 <span aria-hidden="true" class="fab fa-twitter"></span>

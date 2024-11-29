@@ -15,6 +15,19 @@ $(document).ready(function() {
         buttons: ["copy", "excel", "pdf", "colvis"]
     }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
 
+    $("#datatable-buttons-desc").DataTable({
+        lengthChange: !1,
+        order: [[0, 'desc']],
+        // columnDefs: [
+        //     { 
+        //         type: 'datetime-moment', 
+        //         targets: 4 // Ensure this points to your timestamp column index
+        //     }
+        // ],
+        buttons: ["copy", "excel", "pdf", "colvis"]
+    }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
+    
+
     // Initialize DataTables for all elements with .datatable-buttons (class)
     $(".datatable-buttons").DataTable({
         lengthChange: false,

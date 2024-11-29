@@ -114,7 +114,11 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                                <a class="dropdown-item" href="{{ route('member.change-password') }}">
+                                {{-- <a class="dropdown-item" href="{{ route('member.change-password') }}">
+                                    <i class="fas fa-user-lock fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Change Password
+                                </a> --}}
+                                <a class="dropdown-item" href="{{ route('member.update-profile',Auth::id()) }}">
                                     <i class="fas fa-user-lock fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Change Password
                                 </a>

@@ -54,7 +54,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-buttons-desc" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>
                                         <th class="text-wrap">Sl. No.</th>

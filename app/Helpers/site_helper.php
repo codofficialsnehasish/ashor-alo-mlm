@@ -6,6 +6,7 @@
     use App\Models\Orders;
     use App\Models\User;
     use App\Models\OrderProducts;
+    use App\Models\General_settings;
 
     if (!function_exists('get_logo')) {
         function get_logo(){
@@ -16,6 +17,13 @@
             }else{
                 return asset('dashboard_assets/images/no-image.jpg');
             }
+        }
+    }
+
+    if(!function_exists('general_settings')){
+        function general_settings(){
+            $setting = General_settings::find(1);
+            return $setting ?: null;
         }
     }
 

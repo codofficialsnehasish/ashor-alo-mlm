@@ -62,8 +62,8 @@
                                                     <td align="center">
                                                         <img src="{{ get_logo() }}" style="width: 100px;">
                                                         <h1 style="margin: 0;font-size: 20px;">ASHOR ALO </h1>
-                                                        <h2 style="margin: 0;font-size: 16px;">Thacker House, 35, Chittaranjan Avenue, 4th Floor, Kolkata 700012, West Bengal</h2>
-                                                        <p style="margin: 0;font-size: 14px;"><b>E-Mail :</b> ashoralo12@gmail.com </p>
+                                                        <h2 style="margin: 0;font-size: 16px;">{{ optional(general_settings())->contact_address ?? '' }}</h2>
+                                                        <p style="margin: 0;font-size: 14px;"><b>E-Mail :</b> {{ optional(general_settings())->contact_email ?? '' }} </p>
                                                     </td>
                                                 </tr>
                                             </tbody>

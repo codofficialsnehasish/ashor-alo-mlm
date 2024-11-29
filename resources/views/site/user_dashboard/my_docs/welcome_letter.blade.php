@@ -84,7 +84,7 @@
                                             <span>, Mobile No &nbsp;:&nbsp; </span>
                                             <span>7439763048</span>
                                             <br> -->
-                                            <span style="font-weight: bold;">Email ID &nbsp;:&nbsp; </span><a href="#"><span>ashoralo12@gmail.com</span></a><br>
+                                            <span style="font-weight: bold;">Email ID &nbsp;:&nbsp; </span><a href="#"><span>{{ optional(general_settings())->contact_email ?? '' }}</span></a><br>
                                             <span style="font-weight: bold;">Website &nbsp;:&nbsp; </span><a href="#"><span>https://ashoralo.in/</span></a>
                                         </div>
                                     </div>

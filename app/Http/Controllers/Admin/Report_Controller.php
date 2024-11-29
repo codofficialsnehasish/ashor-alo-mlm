@@ -237,7 +237,7 @@ class Report_Controller extends Controller
     // Product Return Report
 
     public function product_return_report(){
-        $data['title'] = 'Product Return Report';
+        $data['title'] = 'Product Support Report';
         // $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')->get();
         $data['items'] = AccountTransaction::where(function ($query) {
                                                 $query->where('which_for', 'ROI Daily')
@@ -250,7 +250,7 @@ class Report_Controller extends Controller
     }
 
     public function generate_product_return_report(Request $r){
-        $data['title'] = 'Product Return Report';
+        $data['title'] = 'Product Support Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
         // $data['items'] = AccountTransaction::where('which_for', 'ROI Daily')->orWhere('which_for', 'ROI Dailys')
@@ -272,7 +272,7 @@ class Report_Controller extends Controller
     }
 
     public function product_return_full_details(Request $r){
-        $data['title'] = 'Product Return Full Report';
+        $data['title'] = 'Product Support Full Report';
         $user_id = $r->userid;
         $data['items'] = AccountTransaction::where(function ($query) {
                                                 $query->where('which_for', 'ROI Daily')
@@ -284,7 +284,7 @@ class Report_Controller extends Controller
     }
 
     public function generate_product_return_full_details(Request $r){
-        $data['title'] = 'Product Return Full Report';
+        $data['title'] = 'Product Support Full Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
         $user_id = $r->userid;
