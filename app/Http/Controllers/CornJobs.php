@@ -91,13 +91,15 @@ class CornJobs extends Controller
     public function disburse_roi(){ //ROI = Return of Invesment
         $this->process_direct_bonus();
 
-        $income_data = TopUp::where('is_completed',0)
-                    ->Where('total_installment_month','>=','month_count')
-                    ->whereDate('start_date','!=',date('Y-m-d'))
-                    ->get();
+        if(date('Y-m-d') != '2024-11-29'){
+            $income_data = TopUp::where('is_completed',0)
+                        ->Where('total_installment_month','>=','month_count')
+                        ->whereDate('start_date','!=',date('Y-m-d'))
+                        ->get();
 
-        DisburseRoiJob::dispatch($income_data);
-    } // tested 09-11-2024
+            DisburseRoiJob::dispatch($income_data);
+        }
+    } // tested 29-11-2024
 
     /*public function forcely_disburse_roi() {
         $income_data = TopUp::where('is_completed', 0)
@@ -183,8 +185,8 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 11, 16);
-        $endDate = Carbon::create(2024, 11, 25);
+        $startDate = Carbon::create(2024, 11, 25);
+        $endDate = Carbon::create(2024, 11, 29);
         // $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
@@ -445,7 +447,7 @@ class CornJobs extends Controller
         // }else{
         //     return 'today in not friday';
         // }
-    }  // tested 19-11-2024
+    }  // tested 29-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
         $start_date = '2024-11-16';
@@ -616,7 +618,7 @@ class CornJobs extends Controller
         // }else{
         //     return 'today in not friday';
         // }
-    } // tested 19-11-2024
+    } // tested 29-11-2024
 
     public function forcely_generate_payout() {
         $start_date = '2024-11-16';
