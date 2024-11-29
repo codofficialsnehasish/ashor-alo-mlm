@@ -273,6 +273,8 @@ class User_dashboard extends Controller
             'account_type' => 'required',
             'ifsc_code' => 'required',
             'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',
+            'upi_type' => 'required',
+            'upi_number' => 'required|digits:10|regex:/^[6789]/'
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -284,6 +286,8 @@ class User_dashboard extends Controller
             $user->account_type = $r->account_type;
             $user->ifsc_code = $r->ifsc_code;
             $user->pan_number = $r->pan_number;
+            $user->upi_type = $r->upi_type;
+            $user->upi_number = $r->upi_number;
             $res = $user->update();
             if($res){
                 return response()->json([

@@ -230,6 +230,19 @@
                                             <label for="usr">PAN</label>
                                             <input type="text" class="form-control" value="{{ $customer->pan_number }}" name="pan_number">
                                         </div>
+                                        <div class="mb-3 col-md-6">
+                                            <label for="usr">UPI Type</label>
+                                            <select class="form-control" name="upi_type">
+                                                <option value selected disabled>Choose...</option>
+                                                <option value="Phone Pay" @if($customer->upi_type == 'Phone Pay') selected @endif>Phone Pay</option>
+                                                <option value="Google Pay" @if($customer->upi_type == 'Google Pay') selected @endif>Google Pay</option>
+                                                <option value="Paytm" @if($customer->upi_type == 'Paytm') selected @endif>Paytm</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3 col-md-6">
+                                            <label for="usr">UPI Phone Number</label>
+                                            <input type="number" class="form-control" value="{{ $customer->upi_number }}" name="upi_number">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
