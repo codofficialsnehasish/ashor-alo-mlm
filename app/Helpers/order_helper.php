@@ -38,3 +38,13 @@
             return $category_id;
         }
     }
+
+    if (!function_exists('get_products_by_order_id')){
+        function get_products_by_order_id($order_id){
+            // $orders = Orders::find($order_id);
+            $order_products_id = OrderProducts::where('order_id',$order_id)->value('product_id');
+            $product = Products::where('id',$order_products_id)->value('title');
+            return $product;
+        }
+    }
+

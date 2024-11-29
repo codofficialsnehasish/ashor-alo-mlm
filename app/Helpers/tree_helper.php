@@ -112,6 +112,7 @@
     
             foreach ($customers as $customer) {
                 $customerData = [
+                    'id' => $customer->id,
                     'reg_date' => formated_date($customer->created_at),
                     'user_id' => $customer->user_id,
                     'name' => $customer->name,

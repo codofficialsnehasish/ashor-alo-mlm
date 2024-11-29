@@ -74,6 +74,7 @@ use App\Http\Controllers\Member\{
     Documents,
     ReportController,
     PayoutController,
+    BusinessReport,
 };
 
 
@@ -184,6 +185,11 @@ Route::middleware('auth')->group(function () {
 
                 Route::get("/remuneration-report","remuneration_report")->name('userreport.remuneration-report');
             });
+        });
+
+        Route::controller(BusinessReport::class)->group( function () {
+            Route::get("/level-wise","level_wise")->name('business-report.level');
+            Route::get("/tree-wise","tree_wise")->name('business-report.tree');
         });
     });
 });

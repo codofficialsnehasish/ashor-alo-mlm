@@ -129,6 +129,21 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('userreport.top-report') }}">Topup Report</a>
                         <a class="collapse-item" href="{{ route('userreport.remuneration-report') }}">Remuneration Report</a>
+                        <a class="collapse-item" href="{{ route('userreport.remuneration-report') }}">Business Report</a>
+                    </div>
+                </div>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#business-reports"
+                    aria-expanded="true" aria-controls="business-reports">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Business Report</span>
+                </a>
+                <div id="business-reports" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="{{ route('business-report.level') }}">Level Wise Report</a>
+                        <a class="collapse-item" href="{{ route('business-report.tree') }}">Tree Wise Report</a>
                     </div>
                 </div>
             </li>
