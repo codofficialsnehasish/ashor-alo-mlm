@@ -55,8 +55,8 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ formated_date($payout->end_date,'-') }}</td>
                                             <td>{{ $payout->total_payout }}</td>
-                                            <td>{{ formated_date($payout->updated_at,'-') }}</td>
-                                            <td>{{ 'NEFT' }}</td>
+                                            <td>{{ !empty($payout->paid_date) ? formated_date($payout->paid_date,'-') : '' }}</td>
+                                            <td>{{ $payout->paid_mode }}</td>
                                             <td>{!! paid_unpaid($payout->id) !!}</td>
                                         </tr>
                                         @endforeach

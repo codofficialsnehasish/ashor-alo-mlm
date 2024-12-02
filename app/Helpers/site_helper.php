@@ -185,9 +185,13 @@
     }
 
     if (!function_exists('paid_unpaid')) {
-        function paid_unpaid($payout_id)
+        function paid_unpaid($payout_id, $user_id = null)
         {
-            $lastPayout = Payout::where('user_id', Auth::id())->latest()->first();
+            if($user_id != null){
+                $lastPayout = Payout::where('user_id', $user_id)->latest()->first();
+            }else{
+                $lastPayout = Payout::where('user_id', Auth::id())->latest()->first();
+            }
             if($lastPayout->id == $payout_id){
                 if($lastPayout->paid_unpaid == 1){
                     $str='<span class="badge rounded-pill bg-success text-white">Paid</span>';

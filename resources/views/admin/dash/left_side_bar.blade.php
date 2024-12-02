@@ -121,6 +121,7 @@
                         <li><a href="{{ route('report.investor-return-report') }}">Investor Return Report</a></li>
                         <li><a href="{{ route('report.product-return-report') }}">Product Support Report</a></li>
                         <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
+                        <li><a href="{{ route('report.payout-history') }}">Payout History</a></li>
                         <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li>
                         <li><a href="{{ route('report.paid-unpaid-payment-report') }}">Paid Unpaid Payment Report</a></li>
                         <li><a href="{{ route('report.less-than-two-hundred-commission-repoet') }}">Commission Report of > 200</a></li>

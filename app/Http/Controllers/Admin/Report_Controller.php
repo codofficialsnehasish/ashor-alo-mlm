@@ -394,6 +394,25 @@ class Report_Controller extends Controller
         return view('admin.reports.payout_statement')->with($data);
     }
 
+    public function payout_history(){
+        $data['title'] = 'Payout History';
+        // $lastPayout = Payout::where('user_id', Auth::id())->latest()->first();
+        $data['items'] =  Payout::select(
+                                'user_id',
+                                DB::raw('SUM(total_payout) as total_payout'),
+                                // DB::raw('(SELECT id FROM payouts AS p WHERE p.user_id = payouts.user_id ORDER BY p.created_at DESC LIMIT 1) as last_payout_id')
+                            )
+                            ->groupBy('user_id')
+                            ->get();
+        return view('admin.reports.payout_history')->with($data);
+    }
+
+    public function payout_history_details($id){
+        $data['title'] = 'Payout History Details';
+        $data['payouts'] = Payout::where('user_id',$id)->orderBy('id','desc')->get();
+        return view('admin.reports.payout_history_details')->with($data);
+    }
+
     // End of Payout Report
 
     public function paid_unpaid_payment_report(){

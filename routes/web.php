@@ -433,6 +433,9 @@ Route::middleware('auth.admin')->group(function () {
 
             Route::post("/update-paid-unpaid-status",[Report_Controller::class,"update_paid_unpaid_status"])->name('report.update-paid-unpaid-status');
 
+            Route::get("/payout-history",[Report_Controller::class,"payout_history"])->name('report.payout-history');
+            Route::get("/payout-history-details/{id}",[Report_Controller::class,"payout_history_details"])->name('report.payout-history-details');
+
             Route::get("/paid-unpaid-payment-report",[Report_Controller::class,"paid_unpaid_payment_report"])->name('report.paid-unpaid-payment-report');
             Route::post("/generate-paid-unpaid-payment-report",[Report_Controller::class,"generate_paid_unpaid_payment_report"])->name('report.generate-paid-unpaid-payment-report');
 
