@@ -192,6 +192,8 @@ Route::middleware('auth')->group(function () {
 
         Route::controller(BusinessReport::class)->group( function () {
             Route::get("/level-wise","level_wise")->name('business-report.level');
+            Route::post("/level-wise","generate_date_wise_level_report")->name('business-report.generate_date_wise_level_report');
+            
             Route::get("/tree-wise","tree_wise")->name('business-report.tree');
         });
     });

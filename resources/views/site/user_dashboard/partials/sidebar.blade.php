@@ -129,7 +129,6 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" href="{{ route('userreport.top-report') }}">Topup Report</a>
                         <a class="collapse-item" href="{{ route('userreport.remuneration-report') }}">Remuneration Report</a>
-                        <a class="collapse-item" href="{{ route('userreport.remuneration-report') }}">Business Report</a>
                     </div>
                 </div>
             </li>

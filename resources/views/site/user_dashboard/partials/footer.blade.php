@@ -44,6 +44,8 @@
     <script src="{{ asset('site_assets/user_dashboard_assets/js/demo/chart-area-demo.js') }}"></script>
     <script src="{{ asset('site_assets/user_dashboard_assets/js/demo/chart-pie-demo.js') }}"></script>
 
+    <script src="{{ asset('dashboard_assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+
     <!-- <script src="{{ asset('site_assets/user_dashboard_assets/js/demo/datatables-demo.js') }}"></script> -->
     
     
