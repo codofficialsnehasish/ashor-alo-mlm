@@ -16,6 +16,7 @@ use App\Models\LocationCountries;
 use App\Models\LocationStates;
 use App\Models\LocationCities;
 use App\Models\RepurchaseAccount;
+use App\Models\Payout;
 
 class User_dashboard extends Controller
 {
@@ -69,7 +70,26 @@ class User_dashboard extends Controller
         $data['rank'] = get_member_rank(Auth::id());
         $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
         $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
+        $data['current_week_business'] = calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id());
+        $data['last_payment'] = Payout::where('user_id', Auth::id())->latest()->first();
         return view($this->view_path."dashboard")->with($data);
+    }
+
+    private function calculate_current_week_business(){
+        $today = Carbon::now();
+        $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+        $current_day = Carbon::now();
+    
+        // Process in chunks and dispatch each chunk to a queue job
+        $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+            ->where('which_for', 'ROI Daily')
+            ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
+            ->distinct()
+            ->get()
+            ->groupBy('user_id')
+            ->map(function ($transactions) {
+                return $transactions->pluck('payment_date')->unique()->count();
+            });
     }
 
 

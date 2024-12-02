@@ -439,6 +439,58 @@
         }
     }
 
+    if(!function_exists('calculate_right_current_week_business')){
+        function calculate_right_current_week_business($user_id){
+
+            $today = Carbon::now();
+            $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            $currentDay = Carbon::now();
+
+            $right_side_members = getRightSideMembers($user_id);
+    
+            if (empty($right_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($right_side_members, 'id');
+            
+            // $total_business = Orders::whereIn('buyer_id', $buyer_ids)
+            //                         ->sum('price_total');
+
+            $total_business = TopUp::whereIn('user_id', $buyer_ids)
+                        ->where('is_provide_direct', 1)
+                        ->whereBetween('created_at', [$lastSaturday->startOfDay(), $currentDay->endOfDay()])
+                        ->sum('total_amount');
+            
+            return $total_business;
+        }
+    }
+
+    if(!function_exists('calculate_left_current_week_business')){
+        function calculate_left_current_week_business($user_id){
+
+            $today = Carbon::now();
+            $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            $currentDay = Carbon::now();
+            
+            $left_side_members = getLeftSideMembers($user_id);
+        
+            if (empty($left_side_members)) {
+                return 0;
+            }
+            
+            $buyer_ids = array_column($left_side_members, 'id');
+
+            $total_business = TopUp::whereIn('user_id', $buyer_ids)
+                        ->where('is_provide_direct', 1)
+                        ->whereBetween('created_at', [$lastSaturday->startOfDay(), $currentDay->endOfDay()])
+                        ->sum('total_amount');
+            
+            return $total_business;
+        }
+    }
+
+
     if(!function_exists('calculate_curr_right_business')){
         function calculate_curr_right_business($user_id){
             $right_side_members = getRightSideMembers($user_id);
