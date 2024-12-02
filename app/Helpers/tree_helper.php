@@ -4,7 +4,7 @@
     use App\Models\User;
     use App\Models\Orders;
     use App\Models\TopUp;
-    
+    use Illuminate\Support\Facades\DB;
     // first version
     // if (!function_exists('render_customer_tree')) {
     //     function render_customer_tree($customers) {
@@ -444,7 +444,7 @@
 
             $today = Carbon::now();
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-            $currentDay = Carbon::now();
+            $current_day = Carbon::now();
 
             $right_side_members = getRightSideMembers($user_id);
     
@@ -459,7 +459,7 @@
 
             $total_business = TopUp::whereIn('user_id', $buyer_ids)
                         ->where('is_provide_direct', 1)
-                        ->whereBetween('created_at', [$lastSaturday->startOfDay(), $currentDay->endOfDay()])
+                        ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
                         ->sum('total_amount');
             
             return $total_business;
@@ -471,7 +471,7 @@
 
             $today = Carbon::now();
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-            $currentDay = Carbon::now();
+            $current_day = Carbon::now();
             
             $left_side_members = getLeftSideMembers($user_id);
         
@@ -480,10 +480,11 @@
             }
             
             $buyer_ids = array_column($left_side_members, 'id');
+            // return $buyer_ids;
 
             $total_business = TopUp::whereIn('user_id', $buyer_ids)
                         ->where('is_provide_direct', 1)
-                        ->whereBetween('created_at', [$lastSaturday->startOfDay(), $currentDay->endOfDay()])
+                        ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
                         ->sum('total_amount');
             
             return $total_business;

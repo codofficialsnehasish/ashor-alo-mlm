@@ -230,6 +230,21 @@
                                     </a>
                                 </div>
                             </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card mini-stat bg-primary text-white">
+                                    <a href="javascript:void(0)">
+                                        <div class="card-body">
+                                            <div class="mb-4">
+                                                <div class="float-start mini-stat-img me-4">
+                                                    <img src="{{ asset('dashboard_assets/images/services-icon/31.png') }}" alt="">
+                                                </div>
+                                                <h5 class="font-size-16 text-uppercase text-white-50">Current Week Business</h5>
+                                                <h4 class="fw-medium font-size-24" style="color:white;">{{ $current_week_business }}</h4>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div> <!-- container-fluid -->
                     </div>
                 </div>

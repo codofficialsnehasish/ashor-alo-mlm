@@ -129,6 +129,9 @@ class Admin extends Controller
         // $data['todays_orders'] = Orders::whereDate('created_at',date('Y-m-d'))->count();
         $data['pending_kyc'] = Kyc::where('is_confirmed',0)->count();
         $data['contac_us'] = ContactUs::all()->count();
+        $root = User::whereNull('parent_id')->where('role','agent')->first();
+        // return calculate_left_current_week_business($root->id);
+        $data['current_week_business'] = calculate_left_current_week_business($root->id) + calculate_right_current_week_business($root->id);
         return view("admin/dashboard")->with($data);
     }
 
