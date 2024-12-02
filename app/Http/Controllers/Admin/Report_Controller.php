@@ -500,4 +500,163 @@ class Report_Controller extends Controller
 
     // End of Remuneration Report
 
+
+
+
+    // Business Report
+
+    public function level_wise(){
+
+        $user = User::whereNull('parent_id')->where('role','agent')->first();
+        $customerTree = get_customer_tree($user->user_id);
+
+        // Levels array to hold users grouped by level
+        $levels = [];
+        $levelData = build_customer_array($customerTree, $levels);
+
+        // Collect all users with their level into a single array
+        $usersWithLevels = [];
+        foreach ($levels as $levelKey => $customers) {
+            $currentLevel = substr($levelKey, 5); // Extract the level number from key
+            foreach ($customers as $customer) {
+                $usersWithLevels[] = [
+                    'id' => $customer['id'],
+                    'level' => (int)$currentLevel,
+                    'user_id' => $customer['user_id'],
+                    'name' => $customer['name'],
+                    'reg_date' => $customer['reg_date'],
+                    'position' => $customer['position'],
+                    'sponsor_id' => $customer['agent_id'],
+                    'status' => $customer['status'],
+                ];
+            }
+        }
+
+        $buyer_ids = array_column($usersWithLevels, 'id');
+        // return count($buyer_ids);
+        // return $buyer_ids;
+        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)->orderBy('id','ASC')->get();
+
+        // return count($total_businesss);
+        // return $usersWithLevels;
+        // return $total_businesss;
+
+        $business = [];
+        foreach ($total_businesss as $total_business) {
+            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
+                return $user['id'] == $total_business->user_id;
+            });
+            if (!empty($matchingUser)) {
+                $business[] = array_merge(current($matchingUser), [
+                    'total_business' => $total_business,
+                ]);
+            }
+        }
+
+        $groupedBusiness = [];
+        foreach ($business as $item) {
+            $level = $item['level'];
+            // Initialize an array for the level if not already exists
+            if (!isset($groupedBusiness[$level])) {
+                $groupedBusiness[$level] = [];
+            }
+            // Add the current item to the level group
+            $groupedBusiness[$level][] = $item;
+        }
+
+        ksort($groupedBusiness);
+        // return $groupedBusiness;
+
+        $data['title'] = 'Level Wise Business Report';
+        return view('admin.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
+    }
+
+    public function generate_date_wise_level_report(Request $request){
+        $user = User::whereNull('parent_id')->where('role','agent')->first();
+        $customerTree = get_customer_tree($user->user_id);
+
+        // Levels array to hold users grouped by level
+        $levels = [];
+        $levelData = build_customer_array($customerTree, $levels);
+
+        // Collect all users with their level into a single array
+        $usersWithLevels = [];
+        foreach ($levels as $levelKey => $customers) {
+            $currentLevel = substr($levelKey, 5); // Extract the level number from key
+            foreach ($customers as $customer) {
+                $usersWithLevels[] = [
+                    'id' => $customer['id'],
+                    'level' => (int)$currentLevel,
+                    'user_id' => $customer['user_id'],
+                    'name' => $customer['name'],
+                    'reg_date' => $customer['reg_date'],
+                    'position' => $customer['position'],
+                    'sponsor_id' => $customer['agent_id'],
+                    'status' => $customer['status'],
+                ];
+            }
+        }
+
+        $buyer_ids = array_column($usersWithLevels, 'id');
+        // return count($buyer_ids);
+        // return $buyer_ids;
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
+                                ->where('is_provide_direct',1)
+                                ->whereDate('start_date', '>=', $startDate)
+                                ->whereDate('start_date', '<=', $endDate)
+                                ->orderBy('id','ASC')->get();
+
+        // return count($total_businesss);
+        // return $usersWithLevels;
+        // return $total_businesss;
+
+        $business = [];
+        foreach ($total_businesss as $total_business) {
+            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
+                return $user['id'] == $total_business->user_id;
+            });
+            if (!empty($matchingUser)) {
+                $business[] = array_merge(current($matchingUser), [
+                    'total_business' => $total_business,
+                ]);
+            }
+        }
+
+        $groupedBusiness = [];
+        foreach ($business as $item) {
+            $level = $item['level'];
+            // Initialize an array for the level if not already exists
+            if (!isset($groupedBusiness[$level])) {
+                $groupedBusiness[$level] = [];
+            }
+            // Add the current item to the level group
+            $groupedBusiness[$level][] = $item;
+        }
+
+        ksort($groupedBusiness);
+        // return $groupedBusiness;
+
+        $data['title'] = 'Level Wise Business Report';
+        return view('admin.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
+    }
+
+
+    public function tree_wise(Request $request){
+        $userId = $request->input('query');
+        $data['title'] = 'Tree Wise Business Report';
+        if(empty($userId)){
+            // return 0;
+            $user = User::whereNull('parent_id')->where('role','agent')->first();
+            $rootUser = User::where('user_id',$user->user_id)->first();
+        }else{
+            // return 1;
+            $rootUser = User::where('role','agent')->where('user_id',$userId)->first();
+        }
+        return view('admin.reports.business_report.tree_wise',compact('rootUser'))->with($data);
+    }
+
+
+    // End of Business Report
 }

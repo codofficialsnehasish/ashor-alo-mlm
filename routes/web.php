@@ -449,6 +449,11 @@ Route::middleware('auth.admin')->group(function () {
             // Remuneration Report
             Route::get("/remuneration-report",[Report_Controller::class,"remuneration_report"])->name('report.remuneration-report');
             Route::post("/generate-remuneration-report",[Report_Controller::class,"generate_remuneration_report"])->name('report.generate-remuneration-report');
+
+            Route::get("/level-wise",[Report_Controller::class,"level_wise"])->name('report.business-report.level');
+            Route::post("/level-wise",[Report_Controller::class,"generate_date_wise_level_report"])->name('report.business-report.generate_date_wise_level_report');
+            
+            Route::get("/tree-wise",[Report_Controller::class,"tree_wise"])->name('report.business-report.tree');
         });
 
         Route::get('/contact-us-massages',[ContactUsController::class,'index'])->name('admin.contact-us');

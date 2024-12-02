@@ -125,6 +125,12 @@
                         <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li>
                         <li><a href="{{ route('report.paid-unpaid-payment-report') }}">Paid Unpaid Payment Report</a></li>
                         <li><a href="{{ route('report.less-than-two-hundred-commission-repoet') }}">Commission Report of > 200</a></li>
+                        <li><a href="javascript: void(0);" class="has-arrow">Business Report</a>
+                            <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('report.business-report.level') }}">Level Wise</a></li>
+                                <li><a href="{{ route('report.business-report.tree') }}">Tree Wise</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
 

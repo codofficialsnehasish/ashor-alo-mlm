@@ -280,6 +280,10 @@
                                                             <input type="text" class="form-control" value="{{ $user->pan_number }}" name="pan_number" required {{ is_disabled($user->pan_number) }}>
                                                         </div>
                                                         <div class="form-group col-md-6">
+                                                            <label for="usr">UPI Name</label>
+                                                            <input type="text" class="form-control" value="{{ $user->upi_name }}" name="upi_name">
+                                                        </div>
+                                                        <div class="form-group col-md-6">
                                                             <label for="usr">UPI Type</label>
                                                             <select class="form-control" name="upi_type" required {{ is_disabled($user->upi_type) }}>
                                                                 <option value selected disabled>Choose...</option>

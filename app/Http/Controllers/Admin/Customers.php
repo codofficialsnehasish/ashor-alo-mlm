@@ -520,6 +520,7 @@ class Customers extends Controller
             $obj->account_type = $r->account_type;
             $obj->ifsc_code = $r->ifsc_code;
             $obj->pan_number = $r->pan_number;
+            $obj->upi_name = $r->upi_name;
             $obj->upi_type = $r->upi_type;
             $obj->upi_number = $r->upi_number;
 
