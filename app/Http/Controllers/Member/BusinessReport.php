@@ -65,10 +65,21 @@ class BusinessReport extends Controller
             }
         }
 
-        // return count($business);
+        $groupedBusiness = [];
+        foreach ($business as $item) {
+            $level = $item['level'];
+            // Initialize an array for the level if not already exists
+            if (!isset($groupedBusiness[$level])) {
+                $groupedBusiness[$level] = [];
+            }
+            // Add the current item to the level group
+            $groupedBusiness[$level][] = $item;
+        }
+
+        // return $groupedBusiness;
 
         $data['title'] = 'Level Wise Business Report';
-        return view('site.user_dashboard.reports.business_report.level_wise',compact('business'))->with($data);
+        return view('site.user_dashboard.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
     }
 
 

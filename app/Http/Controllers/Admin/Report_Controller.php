@@ -374,10 +374,13 @@ class Report_Controller extends Controller
 
     public function update_paid_unpaid_status(Request $request)
     {
+        // return $request->all();
         $item = Payout::find($request->item_id);
         // return $item;
         if ($item) {
             $item->paid_unpaid = $request->status;
+            $item->paid_date = $request->date;
+            $item->paid_mode = $request->payment_mode;
             $item->save();
             return response()->json(['message' => 'Updated successfully']);
         }

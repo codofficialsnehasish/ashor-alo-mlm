@@ -113,6 +113,40 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form id="statusModalForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myModalLabel">Update Payment Status</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="modalItemId" name="item_id">
+                                <div class="form-group mb-3">
+                                    <label for="paymentDate" class="form-label">Payment Date</label>
+                                    <input type="date" class="form-control" id="paymentDate" name="payment_date" value="{{ date('Y-m-d') }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="paymentMode" class="form-label">Payment Mode</label>
+                                    <select class="form-control" id="paymentMode" name="payment_mode" required>
+                                        <option value="Cash">Cash</option>
+                                        <option value="NEFT">NEFT</option>
+                                        <option value="UPI">UPI</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <!-- end show data -->
         </div> <!-- container-fluid -->
     </div>
@@ -120,9 +154,66 @@
 
     @section('script')
         <script>
-            $(document).on('change', '.status-toggle', function() {
+            // $(document).on('change', '.status-toggle', function() {
+            //     let itemId = $(this).data('item-id');
+            //     let isChecked = $(this).is(':checked') ? 1 : 0;
+
+            //     $.ajax({
+            //         url: "{{ route('report.update-paid-unpaid-status') }}",
+            //         method: 'POST',
+            //         data: {
+            //             _token: '{{ csrf_token() }}',
+            //             item_id: itemId,
+            //             status: isChecked
+            //         },
+            //         success: function(response) {
+            //             showToast('success', 'Success', response.message);
+            //         },
+            //         error: function() {
+            //             showToast('error', 'Error', 'Error updating status');
+            //         }
+            //     });
+            // });
+
+
+            $(document).on('change', '.status-toggle', function () {
                 let itemId = $(this).data('item-id');
                 let isChecked = $(this).is(':checked') ? 1 : 0;
+
+                if (isChecked) {
+                    // Open the modal form
+                    $('#statusModal').modal('show');
+
+                    // Set the item ID in the modal for reference
+                    $('#modalItemId').val(itemId);
+                } else {
+                    // Handle unchecked state if needed
+                    $.ajax({
+                        url: "{{ route('report.update-paid-unpaid-status') }}",
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            item_id: itemId,
+                            status: isChecked
+                        },
+                        success: function (response) {
+                            showToast('success', 'Success', response.message);
+                        },
+                        error: function () {
+                            showToast('error', 'Error', 'Error updating status');
+                        }
+                    });
+                }
+            });
+
+            // Submit the modal form
+            $('#statusModalForm').on('submit', function (e) {
+                e.preventDefault();
+
+                let itemId = $('#modalItemId').val();
+                let status = 1; // Status is always '1' when the modal is submitted
+                let date = $('#paymentDate').val();
+                let paymentMode = $('#paymentMode').val();
 
                 $.ajax({
                     url: "{{ route('report.update-paid-unpaid-status') }}",
@@ -130,16 +221,20 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         item_id: itemId,
-                        status: isChecked
+                        status: status,
+                        date: date,
+                        payment_mode: paymentMode
                     },
-                    success: function(response) {
+                    success: function (response) {
+                        $('#statusModal').modal('hide');
                         showToast('success', 'Success', response.message);
                     },
-                    error: function() {
+                    error: function () {
                         showToast('error', 'Error', 'Error updating status');
                     }
                 });
             });
+
         </script>
     @endsection
 
