@@ -111,6 +111,9 @@ Route::post("/forget-password-process",[Authentication::class,"forget_password_p
 Route::get("/invoice/{order_id}",[Order::class,"invoice"])->name('invoice');
 
 
+Route::get('search-customers',[Customers::class,"search_customers"])->name('search-customers');
+
+
 //=========================  User Dashboard Routes ==========================
 Route::middleware('auth')->group(function () {
     Route::prefix('member-dashboard')->group(function () {

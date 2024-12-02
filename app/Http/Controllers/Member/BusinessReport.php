@@ -83,7 +83,17 @@ class BusinessReport extends Controller
     }
 
 
-    public function tree_wise(){
-        return view('site.user_dashboard.reports.business_report.tree_wise');
+    public function tree_wise(Request $request){
+        $userId = $request->input('query');
+        $data['title'] = 'Tree Wise Business Report';
+        if(empty($userId)){
+            // return 0;
+            $rootUser = User::where('user_id',Auth::user()->user_id)->first();
+        }else{
+            // return 1;
+            $rootUser = User::where('role','agent')->where('user_id',$userId)->first();
+        }
+        return view('site.user_dashboard.reports.business_report.tree_wise',compact('rootUser'))->with($data);
     }
+
 }

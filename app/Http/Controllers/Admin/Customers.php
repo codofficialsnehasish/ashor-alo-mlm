@@ -669,4 +669,19 @@ class Customers extends Controller
         }
     }
 
+
+    public function search_customers(Request $request){
+        $query = $request->input('query');
+    
+        // Search customers by name or ID (you can customize this)
+        $customers = User::where('name', 'like', "%$query%")
+                            ->orWhere('user_id', 'like', "%$query%")
+                            // ->limit(5)  // Limit number of suggestions
+                            ->distinct()
+                            ->get(['user_id', 'name']); // Fetch only the necessary fields
+
+        return response()->json([
+            'suggestions' => $customers
+        ]);
+    }
 }
