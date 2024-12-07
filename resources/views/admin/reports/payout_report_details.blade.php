@@ -14,13 +14,22 @@
             <!-- start page title -->
             <div class="page-title-box">
                 <div class="row align-items-center">
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <h6 class="page-title">Reports</h6>
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="{{url('/admin/dashboard')}}">Home</a></li>
                             <li class="breadcrumb-item"><a href="javascript:void(0)">Reports</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{{ $title }}</li>
                         </ol>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="float-end d-none d-md-block">
+                            <div class="">
+                                <a href="{{ route('report.payout-export-excel',[request()->segment(4),request()->segment(5)]) }}" class="btn btn-primary">
+                                    <i class="fas fa-file-excel me-2"></i> Export To Excel
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="float-end d-none d-md-block">
@@ -63,6 +72,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body table-responsive">
+                            {{-- <a href="{{ route('report.payout-export-excel',[request()->segment(4),request()->segment(5)]) }}"> Export To Excel </a> --}}
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead>
                                     <tr>

@@ -434,6 +434,7 @@ Route::middleware('auth.admin')->group(function () {
             // Payout Report
             Route::get("/payout-report",[Report_Controller::class,"payout_report"])->name('report.payout-report');
             Route::get("/payout-report-details/{start_date}/{end_date}",[Report_Controller::class,"payout_report_details"])->name('report.payout-report-details');
+            Route::get("/payout-export-excel/{start_date?}/{end_date?}",[Report_Controller::class,"payoutExportExcel"])->name('report.payout-export-excel');
             Route::get("/{id}/payout-statement",[Report_Controller::class,"view_payout_statement"])->name('report.view-payout-statement');
 
             Route::post("/update-paid-unpaid-status",[Report_Controller::class,"update_paid_unpaid_status"])->name('report.update-paid-unpaid-status');

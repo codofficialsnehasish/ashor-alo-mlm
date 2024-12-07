@@ -14,6 +14,9 @@ use App\Models\Payout;
 use App\Models\RemunerationBenefit;
 use App\Models\SalaryBonus;
 
+use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Concerns\FromArray;
+
 use Illuminate\Support\Facades\DB;
 
 class Report_Controller extends Controller
@@ -370,6 +373,66 @@ class Report_Controller extends Controller
                                 })
                                 ->get();
         return view('admin.reports.payout_report_details')->with($data);
+    }
+
+    public function payoutExportExcel($start_date, $end_date)
+    {
+        try {
+            $payouts = Payout::where('start_date', $start_date)
+                                ->where('end_date', $end_date)
+                                ->where('total_payout', '>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                })
+                                ->get();
+            
+            $headers = [
+                'Name', 'ID', 'Total Payout Amount', 'Account Name (As Per Bank)', 'Bank Name', 'Account Number', 'IFSC', 'Account Type', 'UPI Type', 'UPI Number', 'UPI Name'
+            ];
+
+            // Format data into an array
+            $data = $payouts->map(function ($payout) {
+                $user = $user = get_user_details($payout->user_id);
+                return [
+                    'Name' => get_name($payout->user_id),
+                    'ID' => get_user_id($payout->user_id),
+                    'Total Payout Amount' => $payout->total_payout,
+                    'Account Name (As Per Bank)' => $user->account_name,
+                    'Bank Name' => $user->bank_name,
+                    'Account Number' => $user->account_number,
+                    'IFSC' => $user->ifsc_code,
+                    'Account Type' => $user->account_type,
+                    'UPI Type' => $user->upi_type,
+                    'UPI Number' => $user->upi_number,
+                    'UPI Name' => $user->upi_name,
+                ];
+            })->toArray();
+
+            array_unshift($data, $headers);
+
+            // Create an inline export class and use it to generate the Excel file
+            $export = new class($data) implements FromArray {
+                protected $data;
+
+                public function __construct(array $data)
+                {
+                    $this->data = $data;
+                }
+
+                public function array(): array
+                {
+                    return $this->data;
+                }
+            };
+
+            // Download the Excel file
+            return Excel::download($export, 'payout.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
+        }
     }
 
     public function update_paid_unpaid_status(Request $request)
