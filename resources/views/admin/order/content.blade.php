@@ -74,7 +74,7 @@
                                                 <tr>
                                                     <td class="text-wrap">{{ format_datetime($order->created_at)  }}</td>
                                                     <td>#{{ $order->order_number  }}</td>
-                                                    <td class="text-wrap">{{ $order->user->name  }}</td>
+                                                    <td class="text-wrap">{{ $order->user->name ?? ''  }}</td>
                                                     <td>{{ get_user_id($order->buyer_id) }}</td>
                                                     <!-- <td>
                                                         <span class="label">Subtotal Price :</span><span class="value">{{ $order->price_subtotal }}</span><br>

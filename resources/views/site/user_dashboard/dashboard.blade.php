@@ -390,7 +390,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Last Payment</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ @if($last_payment->paid_unpaid == 0) {{ $last_payment->total_payout }} @else 0.00 @endif</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ @if(!empty($last_payment) && $last_payment->paid_unpaid == 0) {{ $last_payment->total_payout }} @else 0.00 @endif</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>

@@ -285,7 +285,7 @@
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label for="usr">UPI Type</label>
-                                                            <select class="form-control" name="upi_type" required {{ is_disabled($user->upi_type) }}>
+                                                            <select class="form-control" name="upi_type" {{ is_disabled($user->upi_type) }}>
                                                                 <option value selected disabled>Choose...</option>
                                                                 <option value="Phone Pay" @if($user->upi_type == 'Phone Pay') selected @endif>Phone Pay</option>
                                                                 <option value="Google Pay" @if($user->upi_type == 'Google Pay') selected @endif>Google Pay</option>
@@ -294,7 +294,7 @@
                                                         </div>
                                                         <div class="form-group col-md-6">
                                                             <label for="usr">UPI Phone Number</label>
-                                                            <input type="number" class="form-control" value="{{ $user->upi_number }}" name="upi_number" required {{ is_disabled($user->upi_number) }}>
+                                                            <input type="number" class="form-control" value="{{ $user->upi_number }}" name="upi_number" {{ is_disabled($user->upi_number) }}>
                                                         </div>
                                                     </div>
                                                     <p>
