@@ -287,20 +287,42 @@ class User_dashboard extends Controller
     public function update_bank_details(Request $r){
         $validator = Validator::make($r->all(), [
             'user_id' => 'required|numeric|exists:users,id',
-            'account_name' => 'required',
-            'bank_name' => 'required',
-            'account_number' => 'required|unique:users,account_number',
-            'account_type' => 'required',
-            'ifsc_code' => 'required',
-            'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',
-            'upi_name' => 'nullable',
-            'upi_type' => 'nullable',
-            'upi_number' => 'nullable|digits:10|regex:/^[6789]/'
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $user = User::find($r->user_id);
+
+        if($user->account_number){
+            $validator = Validator::make($r->all(), [
+                'upi_name' => 'nullable',
+                'upi_type' => 'nullable',
+                'upi_number' => 'nullable|digits:10|regex:/^[6789]/'
+            ]);    
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            $user->upi_name = $r->upi_name;
+            $user->upi_type = $r->upi_type;
+            $user->upi_number = $r->upi_number;
+            $res = $user->update();
         }else{
-            $user = User::find($r->user_id);
+            $validator = Validator::make($r->all(), [
+                'account_name' => 'required',
+                'bank_name' => 'required',
+                'account_number' => 'required|unique:users,account_number',
+                'account_type' => 'required',
+                'ifsc_code' => 'required',
+                'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',
+                'upi_name' => 'nullable',
+                'upi_type' => 'nullable',
+                'upi_number' => 'nullable|digits:10|regex:/^[6789]/'
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
             $user->account_name = $r->account_name;
             $user->bank_name = $r->bank_name;
             $user->account_number = $r->account_number;
@@ -311,19 +333,20 @@ class User_dashboard extends Controller
             $user->upi_type = $r->upi_type;
             $user->upi_number = $r->upi_number;
             $res = $user->update();
-            if($res){
-                return response()->json([
-                    'status' => 1,
-                    'massage' => 'Bank Details Updated Successfully',
-                    'data' => $user
-                ]);
-            }else{
-                return response()->json([
-                    'status' => 0,
-                    'massage' => 'Bank Details Not Updated, Please try again',
-                    'data' => []
-                ]);
-            }
+        }
+            
+        if($res){
+            return response()->json([
+                'status' => 1,
+                'massage' => 'Bank Details Updated Successfully',
+                'data' => $user
+            ]);
+        }else{
+            return response()->json([
+                'status' => 0,
+                'massage' => 'Bank Details Not Updated, Please try again',
+                'data' => []
+            ]);
         }
     }
 

@@ -75,6 +75,7 @@
                                         <th class="text-wrap">Account Number</th>
                                         <th class="text-wrap">IFSC</th>
                                         <th class="text-wrap">Account Type</th>
+                                        <th class="text-wrap">UPI Details</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -92,6 +93,11 @@
                                         <td class="text-wrap">{{ $user->account_number }}</td>
                                         <td class="text-wrap">{{ $user->ifsc_code }}</td>
                                         <td class="text-wrap">{{ $user->account_type }}</td>
+                                        <td>
+                                            <Strong>UPI Type : </Strong> {{ $user->upi_type }}<br>
+                                            <Strong>UPI Number : </Strong> {{ $user->upi_number }}<br>
+                                            <Strong>UPI Name : </Strong> {{ $user->upi_name }}
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -101,6 +107,7 @@
                                         <td></td>
                                         <td></td>
                                         <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

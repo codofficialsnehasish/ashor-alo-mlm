@@ -280,10 +280,6 @@
                                                             <input type="text" class="form-control" value="{{ $user->pan_number }}" name="pan_number" required {{ is_disabled($user->pan_number) }}>
                                                         </div>
                                                         <div class="form-group col-md-6">
-                                                            <label for="usr">UPI Name</label>
-                                                            <input type="text" class="form-control" value="{{ $user->upi_name }}" name="upi_name">
-                                                        </div>
-                                                        <div class="form-group col-md-6">
                                                             <label for="usr">UPI Type</label>
                                                             <select class="form-control" name="upi_type" {{ is_disabled($user->upi_type) }}>
                                                                 <option value selected disabled>Choose...</option>
@@ -296,11 +292,15 @@
                                                             <label for="usr">UPI Phone Number</label>
                                                             <input type="number" class="form-control" value="{{ $user->upi_number }}" name="upi_number" {{ is_disabled($user->upi_number) }}>
                                                         </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label for="usr">UPI Name</label>
+                                                            <input type="text" class="form-control" value="{{ $user->upi_name }}" name="upi_name" {{ is_disabled($user->upi_name) }}>
+                                                        </div>
                                                     </div>
                                                     <p>
                                                         <b class="text-danger">Note : Once You update Bank & PAN details then You can not change . For Any Further change contact to company Email Id</b>
                                                     </p>
-                                                    @if(empty($user->account_number))
+                                                    @if(empty($user->account_number) || empty($user->upi_type) || empty($user->upi_number) || empty($user->upi_name))
                                                     <div class="d-flex justify-content-center mt-3">
                                                         <button type="submit" class="btn btn-primary">Submit</button>
                                                     </div>

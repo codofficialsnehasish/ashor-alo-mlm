@@ -145,7 +145,10 @@
                                                         <Strong>Bank Name : </Strong> {{ $user->bank_name }}<br>
                                                         <Strong>Account Number : </Strong> {{ $user->account_number }}<br>
                                                         <Strong>Account Type : </Strong> {{ $user->account_type }}<br>
-                                                        <Strong>IFSC : </Strong> {{ $user->ifsc_code }}
+                                                        <Strong>IFSC : </Strong> {{ $user->ifsc_code }}<br>
+                                                        <Strong>UPI Type : </Strong> {{ $user->upi_type }}<br>
+                                                        <Strong>UPI Number : </Strong> {{ $user->upi_number }}<br>
+                                                        <Strong>UPI Name : </Strong> {{ $user->upi_name }}
                                                     </td>
                                                     <td>
                                                         <select name="bank_ac_proof_status" id="bank_ac_proof_status" class="form-select">
