@@ -56,6 +56,13 @@
                     </div>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3><strong>{{ $title }}</strong></h3>
+                    <a href="{{ $pdf_link }}" class="btn btn-primary"><i class="fas fa-file-pdf me-2"></i> Expoet To PDF</a>
+                    <a href="{{ $excel_link }}" class="btn btn-primary"><i class="fas fa-file-excel me-2"></i> Expoet To Excel</a>
+                </div>
+            </div>
             @php $total_amount = 0 @endphp
             @php $total_user_count = 0 @endphp
             @if(!empty($groupedBusiness))

@@ -453,6 +453,8 @@ Route::middleware('auth.admin')->group(function () {
 
             Route::get("/level-wise",[Report_Controller::class,"level_wise"])->name('report.business-report.level');
             Route::post("/level-wise",[Report_Controller::class,"generate_date_wise_level_report"])->name('report.business-report.generate_date_wise_level_report');
+            Route::get("/level-wise-business-exportPdf/{user_id}/{start_date?}/{end_date?}",[Report_Controller::class,"level_wise_business_exportPdf"])->name('report.business-report.level-wise-business-exportPdf');
+            Route::get("/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}",[Report_Controller::class,"level_wise_business_exportExcel"])->name('report.business-report.level-wise-business-exportExcel');
             
             Route::get("/tree-wise",[Report_Controller::class,"tree_wise"])->name('report.business-report.tree');
         });
