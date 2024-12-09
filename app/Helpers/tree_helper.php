@@ -116,6 +116,7 @@
                     'reg_date' => formated_date($customer->created_at),
                     'user_id' => $customer->user_id,
                     'name' => $customer->name,
+                    'phone' => $customer->phone,
                     'agent_id' => $customer->agent_id,
                     'position' => $customer->is_left == 1 ? 'Left' : 'Right',
                     'status' => check_status($customer->status),

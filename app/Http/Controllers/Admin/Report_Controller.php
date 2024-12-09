@@ -587,6 +587,7 @@ class Report_Controller extends Controller
                     'level' => (int)$currentLevel,
                     'user_id' => $customer['user_id'],
                     'name' => $customer['name'],
+                    'phone' => $customer['phone'],
                     'reg_date' => $customer['reg_date'],
                     'position' => $customer['position'],
                     'sponsor_id' => $customer['agent_id'],
