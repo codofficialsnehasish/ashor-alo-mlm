@@ -633,13 +633,25 @@ class Customers extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         }else{
+            $start_date = $r->start_date;
+            $end_date = $r->end_date;
+
             $user = User::where('user_id',$r->user_id)->first();
             $left_side_members = getLeftSideMembers($user->id);
             $right_side_members = getRightSideMembers($user->id);
 
             // $data['members'] = $this->get_all_customers(Auth::user()->phone);
             $data['title'] = 'Users of Leader';
-            $data['customer'] = array_merge($left_side_members,$right_side_members);
+            $all_members = array_merge($left_side_members,$right_side_members);
+            $data['customer'] = array_filter($all_members, function ($member) use ($start_date, $end_date) {
+                // If both dates are empty, return all members
+                if (empty($start_date) && empty($end_date)) {
+                    return true;
+                }
+            
+                // Check if the member's created_at date falls within the range
+                return $member['created_at'] >= $start_date && $member['created_at'] <= $end_date;
+            });
             return view('admin.customer.users_of_leader')->with($data);
         }
     }

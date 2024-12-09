@@ -6,7 +6,6 @@
 // });
 
 $(document).ready(function() {
-    // Initialize DataTable for #datatable (if needed)
     $("#datatable").DataTable();
 
     // Initialize DataTable for #datatable-buttons (single table by ID)
@@ -16,17 +15,30 @@ $(document).ready(function() {
     }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
 
     // Initialize DataTables for all elements with .datatable-buttons (class)
-    $(".datatable-buttons").DataTable({
-        lengthChange: false,
-        buttons: ["copy", "excel", "pdf", "colvis"]
-    }).buttons().container().appendTo(".datatable-buttons_wrapper .col-md-6:eq(0)");
+    // $(".datatable-buttons").DataTable({
+    //     lengthChange: false,
+    //     buttons: ["copy", "excel", "pdf", "colvis"]
+    // }).buttons().container().appendTo(".datatable-buttons_wrapper .col-md-6:eq(0)");
 
+
+    $(".datatable-buttons").each(function () {
+        var table = $(this).DataTable({
+            lengthChange: false,
+            buttons: ["copy", "excel", "pdf", "colvis"]
+        });
+
+        table.buttons()
+            .container()
+            .appendTo($(this).closest(".dataTables_wrapper").find(".col-md-6:eq(0)"));
+    });
+
+
+    
     $("#datatable-buttons-desc").DataTable({
         lengthChange: !1,
         order: [[0, 'desc']],
         buttons: ["copy", "excel", "pdf", "colvis"]
     }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
-    
 
     
 
