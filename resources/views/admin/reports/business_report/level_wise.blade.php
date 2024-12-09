@@ -31,12 +31,21 @@
                             <form action="{{ route('report.business-report.generate_date_wise_level_report') }}" method="post">
                                 @csrf
                                 <div class="row">
-                                    <div class="mb-0 col-md-10">
+                                    <div class="mb-0 col-md-7">
                                         <label class="form-label">Search Using Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                             <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
                                             <input type="text" class="form-control" required name="end_date" placeholder="End Date" value="" autocomplete="off" />
                                         </div>
+                                    </div>
+                                    <div class="mb-0 col-md-3">
+                                        <label class="form-label">Choose Agents</label>
+                                        <select class="form-control select2" name="user_id">
+                                            <option selected disabled value="">Select...</option>
+                                            @foreach($users as $user)
+                                            <option value="{{ $user->user_id }}">{{ $user->name }} ( {{ $user->user_id }} )</option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                     <div class="col-md-2" style="margin-top: 29px !important;">
                                         <button class="btn btn-primary" type="submit">Search Report</button>

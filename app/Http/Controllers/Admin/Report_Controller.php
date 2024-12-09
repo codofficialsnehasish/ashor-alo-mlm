@@ -632,11 +632,18 @@ class Report_Controller extends Controller
         // return $groupedBusiness;
 
         $data['title'] = 'Level Wise Business Report';
+        $data['users'] = User::where("role","!=","admin")->orderBy('name', 'asc')->get();
         return view('admin.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
     }
 
     public function generate_date_wise_level_report(Request $request){
-        $user = User::whereNull('parent_id')->where('role','agent')->first();
+        if(isset($request->user_id)){
+            $user = User::where('user_id',$request->user_id)->first();
+        }else{
+            $user = User::whereNull('parent_id')->where('role','agent')->first();
+        }
+        // return $user;
+
         $customerTree = get_customer_tree($user->user_id);
 
         // Levels array to hold users grouped by level
@@ -653,6 +660,7 @@ class Report_Controller extends Controller
                     'level' => (int)$currentLevel,
                     'user_id' => $customer['user_id'],
                     'name' => $customer['name'],
+                    'phone' => $customer['phone'],
                     'reg_date' => $customer['reg_date'],
                     'position' => $customer['position'],
                     'sponsor_id' => $customer['agent_id'],
@@ -660,6 +668,8 @@ class Report_Controller extends Controller
                 ];
             }
         }
+
+        // return $usersWithLevels;
 
         $buyer_ids = array_column($usersWithLevels, 'id');
         // return count($buyer_ids);
@@ -703,6 +713,7 @@ class Report_Controller extends Controller
         // return $groupedBusiness;
 
         $data['title'] = 'Level Wise Business Report';
+        $data['users'] = User::where("role","!=","admin")->orderBy('name', 'asc')->get();
         return view('admin.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
     }
 
