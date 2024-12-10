@@ -107,7 +107,6 @@
                                     <tr>
                                         <th class="text-wrap">Sl. No.</th>
                                         <th class="text-wrap">Name</th>
-                                        <th class="text-wrap">Phone</th>
                                         <th class="text-wrap">Sponsor ID</th>
                                         <th class="text-wrap">Date</th>
                                         <th class="text-wrap">Amount</th>
@@ -126,7 +125,6 @@
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
-                                                <td>{{ $item['phone'] }}</td>
                                                 <td>{{ $item['sponsor_id'] }}</td>
                                                 <td>{{ formated_date($item['total_business']->start_date, '-') }}</td>
                                                 <td>{{ $item['total_business']->total_amount }}</td>
@@ -137,7 +135,7 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="5" class="text-right"><b>Total Amount -</b></td>
+                                        <td colspan="4" class="text-right"><b>Total Amount -</b></td>
                                         <td><b>{{ $amount }}</b></td>
                                         <td></td>
                                     </tr>

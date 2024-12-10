@@ -872,7 +872,7 @@ class Report_Controller extends Controller
 
             ksort($groupedBusiness);
 
-            $headers = ['Sl. No.', 'Name', 'Phone', 'Level', 'Date', 'Amount', 'Product'];
+            $headers = ['Sl. No.', 'Name', 'Phone', 'Sponsor ID', 'Level', 'Date', 'Amount', 'Product'];
 
             // Prepare the data for Excel export
             $data = [];
@@ -883,6 +883,7 @@ class Report_Controller extends Controller
                         'Sl. No.' => $counter++,
                         'Name' => $item['name'],
                         'Phone' => $item['phone'],
+                        'Sponsor ID' => $item['sponsor_id'],
                         'Level' => 'Level '.$item['level'],
                         'Date' => $item['total_business']->start_date,
                         'Amount' => $item['total_business']->total_amount,

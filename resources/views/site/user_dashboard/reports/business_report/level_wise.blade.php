@@ -22,9 +22,9 @@
 
                     <!-- Page Heading -->
 
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    {{-- <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">{{ $title }}</h1>
-                    </div>
+                    </div> --}}
                     <div class="row mb-3">
                         <div class="col-12">
                             <div class="card">
@@ -32,12 +32,21 @@
                                     <form action="{{ route('business-report.generate_date_wise_level_report') }}" method="post">
                                         @csrf
                                         <div class="row">
-                                            <div class="mb-0 col-md-10">
+                                            <div class="mb-0 col-md-7">
                                                 <label class="form-label">Search Using Date</label>
                                                 <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                                     <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
                                                     <input type="text" class="form-control" required name="end_date" placeholder="End Date" value="" autocomplete="off" />
                                                 </div>
+                                            </div>
+                                            <div class="mb-0 col-md-3">
+                                                <label class="form-label">Choose Agents</label>
+                                                <select class="form-control select2" name="user_id">
+                                                    <option selected disabled value="">Select...</option>
+                                                    @foreach($users as $user)
+                                                    <option value="{{ $user->user_id }}">{{ $user->name }} ( {{ $user->user_id }} )</option>
+                                                    @endforeach
+                                                </select>
                                             </div>
                                             <div class="col-md-2" style="margin-top: 29px !important;">
                                                 <button class="btn btn-primary" type="submit">Search Report</button>
@@ -46,6 +55,13 @@
                                     </form>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card mb-3">
+                        <div class="card-body text-center">
+                            <h3><strong>{{ $title }}</strong></h3>
+                            <a href="{{ $pdf_link }}" class="btn btn-primary"><i class="fas fa-file-pdf me-2"></i> Expoet To PDF</a>
+                            <a href="{{ $excel_link }}" class="btn btn-primary"><i class="fas fa-file-excel me-2"></i> Expoet To Excel</a>
                         </div>
                     </div>
                     @php $total_amount = 0 @endphp
@@ -63,7 +79,7 @@
                                         <tr>
                                             <th class="text-wrap">Sl. No.</th>
                                             <th class="text-wrap">Name</th>
-                                            <th class="text-wrap">Level</th>
+                                            <th class="text-wrap">Sponsor ID</th>
                                             <th class="text-wrap">Date</th>
                                             <th class="text-wrap">Amount</th>
                                             <th class="text-wrap">Product</th>
@@ -81,7 +97,8 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
-                                            <td>{{ 'Level '.$item['level'] }}</td>
+                                            {{-- <td>{{ 'Level '.$item['level'] }}</td> --}}
+                                            <td>{{ $item['sponsor_id'] }}</td>
                                             <td>{{ formated_date($item['total_business']->start_date,'-') }}</td>
                                             <td>{{ $item['total_business']->total_amount }}</td>
                                             <td>{{ get_products_by_order_id($item['total_business']->order_id) }}</td>

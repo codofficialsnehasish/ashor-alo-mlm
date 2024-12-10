@@ -79,6 +79,7 @@
                                     <th class="text-wrap">Sl. No.</th>
                                     <th class="text-wrap">Name</th>
                                     <th class="text-wrap">Phone</th>
+                                    <th class="text-wrap">Sponsor Id</th>
                                     <th class="text-wrap">Date</th>
                                     <th class="text-wrap">Amount</th>
                                     <th class="text-wrap">Product</th>
@@ -97,6 +98,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
                                     <td>{{ $item['phone'] }}</td>
+                                    <td>{{ $item['sponsor_id'] }}</td>
                                     <td>{{ formated_date($item['total_business']->start_date,'-') }}</td>
                                     <td>{{ $item['total_business']->total_amount }}</td>
                                     <td>{{ get_products_by_order_id($item['total_business']->order_id) }}</td>
