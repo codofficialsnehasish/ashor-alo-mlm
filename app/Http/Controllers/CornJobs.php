@@ -91,14 +91,12 @@ class CornJobs extends Controller
     public function disburse_roi(){ //ROI = Return of Invesment
         $this->process_direct_bonus();
 
-        if(date('Y-m-d') != '2024-11-29'){
-            $income_data = TopUp::where('is_completed',0)
-                        ->Where('total_installment_month','>=','month_count')
-                        ->whereDate('start_date','!=',date('Y-m-d'))
-                        ->get();
+        $income_data = TopUp::where('is_completed',0)
+                    ->Where('total_installment_month','>=','month_count')
+                    ->whereDate('start_date','!=',date('Y-m-d'))
+                    ->get();
 
-            DisburseRoiJob::dispatch($income_data);
-        }
+        DisburseRoiJob::dispatch($income_data);
     } // tested 29-11-2024
 
     /*public function forcely_disburse_roi() {
@@ -238,7 +236,8 @@ class CornJobs extends Controller
                         $agent->id,
                         $user_bonus,
                         'Direct Bonus',
-                        1
+                        1,
+                        $custo->id
                     );
 
                     // if(check_limit($agent->id)){
@@ -327,6 +326,7 @@ class CornJobs extends Controller
                         $user_bonus,
                         'Direct Bonus',
                         1,
+                        $custo->id,
                         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
                         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
                     );

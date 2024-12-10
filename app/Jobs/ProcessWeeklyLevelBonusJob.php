@@ -51,7 +51,7 @@ class ProcessWeeklyLevelBonusJob implements ShouldQueue
 
                 // Output the weekly payment
                 // echo "<br>".$weeklyPayment."<br>";
-                $this->levelBonusService->weekly_level_bonus($user->agent_id,$weeklyPayment,1); //,$this->end_date
+                $this->levelBonusService->weekly_level_bonus($user->agent_id,$weeklyPayment,1,$user->id); //,$this->end_date
             }
         }
     }

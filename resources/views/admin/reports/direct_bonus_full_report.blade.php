@@ -69,6 +69,7 @@
                                         <th>ID</th>
                                         <th class="text-wrap">Amount</th>
                                         <th class="text-wrap">Statement</th>
+                                        <th class="text-wrap">Generated Against</th>
                                         <th class="text-wrap">Date</th>
                                     </tr>
                                 </thead>
@@ -83,6 +84,7 @@
                                         <td>{{ get_user_id($item->user_id) }}</td>
                                         <td>{{ $item->amount }}</td>
                                         <td>{{ $item->which_for }}</td>
+                                        <td>@if(!empty($item->generated_against_id)){{ get_name($item->generated_against_id) }} ( {{ get_user_id($item->generated_against_id) }} )@endif</td>
                                         <td>{{ format_datetime($item->created_at) }}</td>
                                     </tr>
                                     @endforeach
@@ -92,6 +94,7 @@
                                         <td></td>
                                         <td></td>
                                         <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                     </tr>

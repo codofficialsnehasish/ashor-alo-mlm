@@ -153,6 +153,7 @@ class ForcelyDisburseRoiJob implements ShouldQueue
                     $user_per_day_roi,
                     'ROI Dailys',
                     1,
+                    null,
                     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
                     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
                 );
@@ -162,6 +163,7 @@ class ForcelyDisburseRoiJob implements ShouldQueue
                     $user_per_day_roi,
                     'ROI Daily',
                     1,
+                    null,
                     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
                     Carbon::parse($this->date)->format('Y-m-d H:i:s'),
                 );

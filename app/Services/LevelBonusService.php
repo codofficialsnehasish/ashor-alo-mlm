@@ -106,7 +106,7 @@ class LevelBonusService
 
     } 
 
-    public function weekly_level_bonus($user_id, $amount, $user_level){ //, $date
+    public function weekly_level_bonus($user_id, $amount, $user_level,$main_user_id){ //, $date
         $user = User::where('user_id', $user_id)->first();
         if($user_id == null) { return; }
         if (empty($user)) {
@@ -138,6 +138,7 @@ class LevelBonusService
                 $bonus,
                 'Level Bonus',
                 1,
+                $main_user_id
                 // Carbon::parse($date)->format('Y-m-d H:i:s'),
                 // Carbon::parse($date)->format('Y-m-d H:i:s')
             );
@@ -183,10 +184,10 @@ class LevelBonusService
             $user->update();
         }
 
-        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1); //, $date
+        $this->weekly_level_bonus($user->agent_id, $amount, $user_level += 1,$main_user_id); //, $date
     }
 
-    public function forcefully_weekly_level_bonus($user_id, $amount, $user_level, $date){ //
+    public function forcefully_weekly_level_bonus($user_id, $amount, $user_level, $date, $main_user_id){ //
         $user = User::where('user_id', $user_id)->first();
         if($user_id == null) { return; }
         if (empty($user)) {
@@ -218,6 +219,7 @@ class LevelBonusService
                 $bonus,
                 'Level Bonus',
                 1,
+                $main_user_id,
                 Carbon::parse($date)->format('Y-m-d H:i:s'),
                 Carbon::parse($date)->format('Y-m-d H:i:s')
             );
@@ -225,7 +227,7 @@ class LevelBonusService
             $user->update();
         }
 
-        $this->forcefully_weekly_level_bonus($user->agent_id, $amount, $user_level += 1, $date); //
+        $this->forcefully_weekly_level_bonus($user->agent_id, $amount, $user_level += 1, $date, $main_user_id); //
     }
     
 }
