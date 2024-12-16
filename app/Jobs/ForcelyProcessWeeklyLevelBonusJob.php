@@ -51,7 +51,9 @@ class ForcelyProcessWeeklyLevelBonusJob implements ShouldQueue
 
                 // Output the weekly payment
                 // echo "<br>".$weeklyPayment."<br>";
-                $this->levelBonusService->forcefully_weekly_level_bonus($user->agent_id,$weeklyPayment,1,$this->end_date,$user->id); //
+                if($user){
+                    $this->levelBonusService->forcefully_weekly_level_bonus($user->agent_id,$weeklyPayment,1,$this->end_date,$user->id); //
+                }
             }
         }
     }
