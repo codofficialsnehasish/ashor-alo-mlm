@@ -135,8 +135,10 @@ class ForcelyDisburseRoiJob implements ShouldQueue
             // $user_per_day_roi = $data->installment_amount_per_month / $daysDifference;
 
             $user = User::find($data->user_id);
-            $user->account_balance += $user_per_day_roi;
-            $user->update();
+            if($user){
+                $user->account_balance += $user_per_day_roi;
+                $user->update();
+            }
 
             // $transaction->make_transaction(
             //     $data->user_id,
