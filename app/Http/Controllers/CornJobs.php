@@ -661,6 +661,6 @@ class CornJobs extends Controller
     
 
     public function dummy_corn_test(){
-        DummyJob::dispatch();
+        // DummyJob::dispatch();
     }
 }
