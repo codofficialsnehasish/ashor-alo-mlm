@@ -20,7 +20,7 @@ class Categories extends Controller
 
     public function index(){
         $data['title'] = 'Categories';
-        $data['categories'] = Categorie::all();
+        $data['categories'] = Categorie::where('is_deleted',0)->get();
         return view($this->view_path.'index')->with($data);
     }
 
@@ -79,7 +79,9 @@ class Categories extends Controller
 
     public function destroy(Request $r){
         $category = Categorie::find($r->id);
-        $res = $category->delete();
+        $category->is_deleted = 1;
+        $res = $category->update();
+        // $res = $category->delete();
         if($res){
             return redirect()->back()->with(['success'=>'Data deleted Successfully']);
         }else{
