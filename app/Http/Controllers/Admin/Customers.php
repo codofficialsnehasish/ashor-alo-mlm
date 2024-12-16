@@ -71,6 +71,7 @@ class Customers extends Controller
         // return $query;
         if($request->query != null){
             $c = User::where("role", "!=", "admin")
+                    ->where('is_deleted',0)
                     ->whereAny([
                         'name',
                         'email',
@@ -535,7 +536,9 @@ class Customers extends Controller
 
     public function customerdel(Request $r){
         $custo = User::find($r->id);
-        $result = $custo->delete();
+        $custo->is_deleted = 1;
+        $result = $custo->update();
+        // $result = $custo->delete();
         if($result){
             return redirect()->back()->with(['success'=>'Data Deleted Successfully']);
         }else{
