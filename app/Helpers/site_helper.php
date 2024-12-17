@@ -327,7 +327,11 @@
             ->where('model_has_roles.model_id', $user_id)
             ->select('roles.name')
             ->first();
-            return $roleName->name;
+            if($roleName){
+                return $roleName->name;
+            }else{
+                return '';
+            }
         }
     }
 

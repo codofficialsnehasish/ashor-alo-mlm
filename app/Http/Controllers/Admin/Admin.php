@@ -55,7 +55,12 @@ class Admin extends Controller
 
     public function checkuser(Request $r){
         if(Auth::attempt(["email"=>$r->email,"password"=>$r->pass])){
-            return redirect(url('admin/dashboard'));
+            $user = Auth::user();
+            if($user->role == 'admin' && $user->status == 1 && $user->is_deleted == 0){
+                return redirect(url('admin/dashboard'));
+            }else{
+                return redirect(url('/admin-login'))->with(["msg"=>"You don't have right Permission to Login"]);
+            }
         }else{
             return redirect(url('/admin-login'))->with(["msg"=>"Invalid Login"]);
         }
