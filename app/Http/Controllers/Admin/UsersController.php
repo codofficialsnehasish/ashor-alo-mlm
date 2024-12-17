@@ -22,7 +22,7 @@ class UsersController extends Controller
 
     public function index(){
         $data['title'] = 'Users';
-        $data['users'] = User::where('role','admin')->where('is_deleted',0)->get();
+        $data['users'] = User::where('role','admin')->where('is_deleted',0)->where('is_hide',0)->get();
         return view($this->view_path.'contents')->with($data);
     }
 
