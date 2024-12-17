@@ -22,7 +22,7 @@ class Lavel_master extends Controller
 
     public function index(){
         $data['title'] = 'Level Content';
-        $data['contents'] = Lavel_masters::all();
+        $data['contents'] = Lavel_masters::where('is_deleted',0)->get();
         return view($this->view_path."content")->with($data);
     }
 
@@ -85,7 +85,9 @@ class Lavel_master extends Controller
 
     public function delete(Request $r){
         $lavel_master = Lavel_masters::find($r->id);
-        $res = $lavel_master->delete();
+        $lavel_master->is_deleted = 1;
+        $res = $lavel_master->update();
+        // $res = $lavel_master->delete();
         if($res){
             return redirect()->back()->with(['success'=>'Data Deleted Successfully']);
         }else{

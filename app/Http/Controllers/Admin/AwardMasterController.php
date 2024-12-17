@@ -17,7 +17,7 @@ class AwardMasterController extends Controller
     public function index()
     {
         $data['title'] = 'Award Reword';
-        $data['contents'] = AwardReword::all();
+        $data['contents'] = AwardReword::where('is_deleted',0)->get();
         return view($this->view_path."index")->with($data);
     }
 
@@ -115,7 +115,9 @@ class AwardMasterController extends Controller
     public function destroy(string $id)
     {
         $award_reword = AwardReword::find($id);
-        $res = $award_reword->delete();
+        $award_reword->is_deleted = 1;
+        $res = $award_reword->update();
+        // $res = $award_reword->delete();
         if($res){
             return back()->with(['success'=>'Data Deleted Successfully.']);
         }else{

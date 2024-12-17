@@ -21,7 +21,7 @@ class RemunerationBenefitController extends Controller
     public function index()
     {
         $data['title'] = 'Remuneration Benefit';
-        $data['contents'] = RemunerationBenefit::all();
+        $data['contents'] = RemunerationBenefit::where('is_deleted',0)->get();
         return view($this->view_path."index")->with($data);
     }
 
@@ -90,7 +90,9 @@ class RemunerationBenefitController extends Controller
     public function destroy(string $id)
     {
         $remuneration_benefit = RemunerationBenefit::find($id);
-        $res = $remuneration_benefit->delete();
+        $remuneration_benefit->is_deleted = 1;
+        $res = $remuneration_benefit->update();
+        // $res = $remuneration_benefit->delete();
         if($res){
             return back()->with(['success'=>'Data Deleted Successfully.']);
         }else{

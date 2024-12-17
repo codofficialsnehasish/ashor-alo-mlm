@@ -17,7 +17,7 @@ class FranchiseBenefitController extends Controller
     public function index()
     {
         $data['title'] = 'Franchise Benefit';
-        $data['contents'] = FranchiseBenefit::all();
+        $data['contents'] = FranchiseBenefit::where('is_deleted',0)->get();
         return view($this->view_path."index")->with($data);
     }
 
@@ -100,7 +100,9 @@ class FranchiseBenefitController extends Controller
     public function destroy(string $id)
     {
         $franchise_benefit = FranchiseBenefit::find($id);
-        $res = $franchise_benefit->delete();
+        $franchise_benefit->is_deleted = 1;
+        $res = $franchise_benefit->update();
+        // $res = $franchise_benefit->delete();
         if($res){
             return back()->with(['success'=>'Data Deleted Successfully.']);
         }else{

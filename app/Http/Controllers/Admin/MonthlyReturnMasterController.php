@@ -25,7 +25,7 @@ class MonthlyReturnMasterController extends Controller
     public function index()
     {
         $data['title'] = 'Monthly Return';
-        $data['contents'] = MonthlyReturn::all();
+        $data['contents'] = MonthlyReturn::where('is_deleted',0)->get();
         return view($this->view_path."index")->with($data);
     }
 
@@ -129,7 +129,9 @@ class MonthlyReturnMasterController extends Controller
     public function destroy(string $id)
     {
         $monthly_return = MonthlyReturn::find($id);
-        $res = $monthly_return->delete();
+        $monthly_return->is_deleted = 1;
+        $res = $monthly_return->update();
+        // $res = $monthly_return->delete();
         if($res){
             return back()->with(['success'=>'Data Deleted Successfully.']);
         }else{
