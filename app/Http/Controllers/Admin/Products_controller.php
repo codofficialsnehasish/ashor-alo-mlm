@@ -21,7 +21,7 @@ class Products_controller extends Controller
 
     public function index(){
         $data['title'] = 'Products';
-        $data['products'] = Products::all();
+        $data['products'] = Products::where('is_deleted',0)->get();
         return view($this->view_path.'contents')->with($data);
     }
 
@@ -131,7 +131,9 @@ class Products_controller extends Controller
 
     public function delete(Request $r){
         $product = Products::find($r->id);
-        $res = $product->delete();
+        $product->is_deleted = 1;
+        $res = $product->update();
+        // $res = $product->delete();
         if($res){
             return redirect()->back()->with(['success'=>'Data deleted Successfully']);
         }else{
