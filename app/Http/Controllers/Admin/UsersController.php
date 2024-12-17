@@ -22,7 +22,7 @@ class UsersController extends Controller
 
     public function index(){
         $data['title'] = 'Users';
-        $data['users'] = User::where('role','admin')->get();
+        $data['users'] = User::where('role','admin')->where('is_deleted',0)->get();
         return view($this->view_path.'contents')->with($data);
     }
 
@@ -89,7 +89,9 @@ class UsersController extends Controller
 
     public function delete(Request $r){
         $user = User::find($r->id);
-        $res = $user->delete();
+        $user->is_deleted = 1;
+        $res = $user->update();
+        // $res = $user->delete();
         if($res){
             return back()->with(['success'=>'User Deleted Successfully']);
         }else{
