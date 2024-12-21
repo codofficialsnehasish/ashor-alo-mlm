@@ -223,7 +223,11 @@ class Order extends Controller
 
 
     public function make_id_green($category, $order_id, $user_id, $total_amount, $date){
-        $ROI = calculate_ROI($total_amount,$category);
+
+        //calculate accumulation business 
+        $total_acumulation = get_accumulation_business($user_id, $category);
+
+        $ROI = calculate_ROI($total_amount, $category, $order_id, $total_acumulation);
         // print_r($ROI);die;
         if(!empty($ROI)){
             $top_up = new TopUp();
@@ -326,30 +330,30 @@ class Order extends Controller
                 }*/
 
             }else{
-                if(check_limit($custo->id)){
-                    if(get_user_limit($custo->id) > ($custo->account_balance + $custo->hold_balance) ){
-                        $custo->account_balance += $custo->hold_balance;
+                // if(check_limit($custo->id)){
+                //     if(get_user_limit($custo->id) > ($custo->account_balance + $custo->hold_balance) ){
+                //         $custo->account_balance += $custo->hold_balance;
                         
-                        $transactionAdded = $this->transaction->make_transaction(
-                            $custo->id,
-                            $custo->hold_balance,
-                            'Previous Balance',
-                            1
-                        );
-                        $custo->hold_balance = 0;
-                    }else{
-                        $gap = get_user_limit($custo->id) - $custo->account_balance;
-                        $custo->account_balance += $gap;
-                        $transactionAdded = $this->transaction->make_transaction(
-                            $custo->id,
-                            $gap,
-                            'Previous Balance',
-                            1
-                        );
-                        $custo->hold_balance = abs($custo->hold_balance - $gap); 
-                    }
-                }
-                $custo->update();
+                //         $transactionAdded = $this->transaction->make_transaction(
+                //             $custo->id,
+                //             $custo->hold_balance,
+                //             'Previous Balance',
+                //             1
+                //         );
+                //         $custo->hold_balance = 0;
+                //     }else{
+                //         $gap = get_user_limit($custo->id) - $custo->account_balance;
+                //         $custo->account_balance += $gap;
+                //         $transactionAdded = $this->transaction->make_transaction(
+                //             $custo->id,
+                //             $gap,
+                //             'Previous Balance',
+                //             1
+                //         );
+                //         $custo->hold_balance = abs($custo->hold_balance - $gap); 
+                //     }
+                // }
+                // $custo->update();
             }
         }else{
             if($total_amount == 0 || $total_amount == 1){

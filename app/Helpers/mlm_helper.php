@@ -75,11 +75,22 @@
     }
 
     if(!function_exists('calculate_ROI')){ //Return of Invesment
-        function calculate_ROI($total_amount, $category){
-            $percentage = DB::table('monthly_returns')->where('form_amount', '<=', $total_amount)
-            ->where('to_amount', '>=', $total_amount)
-            ->where('category',$category)
-            ->first();
+        function calculate_ROI($total_amount, $category, $order_id, $acumulated_amount){
+
+            $main_amount = $total_amount + $acumulated_amount;
+
+            $percentage = DB::table('monthly_returns')->where('form_amount', '<=', $main_amount)
+                            ->where('to_amount', '>=', $main_amount)
+                            ->where('category',$category)
+                            ->first();
+
+            $product = get_products_by_order_id($order_id,'addon');
+            // print_r($product); die;
+
+            // $percentage = DB::table('monthly_returns')->where('form_amount', '<=', $total_amount)
+            // ->where('to_amount', '>=', $total_amount)
+            // ->where('category',$category)
+            // ->first();
             $data_array = [];
             if(!empty($percentage->percentage)){
                 $per_month_installment_amount = $total_amount * ($percentage->percentage / 100);
@@ -91,7 +102,13 @@
                 $data_array['percentage'] = $percentage->percentage;
                 
                 // for add on product, not provide direct bonus
-                $data_array['is_provide_direct'] = $category == 10? 0 : 1;
+                // $data_array['is_provide_direct'] = $category == 10? 0 : 1; 
+                // for add on product, not provide direct bonus
+                if($product->is_addon == 1){
+                    $data_array['is_provide_direct'] = 0; 
+                }else{
+                    $data_array['is_provide_direct'] = 1; 
+                }
                 
                 return $data_array;
             }else{
@@ -113,8 +130,6 @@
 
         }
     }
-
-
 
     if(!function_exists('calculate_total_commission')){
         function calculate_total_commission($type, $user_id){
@@ -165,6 +180,22 @@
             }else{
                 return '';
             }
+        }
+    }
+
+    if(!function_exists('get_accumulation_business')){
+        function get_accumulation_business($user_id, $category_id){
+            $total_acumulation = TopUp::join('orders', 'top_ups.order_id', '=', 'orders.id')
+                                    ->join('order_products', 'orders.id', '=', 'order_products.order_id')
+                                    ->join('product', 'order_products.product_id', '=', 'product.id')
+                                    ->where('product.category_id', $category_id)
+                                    ->where('top_ups.user_id',$user_id)
+                                    ->where('top_ups.is_completed',0)
+                                    ->sum('top_ups.total_amount');
+
+            // $total_acumulation = TopUp::where('user_id',$user_id)->where('is_completed',0)->sum('total_amount');
+            
+            return $total_acumulation ?? 0;
         }
     }
 

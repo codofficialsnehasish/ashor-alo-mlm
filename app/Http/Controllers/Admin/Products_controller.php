@@ -67,6 +67,7 @@ class Products_controller extends Controller
             $product->weight = $r->weight;
             $product->is_featured = $r->is_featured;
             $product->is_visible = $r->is_visible;
+            $product->is_addon = $r->is_addon;
             $res = $product->save();
             if($res){
                 return redirect()->back()->with(['success'=>'Data added Successfully']);
@@ -120,6 +121,7 @@ class Products_controller extends Controller
             $product->weight = $r->weight;
             $product->is_featured = $r->is_featured;
             $product->is_visible = $r->is_visible;
+            $product->is_addon = $r->is_addon;
             $res = $product->update();
             if($res){
                 return redirect()->back()->with(['success'=>'Data Updated Successfully']);
