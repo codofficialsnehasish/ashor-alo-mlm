@@ -183,31 +183,31 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 11, 25);
-        $endDate = Carbon::create(2024, 11, 29);
+        $startDate = Carbon::create(2024, 12, 19);
+        $endDate = Carbon::create(2024, 12, 20);
         // $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
         while ($startDate->lt($endDate)) {
             $dates[] = $startDate->toDateString(); // Add the current date to the array
-            // break;
+            break;
             $startDate->addDay(); // Move to the next day
         }
 
-        return $dates;
+        // return $dates;
 
         // Output the dates
         foreach ($dates as $date) {
             // echo $date . "<br>";
             $this->forcely_process_direct_bonus($date);
 
-            // $income_data = TopUp::where('is_completed',0)
-            //             ->Where('total_installment_month','>=','month_count')
-            //             // ->whereDate('start_date','!=',$date)
-            //             ->whereDate('start_date', '<', $date)
-            //             ->get();
+            $income_data = TopUp::where('is_completed',0)
+                        ->Where('total_installment_month','>=','month_count')
+                        // ->whereDate('start_date','!=',$date)
+                        ->whereDate('start_date', '<', $date)
+                        ->get();
 
-            // // DisburseRoiJob::dispatch($income_data,$date);
+            DisburseRoiJob::dispatch($income_data);
             // ForcelyDisburseRoiJob::dispatch($income_data,$date);
             
         }
@@ -327,8 +327,8 @@ class CornJobs extends Controller
                         'Direct Bonus',
                         1,
                         $custo->id,
-                        Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                        Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
                     );
 
 
