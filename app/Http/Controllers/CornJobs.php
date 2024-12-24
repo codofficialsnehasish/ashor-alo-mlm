@@ -443,15 +443,18 @@ class CornJobs extends Controller
                         return $transactions->pluck('payment_date')->unique()->count();
                     });
 
-                ProcessWeeklyLevelBonusJob::dispatch($acc_transactions);
+                ProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $current_day, $lastSaturday, $current_day);
         // }else{
         //     return 'today in not friday';
         // }
     }  // tested 29-11-2024
 
     public function forcely_level_bonus_in_saturday_to_friday() {
-        $start_date = '2024-11-16';
-        $lastFriday = '2024-11-22';
+        $start_date = '2024-12-14';
+        $lastFriday = '2024-12-20';
+
+        //version 0.01
+
         $acc_transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
             ->where('which_for', 'ROI Daily')
             ->select('user_id', DB::raw('DATE(created_at) as payment_date'))
@@ -461,9 +464,11 @@ class CornJobs extends Controller
             ->map(function ($transactions) {
                 return $transactions->pluck('payment_date')->unique()->count();
             });
+
+        
         // return $acc_transactions; die;
 
-        ForcelyProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $lastFriday);
+        ForcelyProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $start_date, $lastFriday);
     }   
     
     public function generate_payout_in_saturday_to_friday() {
