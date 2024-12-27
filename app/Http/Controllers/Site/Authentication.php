@@ -11,14 +11,18 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+use App\Services\SMSService;
+
 class Authentication extends Controller
 {
     protected $binaryTreeService;
+    protected $smsService;
 
-    public function __construct(BinaryTreeService $binaryTreeService)
+    public function __construct(BinaryTreeService $binaryTreeService, SMSService $smsService)
     {
         $this->view_path='site.authentication.';
         $this->binaryTreeService = $binaryTreeService;
+        $this->smsService = $smsService;
     }
 
     public function login(){
@@ -82,6 +86,9 @@ class Authentication extends Controller
                 $user = $this->binaryTreeService->addUser($r->all());
                 // return redirect()->back()->with(['success' => 'Registration Successfull']);
                 // Auth::attempt(['phone'=>$r->mobile,'password'=>$r->password]);
+
+                $this->smsService->sendSMS('91'.$user->phone,$user->user_id,$user->decoded_password);
+
                 $data = array(
                     // 'msg'=>'Signup Successfully'
                     // 'msg'=>array(
