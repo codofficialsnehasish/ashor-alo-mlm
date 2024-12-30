@@ -183,8 +183,23 @@ class Authentication extends Controller
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         }else{
-            Cookie::queue('user_phone', $r->phone, 5);
-            return $this->forget_password($r->phone);
+            // in first version
+            // Cookie::queue('user_phone', $r->phone, 5);
+            // return $this->forget_password($r->phone);
+
+            // in second version date - 30-12-2024
+            $user = User::where('phone',$r->phone)->first();
+            $responce = $this->smsService->sendSMS('91'.$user->phone,$user->user_id,$user->decoded_password);
+            // return $responce['statusCode'];
+            if(!empty($responce)){
+                if($responce['statusCode'] == 200){
+                    return redirect(url('/login'))->with(["success"=>"Password reset successfully. We have sent an SMS to your phone number. Please check it."]);
+                }else{
+                    return redirect(url('/login'))->with(["error"=>"An internal issue occurred. If you didn't receive any message, please try again."]);
+                }
+            }else{
+                return redirect(url('/login'))->with(["error"=>"An internal issue occurred. If you didn't receive any message, please try again."]);
+            }
         }
     }
 
