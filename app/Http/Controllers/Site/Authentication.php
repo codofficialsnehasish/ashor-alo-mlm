@@ -48,7 +48,7 @@ class Authentication extends Controller
             // return redirect()->back()->withErrors($validator->errors());
             echo json_encode($validator->errors());
         }else{
-            $user = User::where("user_id",'=',$r->sponsorid)->first();
+            $user = User::where("user_id",'=',$r->sponsorid)->where('is_deleted', 0)->first();
             echo json_encode($user->name);
         }
     }
@@ -59,7 +59,19 @@ class Authentication extends Controller
             'mobile' => 'required|digits:10|regex:/^[6789]/|unique:users,phone',
             // 'email' => 'required|email|unique:users,email',
             'password' => 'nullable|min:4|confirmed',
-            'agentid' => 'required|exists:users,user_id',
+            // 'agentid' => 'required|exists:users,user_id',
+            'agentid' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $agentExists = \App\Models\User::where('user_id', $value)
+                        ->where('is_deleted', 0)
+                        ->exists();
+
+                    if (!$agentExists) {
+                        $fail('The selected agent does not exist or has been deleted.');
+                    }
+                },
+            ],
         ]);
         if ($validator->fails()) {
             // return redirect()->back()->withErrors($validator->errors());

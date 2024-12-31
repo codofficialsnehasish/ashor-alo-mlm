@@ -107,17 +107,20 @@ class Admin extends Controller
         $current_day = Carbon::now();
         
         $data['title'] = 'Dashboard';
-        $data['customer_count'] = User::where("role","=","agent")->count();
+        $data['customer_count'] = User::where("role","=","agent")->where('is_deleted', 0)->count();
         $data['active_count'] = User::where("role","=","agent")->where('status',1)->count();
         $data['todays_business'] = TopUp::whereDate("created_at",date('Y-m-d'))->sum('total_amount');
         $data['total_business'] = TopUp::all()->sum('total_amount');
+
         // $data['total_payment'] = Payout::where('paid_unpaid','1')->sum('total_payout');
+
         $lastFridayPayout = Payout::select(DB::raw('SUM(total_payout) as total_payout'))
                                     ->where('paid_unpaid', 1)
                                     ->where(DB::raw('WEEKDAY(end_date)'), 4) // Checks if the end_date is a Friday (4 = Friday in WEEKDAY)
                                     ->orderBy('end_date', 'desc')
                                     ->groupBy('start_date', 'end_date')
                                     ->first();
+
         $data['total_payment'] = $lastFridayPayout->total_payout + Payout::where('paid_unpaid','1')->sum('total_payout');
 
 

@@ -96,6 +96,7 @@ class Customers extends Controller
         try {
             $query = $request->input('query');
             $customers = User::where("role", "!=", "admin")
+                            ->where('is_deleted',0)
                             ->whereAny([
                                         'name',
                                         'email',
@@ -118,6 +119,7 @@ class Customers extends Controller
         try {
             $query = $request->input('query');
             $customers = User::where("role", "!=", "admin")
+                            ->where('is_deleted',0)
                             ->whereAny([
                                         'name',
                                         'email',
@@ -302,7 +304,7 @@ class Customers extends Controller
         $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
 
         $html = '<li>';
-        if(!empty($user->user_id)){
+        if(!empty($user->user_id) && $user->is_deleted != 1){
             $html .= '<a href="' . route('customer.tree-view',$user ? $user->user_id : '') . '" onmouseover="MemberDetails('. $user->user_id.')">
                         <div class="member-view-box n-ppost">
                             <div class="member-header">
@@ -413,7 +415,19 @@ class Customers extends Controller
             'mobile' => 'required|digits:10|regex:/^[6789]/|unique:users,phone',
             // 'email' => 'required|email|unique:users,email',
             // 'password' => 'required|min:4',
-            'agentid' => 'exists:users,user_id',
+            // 'agentid' => 'exists:users,user_id',
+            'agentid' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $agentExists = \App\Models\User::where('user_id', $value)
+                        ->where('is_deleted', 0)
+                        ->exists();
+
+                    if (!$agentExists) {
+                        $fail('The selected agent does not exist or has been deleted.');
+                    }
+                },
+            ],
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
@@ -631,7 +645,19 @@ class Customers extends Controller
 
     public function get_users_of_leaders(Request $r){
         $validator = Validator::make($r->all(), [
-            'user_id' => 'exists:users,user_id',
+            // 'user_id' => 'exists:users,user_id',
+            'user_id' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    $user = \App\Models\User::where('user_id', $value)
+                        ->where('is_deleted', 0)
+                        ->first();
+
+                    if (!$user) {
+                        $fail('The user does not exist or is deleted.');
+                    }
+                },
+            ],
         ]);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
@@ -647,6 +673,11 @@ class Customers extends Controller
             $data['title'] = 'Users of Leader';
             $all_members = array_merge($left_side_members,$right_side_members);
             $data['customer'] = array_filter($all_members, function ($member) use ($start_date, $end_date) {
+                // Ensure the member is not deleted
+                if ($member['is_deleted'] != 0) {
+                    return false;
+                }
+
                 // If both dates are empty, return all members
                 if (empty($start_date) && empty($end_date)) {
                     return true;
@@ -693,6 +724,7 @@ class Customers extends Controller
         $customers = User::where('name', 'like', "%$query%")
                             ->orWhere('user_id', 'like', "%$query%")
                             // ->limit(5)  // Limit number of suggestions
+                            ->where('is_deleted',0)
                             ->distinct()
                             ->get(['user_id', 'name']); // Fetch only the necessary fields
 
