@@ -29,7 +29,7 @@
 
     if (!function_exists('get_customer_by_agent_id')) {
         function get_customer_by_agent_id($agent_id){
-            $customer = DB::table('users')->where('agent_id', $agent_id)->get();
+            $customer = DB::table('users')->where('agent_id', $agent_id)->where('is_deleted', 0)->get();
             return $customer;
         }
     }
@@ -330,12 +330,13 @@
 
     if(!function_exists('getLeftSideMembers')){
         function getLeftSideMembers($user_id) {
-            $user = User::where('parent_id',$user_id)->where('is_left',1)->first();
+            $user = User::where('parent_id',$user_id)->where('is_left',1)->where('is_deleted', 0)->first();
             if(!empty($user)){
                 $user_id = $user->id;
                 $all_customers = [$user];
                 $fetch_customers = function($user_id) use (&$all_customers, &$fetch_customers) {
                     $left_customers = User::where('parent_id', $user_id)
+                                        ->where('is_deleted', 0)
                                         ->get();
                     foreach ($left_customers as $left_customer) {
                         $all_customers[] = $left_customer;
@@ -355,13 +356,14 @@
 
     if(!function_exists('getRightSideMembers')){
         function getRightSideMembers($user_id) {
-            $user = User::where('parent_id',$user_id)->where('is_right',1)->first();
+            $user = User::where('parent_id',$user_id)->where('is_right',1)->where('is_deleted', 0)->first();
             if(!empty($user)){
                 $user_id = $user->id;
                 $all_customers = [$user];
                 $fetch_customers = function($user_id) use (&$all_customers, &$fetch_customers) {
                     $left_customers = User::where('parent_id', $user_id)
-                                          ->get();
+                                            ->where('is_deleted', 0)
+                                            ->get();
                     if(!empty($left_customers)){
                         foreach ($left_customers as $left_customer) {
                             $all_customers[] = $left_customer;

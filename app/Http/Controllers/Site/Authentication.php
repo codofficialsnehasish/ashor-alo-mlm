@@ -59,6 +59,7 @@ class Authentication extends Controller
             'mobile' => 'required|digits:10|regex:/^[6789]/|unique:users,phone',
             // 'email' => 'required|email|unique:users,email',
             'password' => 'nullable|min:4|confirmed',
+            'position' => 'required|in:left,right',
             // 'agentid' => 'required|exists:users,user_id',
             'agentid' => [
                 'required',
@@ -68,14 +69,18 @@ class Authentication extends Controller
                         ->exists();
 
                     if (!$agentExists) {
-                        $fail('The selected agent does not exist or has been deleted.');
+                        $fail('The selected agent does not exist.');
                     }
                 },
             ],
         ]);
         if ($validator->fails()) {
-            // return redirect()->back()->withErrors($validator->errors());
-            echo json_encode($validator->errors());
+            if ($r->is('api/*')) {
+                return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
+            } else {
+                // return redirect()->back()->withErrors($validator->errors());
+                echo json_encode($validator->errors());
+            }
         }else{
             // $obj = new User();
             // $obj->user_id = $r->mobile;
@@ -112,7 +117,15 @@ class Authentication extends Controller
                         'text' => 'Hi,'.$user->name.' Your ID is '.$user->user_id.' and Password is '.$user->decoded_password,
                     )
                 );
-                echo json_encode($data);
+                if ($r->is('api/*')) {
+                    return response()->json([
+                        'status' => "true",
+                        'text' => 'Hi,'.$user->name.' Your ID is '.$user->user_id.' and Password is '.$user->decoded_password,
+                        'message' => 'Signup Successfully'
+                    ], 200);
+                }else{
+                    echo json_encode($data);
+                }
             } catch (\Exception $e) {
                 // return redirect()->back()->with(['error' => $e->getMessage()]);
                 $data = array(
@@ -155,27 +168,78 @@ class Authentication extends Controller
     // }
 
     // Login Process With User ID
-    public function login_process(Request $r){
+    // public function login_process(Request $r){
+    //     $validator = Validator::make($r->all(), [
+    //         'user_id' => 'required|digits:8|exists:users,user_id',
+    //         'password' => 'required|min:4',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator->errors());
+    //     }else{
+    //         $obj = User::where("user_id","=",$r->user_id)->first();
+    //         if($obj->block == 0){
+    //             if(Auth::attempt(['user_id'=>$r->user_id,'password'=>$r->password])){
+    //                 // return redirect()->route('home');
+    //                 return redirect(url('/member-dashboard'));
+    //             }else{
+    //                 return redirect()->back()->withErrors(['message' => 'Invalid Login']);
+    //             }
+    //         }else{
+    //             return redirect()->back()->with('error','Your ID is Blocked');
+    //         }
+    //     }
+    // }
+
+    public function login_process(Request $r)
+    {
         $validator = Validator::make($r->all(), [
             'user_id' => 'required|digits:8|exists:users,user_id',
             'password' => 'required|min:4',
         ]);
+
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator->errors());
-        }else{
-            $obj = User::where("user_id","=",$r->user_id)->first();
-            if($obj->block == 0){
-                if(Auth::attempt(['user_id'=>$r->user_id,'password'=>$r->password])){
-                    // return redirect()->route('home');
+            if ($r->is('api/*')) {
+                return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
+            } else {
+                return redirect()->back()->withErrors($validator->errors());
+            }
+        }
+
+        $obj = User::where("user_id", "=", $r->user_id)->first();
+
+        if ($obj->block == 0) {
+            if (Auth::attempt(['user_id' => $r->user_id, 'password' => $r->password])) {
+                if ($r->is('api/*')) {
+                    $user = Auth::user();
+                    $token = $user->createToken('authToken')->plainTextToken;
+
+                    return response()->json([
+                        'status' => "true",
+                        'token' => $token,
+                        'message' => 'Login successful',
+                        'user' => $user,
+                    ], 200);
+                } else {
                     return redirect(url('/member-dashboard'));
-                }else{
-                    return redirect()->back()->withErrors(['message' => 'Invalid Login']);
                 }
-            }else{
-                return redirect()->back()->with('error','Your ID is Blocked');
+            } else {
+                $errorMessage = ['status' => "false",'message' => 'Invalid Login'];
+                if ($r->expectsJson()) {
+                    return response()->json($errorMessage, 401);
+                } else {
+                    return redirect()->back()->withErrors($errorMessage);
+                }
+            }
+        } else {
+            $blockMessage = 'Your ID is Blocked';
+            if ($r->is('api/*')) {
+                return response()->json(['status' => "false",'error' => $blockMessage], 403);
+            } else {
+                return redirect()->back()->with('error', $blockMessage);
             }
         }
     }
+
 
     public function member_register(){
         $data['title'] = 'Member Register';
@@ -193,7 +257,11 @@ class Authentication extends Controller
             // 'password' => 'required|min:4',
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator->errors());
+            if ($r->is('api/*')) {
+                return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
+            } else {
+                return redirect()->back()->withErrors($validator->errors());
+            }
         }else{
             // in first version
             // Cookie::queue('user_phone', $r->phone, 5);
@@ -205,12 +273,33 @@ class Authentication extends Controller
             // return $responce['statusCode'];
             if(!empty($responce)){
                 if($responce['statusCode'] == 200){
-                    return redirect(url('/login'))->with(["success"=>"Password reset successfully. We have sent an SMS to your phone number. Please check it."]);
+                    if ($r->is('api/*')) {
+                        return response()->json([
+                            'status' => "true",
+                            'message' => 'Password reset successfully. We have sent an SMS to your phone number. Please check it.',
+                        ], 200);
+                    }else{
+                        return redirect(url('/login'))->with(["success"=>"Password reset successfully. We have sent an SMS to your phone number. Please check it."]);
+                    }
+                }else{
+                    if ($r->is('api/*')) {
+                        return response()->json([
+                            'status' => "false",
+                            'message' => "An internal issue occurred. If you didn't receive any message, please try again.",
+                        ], 200);
+                    }else{
+                        return redirect(url('/login'))->with(["error"=>"An internal issue occurred. If you didn't receive any message, please try again."]);
+                    }
+                }
+            }else{
+                if ($r->is('api/*')) {
+                    return response()->json([
+                        'status' => "false",
+                        'message' => "An internal issue occurred. If you didn't receive any message, please try again.",
+                    ], 200);
                 }else{
                     return redirect(url('/login'))->with(["error"=>"An internal issue occurred. If you didn't receive any message, please try again."]);
                 }
-            }else{
-                return redirect(url('/login'))->with(["error"=>"An internal issue occurred. If you didn't receive any message, please try again."]);
             }
         }
     }

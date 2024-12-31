@@ -59,23 +59,40 @@ class User_management extends Controller
         return $all_customers;
     }
 
-    public function all_members(){
+    public function all_members(Request $request){
         $data['title'] = 'All Team';
-        $left_side_members = getLeftSideMembers(Auth::id());
-        $right_side_members = getRightSideMembers(Auth::id());
+        if ($request->is('api/*')) { $user_id = $request->user()->id; }else{ $user_id = Auth::id(); }
+        $left_side_members = getLeftSideMembers($user_id);
+        $right_side_members = getRightSideMembers($user_id);
 
-        // $data['members'] = $this->get_all_customers(Auth::user()->phone);
-        $data['members'] = array_merge($left_side_members,$right_side_members);
-        return view($this->view_path."all_members")->with($data);
+        if ($request->is('api/*')) {
+            $user = User::find($request->user()->id);
+            return response()->json([
+                'status' => "true",
+                'data' => array_merge($left_side_members,$right_side_members)
+            ], 200);
+        }else{
+            // $data['members'] = $this->get_all_customers(Auth::user()->phone);
+            $data['members'] = array_merge($left_side_members,$right_side_members);
+            return view($this->view_path."all_members")->with($data);
+        }
     }
 
-    public function direct(){
-        $data['title'] = 'Direct Members';
-        $data['members'] = User::where('agent_id',Auth::user()->user_id)->get();
-        return view($this->view_path."direct")->with($data);
+    public function direct(Request $request){
+        if ($request->is('api/*')) {
+            $user = User::find($request->user()->id);
+            return response()->json([
+                'status' => "true",
+                'data' => User::where('agent_id',$user->user_id)->where('is_deleted', 0)->get()
+            ], 200);
+        }else{
+            $data['title'] = 'Direct Members';
+            $data['members'] = User::where('agent_id',Auth::user()->user_id)->where('is_deleted', 0)->get();
+            return view($this->view_path."direct")->with($data);
+        }
     }
 
-    public function left_side_members(){
+    public function left_side_members(Request $request){
         $data['title'] = 'Left Side Members';
         // $data['members'] = User::where('agent_id','=',Auth::user()->phone)
         //                         ->where('is_left','=',1)
@@ -91,11 +108,18 @@ class User_management extends Controller
         // };
         // $fetch_customers(Auth::user()->phone);
         // $data['members'] = $all_customers;
-        $data['members'] = getLeftSideMembers(Auth::id());
-        return view($this->view_path."left_side_members")->with($data);
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => "true",
+                'data' => getLeftSideMembers($request->user()->id)
+            ], 200);
+        }else{
+            $data['members'] = getLeftSideMembers(Auth::id());
+            return view($this->view_path."left_side_members")->with($data);
+        }
     }
 
-    public function right_side_members(){
+    public function right_side_members(Request $request){
         $data['title'] = 'Right Side Members';
         // $data['members'] = User::where('agent_id','=',Auth::user()->phone)
         //                         ->where('is_right','=',1)
@@ -111,8 +135,15 @@ class User_management extends Controller
         // };
         // $fetch_customers(Auth::user()->phone);
         // $data['members'] = $all_customers;
-        $data['members'] = getRightSideMembers(Auth::id());
-        return view($this->view_path."right_side_members")->with($data);
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => "true",
+                'data' => getRightSideMembers($request->user()->id)
+            ], 200);
+        }else{
+            $data['members'] = getRightSideMembers(Auth::id());
+            return view($this->view_path."right_side_members")->with($data);
+        }
     }
 
     // public function tree_view(){
@@ -248,7 +279,7 @@ class User_management extends Controller
         $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
 
         $html = '<li>';
-        if(!empty($user->user_id)){
+        if(!empty($user->user_id) && $user->is_deleted != 1){
             $html .= '<a href="' . route('member.tree-view',$user ? $user->user_id : '') . '">
                         <div class="member-view-box n-ppost">
                             <div class="member-header">
