@@ -549,9 +549,38 @@ class Customers extends Controller
     }
 
     public function customerdel(Request $r){
-        $custo = User::find($r->id);
-        $custo->is_deleted = 1;
-        $result = $custo->update();
+        $user = User::find($r->id);
+
+        // $parent = $user->parent;
+        
+        // Retrieve children of the user
+        $leftChild = $user->children->firstWhere('is_left', 1);
+        $rightChild = $user->children->firstWhere('is_right', 1);
+
+        if($leftChild || $rightChild){
+            return redirect()->back()->with(['error'=>'Cannot delete this user as they have children.']);
+        }
+ 
+        // // Reconnect children to the parent
+        // if ($parent) {
+        //     if ($leftChild) {
+        //         $leftChild->parent_id = $parent->id;
+        //         $leftChild->is_left = $user->is_left;
+        //         $leftChild->is_right = $user->is_right;
+        //         $leftChild->save();
+        //     }
+
+        //     if ($rightChild) {
+        //         $rightChild->parent_id = $parent->id;
+        //         $rightChild->is_right = $user->is_right;
+        //         $rightChild->is_left = $user->is_left;
+        //         $rightChild->save();
+        //     }
+        // }
+
+
+        $user->is_deleted = 1;
+        $result = $user->update();
         // $result = $custo->delete();
         if($result){
             return redirect()->back()->with(['success'=>'Data Deleted Successfully']);
