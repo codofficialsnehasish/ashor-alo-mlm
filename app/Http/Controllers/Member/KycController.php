@@ -18,10 +18,42 @@ class KycController extends Controller
     }
 
     //============================ User Part ====================
-    public function index(){
-        $data['title'] = 'KYC';
-        $data['kyc'] = Kyc::where('user_id',Auth::id())->first();
-        return view($this->view_path.'index')->with($data);
+    public function index(Request $request){
+        if ($request->is('api/*')) {
+            return response()->json([
+                'status' => "true",
+                'data' => [
+                    "status_info" => [
+                        ["status = 0"=>"Pending"],
+                        ["status = 1"=>"Completed"],
+                        ["status = 2"=>"Cancelled"],
+                    ],
+                    "kyc"=>Kyc::where('user_id',$request->user()->id)->first(),
+                    "identy_proof_type"=>[
+                        ["recive_value"=>"Aadhar_Card","show_name"=>"Aadhar Card"],
+                        ["recive_value"=>"Voter_Card","show_name"=>"Voter Card"],
+                        ["recive_value"=>"Pan_Card","show_name"=>"Pan Card"],
+                        ["recive_value"=>"Passport","show_name"=>"Passport"],
+                        ["recive_value"=>"Driving_Licence","show_name"=>"Driving Licence"],
+                    ],
+                    "address_proof_type"=>[
+                        ["recive_value"=>"Aadhar_Card","show_name"=>"Aadhar Card"],
+                        ["recive_value"=>"Voter_Card","show_name"=>"Voter Card"],
+                        ["recive_value"=>"Passport","show_name"=>"Passport"],
+                        ["recive_value"=>"Driving_Licence","show_name"=>"Driving Licence"],
+                    ],
+                    "bank_proof_type"=>[
+                        ["recive_value"=>"Passbook","show_name"=>"Passbook"],
+                        ["recive_value"=>"Cheque","show_name"=>"Cheque"],
+                    ]
+                ]
+            ], 200);
+        }
+        else{
+            $data['title'] = 'KYC';
+            $data['kyc'] = Kyc::where('user_id',Auth::id())->first();
+            return view($this->view_path.'index')->with($data);
+        }
     }
 
     public function upload_kyc_data(Request $request){
@@ -132,6 +164,156 @@ class KycController extends Controller
                     return back()->with(['success'=>'KYC Submitted Successfully.']);
                 }else{
                     return back()->with(['error'=>'KYC not submitted. Please try again later.']);
+                }
+            }
+        }
+    }
+
+    public function upload_kyc_data_api(Request $request){
+        $validator = Validator::make($request->all(), [
+            'identy_proof_type' => 'required',
+            'address_proof_type' => 'required',
+            'bank_proof_type' => 'required',
+            'identityFile' => 'nullable',
+            'addressFile' => 'nullable',
+            'bankFile' => 'nullable',
+            'panProofFile' => 'nullable',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
+        }else{
+            if($request->user()->status != 1){
+                return response()->json(['status' => "false",'error'=>'KYC not submitted. You Need to active First.']);
+            }
+            $kyc = Kyc::where('user_id',$request->user()->id)->first();
+            if(!empty($kyc)){
+                // return back()->with(['error'=>'this user kyc already exists']);
+                $kyc->identy_proof_type = $request->identy_proof_type;
+                $kyc->address_proof_type = $request->address_proof_type;
+                $kyc->bank_ac_proof_type = $request->bank_proof_type;
+                if ($request->has('identityFile') && !empty($request->input('identityFile'))) {
+                    $base64Image = $request->input('identityFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $kyc->identy_proof = $filePath;
+                    }
+                    $kyc->identy_proof_status = 0;
+                }
+                if ($request->has('addressFile') && !empty($request->input('addressFile'))) {
+                    $base64Image = $request->input('addressFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $kyc->address_proof = $filePath;
+                    }
+                    $kyc->address_proof_status = 0;
+                }
+                if ($request->has('bankFile') && !empty($request->input('bankFile'))) {
+                    $base64Image = $request->input('bankFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $kyc->bank_ac_proof = $filePath;
+                    }
+                    $kyc->bank_ac_proof_status = 0;
+                }
+                if ($request->has('panProofFile') && !empty($request->input('panProofFile'))) {
+                    $base64Image = $request->input('panProofFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $kyc->pan_card_proof = $filePath;
+                    }
+                    $kyc->pan_card_proof_status	 = 0;
+                }
+                $kyc->is_confirmed = 0;
+                $res = $kyc->update();
+                if($res){
+                    return response()->json(['status' => "true",'success'=>'KYC Submitted Successfully.']);
+                }else{
+                    return back()->with(['status' => "false",'error'=>'KYC not submitted. Please try again later.']);
+                }
+            }else{
+                $newKyc = new Kyc();
+                $newKyc->user_id = $request->user()->id;
+                $newKyc->identy_proof_type = $request->identy_proof_type;
+                $newKyc->address_proof_type = $request->address_proof_type;
+                $newKyc->bank_ac_proof_type = $request->bank_proof_type;
+
+                if ($request->has('identityFile') && !empty($request->input('identityFile'))) {
+                    $base64Image = $request->input('identityFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $newKyc->identy_proof = $filePath;
+                    }
+                }
+
+                if ($request->has('addressFile') && !empty($request->input('addressFile'))) {
+                    $base64Image = $request->input('addressFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $newKyc->address_proof = $filePath;
+                    }
+                }
+
+                if ($request->has('bankFile') && !empty($request->input('bankFile'))) {
+                    $base64Image = $request->input('bankFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $newKyc->bank_ac_proof = $filePath;
+                    }
+                }
+
+                if ($request->has('panProofFile') && !empty($request->input('panProofFile'))) {
+                    $base64Image = $request->input('panProofFile');
+                    $decodedImage = base64_decode($base64Image);
+                    if ($decodedImage !== false) {
+                        $filename = uniqid() . '.png';
+                        $directory = public_path('web_directory/kyc_proof');
+                        $filePath = $directory . '/' . $filename;
+                        file_put_contents($filePath, $decodedImage);
+                        $filePath = "web_directory/kyc_proof/".$filename;
+                        $newKyc->pan_card_proof = $filePath;
+                    }
+                }
+
+                $res = $newKyc->save();
+                if($res){
+                    return response()->json(['status' => "true",'message'=>'KYC Submitted Successfully.']);
+                }else{
+                    return response()->json(['status' => "false",'message'=>'KYC not submitted. Please try again later.']);
                 }
             }
         }

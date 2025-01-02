@@ -45,11 +45,22 @@ class Authentication extends Controller
             'sponsorid' => 'exists:users,user_id',
         ]);
         if ($validator->fails()) {
-            // return redirect()->back()->withErrors($validator->errors());
-            echo json_encode($validator->errors());
+            if ($r->is('api/*')) {
+                return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
+            } else {
+                // return redirect()->back()->withErrors($validator->errors());
+                echo json_encode($validator->errors());
+            }
         }else{
             $user = User::where("user_id",'=',$r->sponsorid)->where('is_deleted', 0)->first();
-            echo json_encode($user->name);
+            if ($r->is('api/*')) {
+                return response()->json([
+                    'status' => "true",
+                    'data' => ["name"=>$user->name]
+                ], 200);
+            }else{
+                echo json_encode($user->name);
+            }
         }
     }
 
