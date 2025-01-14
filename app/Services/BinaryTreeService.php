@@ -12,20 +12,50 @@ class BinaryTreeService
         $this->lavelservice = $lavelservice;
     }
 
-    public function findDeepestLeftChild($userId)
+    // version 1
+    /*public function findDeepestLeftChild($userId)
     {
         $user = User::find($userId);
         while ($user && $user->children->where('is_left', 1)->count() > 0) {
             $user = $user->children->where('is_left', 1)->first();
         }
         return $user;
+    }*/
+
+    // version 2
+    public function findDeepestLeftChild($userId)
+    {
+        $user = User::find($userId);
+        while ($user) {
+            $leftChild = $user->children->where('is_left', 1)->where('is_deleted', 0)->first();
+            if (!$leftChild) {
+                break; // No valid left child found
+            }
+            $user = $leftChild; // Move to the next left child
+        }
+        return $user;
     }
 
-    public function findDeepestRightChild($userId)
+    // version 1
+    /*public function findDeepestRightChild($userId)
     {
         $user = User::find($userId);
         while ($user && $user->children->where('is_right', 1)->count() > 0) {
             $user = $user->children->where('is_right', 1)->first();
+        }
+        return $user;
+    }*/
+
+    // version 2
+    public function findDeepestRightChild($userId)
+    {
+        $user = User::find($userId);
+        while ($user) {
+            $rightChild = $user->children->where('is_right', 1)->where('is_deleted', 0)->first();
+            if (!$rightChild) {
+                break; // No valid right child found
+            }
+            $user = $rightChild; // Move to the next right child
         }
         return $user;
     }

@@ -88,7 +88,7 @@ function confirmDelete(val) {
                                     'Your current session has been deleted.',
                                     'success'
                             ).then((e) => {
-                                    window.location.href = '/';
+                                    window.location.href = '/admin-login';
                             })
                         }
                     });

@@ -6,6 +6,7 @@
     use App\Models\Orders;
     use App\Models\User;
     use App\Models\OrderProducts;
+    use App\Models\Categorie;
     
     if (!function_exists('update_order_number')) {
         function update_order_number($order_id)
@@ -50,6 +51,20 @@
             }
             
             return $product;
+        }
+    }
+
+    if (!function_exists('get_product_category_name_by_order_id')){
+        function get_product_category_name_by_order_id($order_id){
+            // $orders = Orders::find($order_id);
+            $order_products_id = OrderProducts::where('order_id',$order_id)->value('product_id');
+            $category_id = Products::where('id',$order_products_id)->value('category_id');
+            $category = Categorie::find($category_id);
+            if($category){
+                return $category->name;
+            }else{
+                return "";
+            }
         }
     }
 

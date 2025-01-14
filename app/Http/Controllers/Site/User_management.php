@@ -166,117 +166,121 @@ class User_management extends Controller
         return view($this->view_path."tree_view", compact('html','title'));
     }
     
-    // private function generateTreeHtml($user, $currentDepth = 0){
-    //     if ($currentDepth > 3) {
-    //         return '';
-    //     }
-
-    //     $leftChild = $user ? $user->children->firstWhere('is_left', 1) : null;
-    //     $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
-
-    //     $html = '<li>';
-    //     if(!empty($user->user_id)){
-    //         $html .= '<a href="' . route('member.tree-view',$user ? $user->user_id : '') . '">
-    //                     <div class="member-view-box n-ppost">
-    //                         <div class="member-header">
-    //                             <span></span>
-    //                         </div>
-    //                         <div class="member-image">
-    //                             <img src="' . (!empty($user->user_image) ? asset($user->user_image) : asset('dashboard_assets/images/users/user-14.png')) . '" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;border: 3px solid ' . ($user && $user->status == 1 ? 'green' : 'red') . ';" alt="Member" class="rounded-circle">
-    //                         </div>
-    //                         <div class="member-footer">
-    //                             <div class="name"><span>' . ($user ? $user->name : '') . '</span></div>
-    //                             <div class="downline"><span>(' . ($user ? $user->user_id : '') . ')</span></div>
-    //                         </div>
-    //                     </div>
-    //                     <div class="n-ppost-name">
-    //                         <div class="element">
-    //                             <label>Name :</label> <strong style="padding-left: 50px;">' . ($user ? $user->name : '') . '</strong>
-    //                         </div>
-    //                         <div class="left">
-    //                             <div class="element">
-    //                                 <label>Sponsor ID :</label> <strong>' . ($user ? $user->agent_id : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Joining Date :</label> <strong>' . ($user ? formated_date($user->created_at) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Register (Left) :</label> <strong>' . ($user ? register_left($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Activated (Left) :</label> <strong>' . ($user ? activated_left($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Total Left :</label> <strong>' . ($user ? total_left($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Curr. Left BV :</label> <strong>'.($user ? calculate_curr_left_business($user->id) : '').'</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Total Left BV :</label> <strong>'. ($user ? calculate_left_business($user->id) : '') .'</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Total User :</label> <strong>' . ($user ? total_user($user->id) : '') . '</strong>
-    //                             </div>
-    //                         </div>
-    //                         <div class="right">
-    //                             <div class="element">
-    //                                 <label>Rank :</label> <strong></strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Confirm Date :</label> <strong></strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Register (Right) :</label> <strong>' . ($user ? register_right($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Activated (Right) :</label> <strong>' . ($user ? activated_right($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Total Right :</label> <strong>' . ($user ? total_right($user->id) : '') . '</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Curr. Right BV :</label> <strong>'.($user ? calculate_curr_right_business($user->id) : '').'</strong>
-    //                             </div>
-    //                             <div class="element">
-    //                                 <label>Total Right BV :</label> <strong>'. ($user ? calculate_right_business($user->id) : '') .'</strong>
-    //                             </div>
-    //                         </div>
-    //                     </div>
-    //                 </a>';
-    //     }else{
-    //         $html .= '<a href="javascript:void(0);">
-    //         <div class="member-view-box">
-    //             <div class="member-header">
-    //                 <span></span>
-    //             </div>
-    //             <div class="member-image">
-    //                 <img src="'. asset('dashboard_assets/images/users/user-16.png') .'" style="width: 70px;height: 70px;border-radius: 50%;object-fit: cover;" alt="Member" class="rounded-circle">
-    //             </div>
-    //             <div class="member-footer">
-    //                 <div class="name"><span> </span></div>
-    //                 <div class="downline"><span> </span></div>
-    //             </div>
-    //         </div>
-    //     </a>';
-    //     }
-    //     if($currentDepth != 3){
-    //         $html .= '<ul class="active">'
-    //                     . $this->generateTreeHtml($leftChild, $currentDepth + 1) .
-    //                     $this->generateTreeHtml($rightChild, $currentDepth + 1) .
-    //                 '</ul>
-    //             </li>';
-    //     }
-    //     return $html;
-    // }
-
-    private function generateTreeHtml($user, $currentDepth = 0){
+    /*private function generateTreeHtml($user, $currentDepth = 0){
         if ($currentDepth > 3) {
             return '';
         }
 
         $leftChild = $user ? $user->children->firstWhere('is_left', 1) : null;
         $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
+
+        $html = '<li>';
+        if(!empty($user->user_id)){
+            $html .= '<a href="' . route('member.tree-view',$user ? $user->user_id : '') . '">
+                        <div class="member-view-box n-ppost">
+                            <div class="member-header">
+                                <span></span>
+                            </div>
+                            <div class="member-image">
+                                <img src="' . (!empty($user->user_image) ? asset($user->user_image) : asset('dashboard_assets/images/users/user-14.png')) . '" style="width: 50px;height: 50px;border-radius: 50%;object-fit: cover;border: 3px solid ' . ($user && $user->status == 1 ? 'green' : 'red') . ';" alt="Member" class="rounded-circle">
+                            </div>
+                            <div class="member-footer">
+                                <div class="name"><span>' . ($user ? $user->name : '') . '</span></div>
+                                <div class="downline"><span>(' . ($user ? $user->user_id : '') . ')</span></div>
+                            </div>
+                        </div>
+                        <div class="n-ppost-name">
+                            <div class="element">
+                                <label>Name :</label> <strong style="padding-left: 50px;">' . ($user ? $user->name : '') . '</strong>
+                            </div>
+                            <div class="left">
+                                <div class="element">
+                                    <label>Sponsor ID :</label> <strong>' . ($user ? $user->agent_id : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Joining Date :</label> <strong>' . ($user ? formated_date($user->created_at) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Register (Left) :</label> <strong>' . ($user ? register_left($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Activated (Left) :</label> <strong>' . ($user ? activated_left($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Total Left :</label> <strong>' . ($user ? total_left($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Curr. Left BV :</label> <strong>'.($user ? calculate_curr_left_business($user->id) : '').'</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Total Left BV :</label> <strong>'. ($user ? calculate_left_business($user->id) : '') .'</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Total User :</label> <strong>' . ($user ? total_user($user->id) : '') . '</strong>
+                                </div>
+                            </div>
+                            <div class="right">
+                                <div class="element">
+                                    <label>Rank :</label> <strong></strong>
+                                </div>
+                                <div class="element">
+                                    <label>Confirm Date :</label> <strong></strong>
+                                </div>
+                                <div class="element">
+                                    <label>Register (Right) :</label> <strong>' . ($user ? register_right($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Activated (Right) :</label> <strong>' . ($user ? activated_right($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Total Right :</label> <strong>' . ($user ? total_right($user->id) : '') . '</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Curr. Right BV :</label> <strong>'.($user ? calculate_curr_right_business($user->id) : '').'</strong>
+                                </div>
+                                <div class="element">
+                                    <label>Total Right BV :</label> <strong>'. ($user ? calculate_right_business($user->id) : '') .'</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </a>';
+        }else{
+            $html .= '<a href="javascript:void(0);">
+            <div class="member-view-box">
+                <div class="member-header">
+                    <span></span>
+                </div>
+                <div class="member-image">
+                    <img src="'. asset('dashboard_assets/images/users/user-16.png') .'" style="width: 70px;height: 70px;border-radius: 50%;object-fit: cover;" alt="Member" class="rounded-circle">
+                </div>
+                <div class="member-footer">
+                    <div class="name"><span> </span></div>
+                    <div class="downline"><span> </span></div>
+                </div>
+            </div>
+        </a>';
+        }
+        if($currentDepth != 3){
+            $html .= '<ul class="active">'
+                        . $this->generateTreeHtml($leftChild, $currentDepth + 1) .
+                        $this->generateTreeHtml($rightChild, $currentDepth + 1) .
+                    '</ul>
+                </li>';
+        }
+        return $html;
+    }*/
+
+    private function generateTreeHtml($user, $currentDepth = 0){
+        if ($currentDepth > 3) {
+            return '';
+        }
+
+        // $leftChild = $user ? $user->children->firstWhere('is_left', 1) : null;
+        // $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
+
+
+        $leftChild = $user ? $user->children->where('is_left', 1)->where('is_deleted', 0)->first() : null;
+        $rightChild = $user ? $user->children->where('is_right', 1)->where('is_deleted', 0)->first() : null;
 
         $html = '<li>';
         if(!empty($user->user_id) && $user->is_deleted != 1){
@@ -320,6 +324,48 @@ class User_management extends Controller
         return $html;
     }
 
+    // for API
+    public function tree_view_array(Request $request, $q_user_id=null) {
+        if(empty($q_user_id)){
+            $rootUsers = User::where('user_id', $request->user()->user_id)->where('role', 'agent')->get();
+        }else{
+            if(User::where('user_id', $q_user_id)->exists()){
+                $rootUsers = User::where('role','agent')->where('user_id',$q_user_id)->get();
+            }else{
+                return response()->json(['status' => "false",'massage' => 'User id not exists'], 422);
+            }
+        }
+    
+        $treeData = [];
+        foreach ($rootUsers as $user) {
+            $treeData[] = $this->generateTreeArray($user);
+        }
+    
+        return response()->json([
+            'status' => "true",
+            'data' => $treeData,
+        ]);
+    }
+    
+    private function generateTreeArray($user, $currentDepth = 0) {
+        if ($currentDepth > 3 || !$user) {
+            return null;
+        }
+    
+        $leftChild = $user->children->where('is_left', 1)->where('is_deleted', 0)->first();
+        $rightChild = $user->children->where('is_right', 1)->where('is_deleted', 0)->first();
+    
+        return [
+            'user_id' => $user->user_id,
+            'name' => $user->name,
+            'image' => !empty($user->user_image) ? asset($user->user_image) : asset('dashboard_assets/images/users/user-14.png'),
+            'status' => $user->status == 1 ? 'active' : 'inactive',
+            'left_child' => $this->generateTreeArray($leftChild, $currentDepth + 1),
+            'right_child' => $this->generateTreeArray($rightChild, $currentDepth + 1),
+        ];
+    }
+    // end of API
+
     public function level_view(){
         $data['title'] = 'Level View';
         $left_side_members = getLeftSideMembers(Auth::id());
@@ -329,6 +375,55 @@ class User_management extends Controller
         $data['members'] = array_merge($left_side_members,$right_side_members);
         return view($this->view_path."level_view")->with($data);
     }
+
+    public function level_view_api(Request $request)
+    {
+        $left_side_members = getLeftSideMembers($request->user()->id);
+        $right_side_members = getRightSideMembers($request->user()->id);
+
+        // Combine left and right side members
+        $all_members = array_merge($left_side_members, $right_side_members);
+
+        // Build customer tree and levels
+        $customerTree = get_customer_tree($request->user()->user_id);
+        $levels = [];
+        $level_data = build_customer_array($customerTree, $levels);
+
+        $maxLevels = 40; // Maximum levels to include in the output
+        $total_members = 0;
+        $level_response = [];
+
+        foreach ($levels as $level => $customers) {
+            $currentLevel = substr($level, 5); // Extract level number
+            if ($currentLevel <= $maxLevels) {
+                $total_members += count($customers);
+                // Customize each customer's data
+                $customized_customers = array_map(function ($customer) {
+                    return [
+                        // 'id' => $customer['id'],
+                        'reg_date' => $customer['reg_date'],
+                        'id' => $customer['user_id'],
+                        'name' => $customer['name'],
+                        'position' => $customer['position'],
+                        // 'phone' => $customer['phone'],
+                        'sponsor_id' => $customer['agent_id'],
+                        'status' => strip_tags($customer['status']), // Remove HTML tags from status
+                    ];
+                }, $customers);
+                $level_response[] = [
+                    'level' => $currentLevel,
+                    'customers' => $customized_customers,
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'total_members' => $total_members,
+            'levels' => $level_response,
+        ]);
+    }
+
 
 
 

@@ -69,6 +69,7 @@
                                         <th class="text-wrap">Name</th>
                                         <th class="text-wrap">ID</th>
                                         <th class="text-wrap">Total Hold Wallet Amount</th>
+                                        <th class="text-wrap">Total Hold Amount</th>
                                         <th class="text-wrap">Payout Date</th>
                                         <th class="text-wrap">Account Name (As Per Bank)</th>
                                         <th class="text-wrap">Bank Name</th>
@@ -79,13 +80,16 @@
                                 </thead>
                                 <tbody>
                                     @php $amount = 0 @endphp
+                                    @php $hold_amount = 0 @endphp
                                     @foreach($items as $item)
                                     @php $amount += $item->hold_wallet @endphp
+                                    @php $hold_amount += $item->hold_amount @endphp
                                     @php $user = get_user_details($item->user_id) @endphp
                                     <tr>
                                         <td class="text-wrap">{{ get_name($item->user_id) }}</td>
                                         <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
                                         <td class="text-wrap">{{ $item->hold_wallet }}</td>
+                                        <td class="text-wrap">{{ $item->hold_amount }}</td>
                                         <td class="text-wrap">{{ $item->start_date }} - {{ $item->end_date }}</td>
                                         <td class="text-wrap">{{ $user->account_name }}</td>
                                         <td class="text-wrap">{{ $user->bank_name }}</td>
@@ -99,7 +103,8 @@
                                     <tr>
                                         <td></td>
                                         <td></td>
-                                        <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td class="text-wrap"><b>Total Amount - {{ $amount }}</b></td>
+                                        <td class="text-wrap"><b>Total Amount - {{ $hold_amount }}</b></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

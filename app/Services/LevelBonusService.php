@@ -53,51 +53,51 @@ class LevelBonusService
                 Carbon::parse($date)->format('Y-m-d H:i:s')
             );
 
-            // if(check_limit($user->id)){
-            //     if(get_user_limit($user->id) > ($user->account_balance + $bonus) ){
-            //         $user->account_balance += $bonus;
-            //         // Level Bonus transaction
-            //         $transactionAdded = $this->transaction->make_transaction(
-            //             $user->id,
-            //             $bonus,
-            //             'Level Bonus',
-            //             1,
-            //             Carbon::parse($date)->format('Y-m-d H:i:s'),
-            //             Carbon::parse($date)->format('Y-m-d H:i:s')
-            //         );
-            //     }else{
-            //         $gap = get_user_limit($user->id) - $user->account_balance;
-            //         $user->account_balance += $gap;
-            //         $transactionAdded = $this->transaction->make_transaction(
-            //             $user->id,
-            //             $gap,
-            //             'Level Bonus',
-            //             1,
-            //             Carbon::parse($date)->format('Y-m-d H:i:s'),
-            //             Carbon::parse($date)->format('Y-m-d H:i:s')
-            //         );
-            //         $bonus = abs($bonus - $gap); 
-            //         $user->hold_balance += $bonus;
-            //         $transactionAdded = $this->transaction->make_transaction(
-            //             $user->id,
-            //             $bonus,
-            //             'Level Bonus on Hold',
-            //             1,
-            //             Carbon::parse($date)->format('Y-m-d H:i:s'),
-            //             Carbon::parse($date)->format('Y-m-d H:i:s')
-            //         );
-            //     }
-            // }else{
-            //     $user->hold_balance += $bonus;
-            //     $transactionAdded = $this->transaction->make_transaction(
-            //         $user->id,
-            //         $bonus,
-            //         'Level Bonus on Hold',
-            //         1,
-            //         Carbon::parse($date)->format('Y-m-d H:i:s'),
-            //         Carbon::parse($date)->format('Y-m-d H:i:s')
-            //     );
-            // }
+            /*if(check_limit($user->id)){
+                if(get_user_limit($user->id) > ($user->account_balance + $bonus) ){
+                    $user->account_balance += $bonus;
+                    // Level Bonus transaction
+                    $transactionAdded = $this->transaction->make_transaction(
+                        $user->id,
+                        $bonus,
+                        'Level Bonus',
+                        1,
+                        Carbon::parse($date)->format('Y-m-d H:i:s'),
+                        Carbon::parse($date)->format('Y-m-d H:i:s')
+                    );
+                }else{
+                    $gap = get_user_limit($user->id) - $user->account_balance;
+                    $user->account_balance += $gap;
+                    $transactionAdded = $this->transaction->make_transaction(
+                        $user->id,
+                        $gap,
+                        'Level Bonus',
+                        1,
+                        Carbon::parse($date)->format('Y-m-d H:i:s'),
+                        Carbon::parse($date)->format('Y-m-d H:i:s')
+                    );
+                    $bonus = abs($bonus - $gap); 
+                    $user->hold_balance += $bonus;
+                    $transactionAdded = $this->transaction->make_transaction(
+                        $user->id,
+                        $bonus,
+                        'Level Bonus on Hold',
+                        1,
+                        Carbon::parse($date)->format('Y-m-d H:i:s'),
+                        Carbon::parse($date)->format('Y-m-d H:i:s')
+                    );
+                }
+            }else{
+                $user->hold_balance += $bonus;
+                $transactionAdded = $this->transaction->make_transaction(
+                    $user->id,
+                    $bonus,
+                    'Level Bonus on Hold',
+                    1,
+                    Carbon::parse($date)->format('Y-m-d H:i:s'),
+                    Carbon::parse($date)->format('Y-m-d H:i:s')
+                );
+            }*/
 
             $user->update();
         }
@@ -220,6 +220,7 @@ class LevelBonusService
                 'Level Bonus',
                 1,
                 $main_user_id,
+                null,
                 Carbon::parse($date)->format('Y-m-d H:i:s'),
                 Carbon::parse($date)->format('Y-m-d H:i:s')
             );

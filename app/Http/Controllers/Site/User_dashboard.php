@@ -213,6 +213,28 @@ class User_dashboard extends Controller
         return view($this->view_path.'profile.edit_profile')->with($data);
     }
 
+    public function get_profile_api(Request $request){
+        $data['user'] = $request->user();
+        $data['countries'] = LocationCountries::where('is_visible',1)->get();
+        $data['nominee_states'] = LocationStates::where('country_id',99)->get();
+        if(!empty(Auth::user()->nominee_state_id)){
+            $data['nominee_cities'] = LocationCities::where('is_visible',1)->where('state_id',$request->user()->nominee_state_id)->get();
+        }
+
+        if(!empty(Auth::user()->country)){
+            $data['states'] = LocationStates::where('is_visible',1)->where('country_id',$request->user()->country)->get();
+        }
+
+        if(!empty(Auth::user()->state)){
+            $data['cities'] = LocationCities::where('is_visible',1)->where('state_id',$request->user()->state)->get();
+        }
+        
+        return response()->json([
+            'status' => "true",
+            'data' => $data
+        ], 200);
+    }
+
     public function process_update_profile(Request $request){
         $user = User::find($request->user_id);
         if ($request->hasFile('user_image')) {
@@ -231,6 +253,28 @@ class User_dashboard extends Controller
         }
     }
 
+    public function process_update_profile_api(Request $request){
+        $user = User::find($request->user()->id);
+        if ($request->has('user_image') && !empty($request->input('user_image'))) {
+            $base64Image = $request->input('user_image');
+            $decodedImage = base64_decode($base64Image);
+            if ($decodedImage !== false) {
+                $filename = uniqid() . '.png';
+                $directory = public_path('web_directory/users_profile_picture');
+                $filePath = $directory . '/' . $filename;
+                file_put_contents($filePath, $decodedImage);
+                $filePath = "web_directory/users_profile_picture/".$filename;
+                $user->user_image = $filePath;
+            }
+        }
+        $res = $user->update();
+        return response()->json([
+            'status' => "true",
+            'massage' => "Profile Picture Updated Successfully",
+            'data' => $user
+        ], 200);
+    }
+
     public function change_password(){
         $data['title'] = 'Change Password';
         return view($this->view_path.'profile.change_password')->with($data);
@@ -238,10 +282,12 @@ class User_dashboard extends Controller
 
     public function update_profile_details(Request $r){
         $validator = Validator::make($r->all(), [
-            'user_id' => 'required|numeric|exists:users,id',
+            // 'user_id' => 'required|numeric|exists:users,id',
             // 'name' => 'nullable',
             'father_or_husband_name' => 'required',
-            'gender' => 'required',
+            'date_of_birth' => 'date|before:today',
+            'gender' => 'required|in:Male,Female,Others',
+            'marital_status' => 'nullable|in:Married,Unmarried',
             // 'phone' => 'required',
             'pin_code' => 'required',
             'shipping_address' => 'required',
@@ -251,9 +297,14 @@ class User_dashboard extends Controller
             'city' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
         }else{
-            $user = User::find($r->user_id);
+            if ($r->is('api/*')) {
+                $user = User::find($request->user()->id);
+            }else{
+                $user = User::find(Auth::user()->id);
+            }
+
             // $user->name = $r->name;
             $user->father_or_husband_name = $r->father_or_husband_name;
             $user->date_of_birth = $r->date_of_birth;
@@ -270,18 +321,34 @@ class User_dashboard extends Controller
             $user->state = $r->state;
             $user->city = $r->city;
             $res = $user->update();
-            if($res){
-                return response()->json([
-                    'status' => 1,
-                    'massage' => 'Profile Details Updated Successfully',
-                    'data' => $user
-                ]);
+            if ($r->is('api/*')) {
+                if($res){
+                    return response()->json([
+                        'status' => "true",
+                        'massage' => 'Profile Details Updated Successfully',
+                        'data' => $user
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => "false",
+                        'massage' => 'Profile Details Not Updated, Please try again',
+                        'data' => []
+                    ]);
+                }
             }else{
-                return response()->json([
-                    'status' => 0,
-                    'massage' => 'Profile Details Not Updated, Please try again',
-                    'data' => []
-                ]);
+                if($res){
+                    return response()->json([
+                        'status' => 1,
+                        'massage' => 'Profile Details Updated Successfully',
+                        'data' => $user
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => 0,
+                        'massage' => 'Profile Details Not Updated, Please try again',
+                        'data' => []
+                    ]);
+                }
             }
         }
     }
@@ -289,18 +356,23 @@ class User_dashboard extends Controller
 
     public function update_nominee_details(Request $r){
         $validator = Validator::make($r->all(), [
-            'user_id' => 'required|numeric|exists:users,id',
+            // 'user_id' => 'required|numeric|exists:users,id',
             'nominee_name' => 'required',
             'nominee_relation' => 'required',
-            'nominee_dob' => 'required',
+            'nominee_dob' => 'required|before:today',
             'nominee_address' => 'required',
             'nominee_state_id' => 'required',
             'nominee_city_id' => 'required',
         ]);
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
         }else{
-            $user = User::find($r->user_id);
+            if ($r->is('api/*')) {
+                $user = User::find($request->user()->id);
+            }else{
+                $user = User::find(Auth::user()->id);
+            }
+            // $user = User::find(Auth::user()->id);
             $user->nominee_name = $r->nominee_name;
             $user->nominee_relation = $r->nominee_relation;
             $user->nominee_dob = $r->nominee_dob;
@@ -308,36 +380,57 @@ class User_dashboard extends Controller
             $user->nominee_state_id = $r->nominee_state_id;
             $user->nominee_city_id = $r->nominee_city_id;
             $res = $user->update();
-            if($res){
-                return response()->json([
-                    'status' => 1,
-                    'massage' => 'Nominee Details Updated Successfully',
-                    'data' => $user
-                ]);
+            if ($r->is('api/*')) {
+                if($res){
+                    return response()->json([
+                        'status' => "true",
+                        'massage' => 'Nominee Details Updated Successfully',
+                        'data' => $user
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => "false",
+                        'massage' => 'Nominee Details Not Updated, Please try again',
+                        'data' => []
+                    ]);
+                }
             }else{
-                return response()->json([
-                    'status' => 0,
-                    'massage' => 'Nominee Details Not Updated, Please try again',
-                    'data' => []
-                ]);
+                if($res){
+                    return response()->json([
+                        'status' => 1,
+                        'massage' => 'Nominee Details Updated Successfully',
+                        'data' => $user
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => 0,
+                        'massage' => 'Nominee Details Not Updated, Please try again',
+                        'data' => []
+                    ]);
+                }
             }
         }
     }
 
 
     public function update_bank_details(Request $r){
-        $validator = Validator::make($r->all(), [
-            'user_id' => 'required|numeric|exists:users,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        // $validator = Validator::make($r->all(), [
+        //     'user_id' => 'required|numeric|exists:users,id',
+        // ]);
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+        if ($r->is('api/*')) {
+            $user = User::find($request->user()->id);
+        }else{
+            $user = User::find(Auth::user()->id);
         }
-        $user = User::find($r->user_id);
+        // $user = User::find(Auth::user()->id);
 
         if($user->account_number){
             $validator = Validator::make($r->all(), [
                 'upi_name' => 'nullable',
-                'upi_type' => 'nullable',
+                'upi_type' => 'nullable|in:Phone Pay,Google Pay,Paytm',
                 'upi_number' => 'nullable|digits:10|regex:/^[6789]/'
             ]);    
             if ($validator->fails()) {
@@ -353,11 +446,11 @@ class User_dashboard extends Controller
                 'account_name' => 'required',
                 'bank_name' => 'required',
                 'account_number' => 'required|unique:users,account_number',
-                'account_type' => 'required',
+                'account_type' => 'required|in:Current,Saving',
                 'ifsc_code' => 'required',
                 'pan_number' => 'required|regex:/[A-Z]{5}[0-9]{4}[A-Z]{1}/|unique:users,pan_number',
                 'upi_name' => 'nullable',
-                'upi_type' => 'nullable',
+                'upi_type' => 'nullable|in:Phone Pay,Google Pay,Paytm',
                 'upi_number' => 'nullable|digits:10|regex:/^[6789]/'
             ]);
             if ($validator->fails()) {
@@ -375,25 +468,41 @@ class User_dashboard extends Controller
             $user->upi_number = $r->upi_number;
             $res = $user->update();
         }
-            
-        if($res){
-            return response()->json([
-                'status' => 1,
-                'massage' => 'Bank Details Updated Successfully',
-                'data' => $user
-            ]);
+           
+        if ($r->is('api/*')) {
+            if($res){
+                return response()->json([
+                    'status' => "true",
+                    'massage' => 'Bank Details Updated Successfully',
+                    'data' => $user
+                ]);
+            }else{
+                return response()->json([
+                    'status' => "false",
+                    'massage' => 'Bank Details Not Updated, Please try again',
+                    'data' => []
+                ]);
+            }
         }else{
-            return response()->json([
-                'status' => 0,
-                'massage' => 'Bank Details Not Updated, Please try again',
-                'data' => []
-            ]);
+            if($res){
+                return response()->json([
+                    'status' => 1,
+                    'massage' => 'Bank Details Updated Successfully',
+                    'data' => $user
+                ]);
+            }else{
+                return response()->json([
+                    'status' => 0,
+                    'massage' => 'Bank Details Not Updated, Please try again',
+                    'data' => []
+                ]);
+            }
         }
     }
 
     public function process_change_password(Request $r){
         $validator = Validator::make($r->all(), [
-            'user_id' => 'required|numeric|exists:users,id',
+            // 'user_id' => 'required|numeric|exists:users,id',
             'old_password' => 'required',
             'new_password' => 'required|min:4',
             'confirm_password' => 'required',
@@ -401,22 +510,31 @@ class User_dashboard extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }else{
-            $user = User::find($r->user_id);
-            if(Hash::check($r->old_password, Auth::user()->password)){
+            // $user = User::find($r->user_id);
+            if ($r->is('api/*')) {
+                $user = User::find($request->user()->id);
+            }else{
+                $user = User::find(Auth::user()->id);
+            }
+            if(Hash::check($r->old_password, $user->password)){
                 if($r->new_password == $r->confirm_password){
                     $user->password = bcrypt($r->new_password);
                     $user->decoded_password = $r->new_password;
                     $res = $user->update();
 
                     if($res){
+                        if ($r->is('api/*')) { return response()->json(['status'=>'true','massage'=>'Password Changed Successfully']); }
                         return response()->json(['status'=>1,'massage'=>'Password Changed Successfully']);
                     }else{
+                        if ($r->is('api/*')) { return response()->json(['status'=>'false','massage'=>'Password Not Changed, Please try again']); }
                         return response()->json(['status'=>0,'massage'=>'Password Not Changed, Please try again']);
                     }
                 }else{
+                    if ($r->is('api/*')) { return response()->json(['status'=>'false','massage'=>'Password & Confirm Password Not Matched']); }
                     return response()->json(['status'=>0,'massage'=>'Password & Confirm Password Not Matched']);
                 }
             }else{
+                if ($r->is('api/*')) { return response()->json(['status'=>'false','massage'=>'Old Password Not Matched']); }
                 return response()->json(['status'=>0,'massage'=>'Old Password Not Matched']);
             }  
         }

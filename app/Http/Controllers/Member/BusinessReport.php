@@ -22,7 +22,7 @@ use Maatwebsite\Excel\Concerns\FromArray;
 
 class BusinessReport extends Controller
 {
-    public function level_wise(){
+    public function level_wise(Request $request){
 
         $customerTree = get_customer_tree(Auth::user()->user_id);
 
@@ -85,12 +85,118 @@ class BusinessReport extends Controller
 
         $data['title'] = 'Level Wise Business Report of '.Auth::user()->name;
         $users = array_merge(getLeftSideMembers(Auth::id()),getRightSideMembers(Auth::id()));
+
         // $data['users'] = User::where("role","!=","admin")->orderBy('name', 'asc')->get();
         $data['users'] = $users;
+
         $data['pdf_link'] = route('member.business-report.level-wise-business-exportPdf',[Auth::user()->user_id]);
         $data['excel_link'] = route('member.business-report.level-wise-business-exportExcel',[Auth::user()->user_id]);
+
         return view('site.user_dashboard.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
     }
+
+    public function level_wise_api(Request $request)
+    {
+        $customerTree = get_customer_tree($request->user()->user_id);
+
+        // Levels array to hold users grouped by level
+        $levels = [];
+        $levelData = build_customer_array($customerTree, $levels);
+
+        // Collect all users with their level into a single array
+        $usersWithLevels = [];
+        foreach ($levels as $levelKey => $customers) {
+            $currentLevel = substr($levelKey, 5); // Extract the level number from key
+            foreach ($customers as $customer) {
+                $usersWithLevels[] = [
+                    'id' => $customer['id'],
+                    'level' => (int)$currentLevel,
+                    'user_id' => $customer['user_id'],
+                    'name' => $customer['name'],
+                    'reg_date' => $customer['reg_date'],
+                    'position' => $customer['position'],
+                    'sponsor_id' => $customer['agent_id'],
+                    'status' => $customer['status'],
+                ];
+            }
+        }
+
+        $buyer_ids = array_column($usersWithLevels, 'id');
+        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
+            ->where('is_provide_direct', 1)
+            ->orderBy('id', 'ASC')
+            ->get();
+
+        $business = [];
+        foreach ($total_businesss as $total_business) {
+            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
+                return $user['id'] == $total_business->user_id;
+            });
+            if (!empty($matchingUser)) {
+                $business[] = array_merge(current($matchingUser), [
+                    'total_business' => $total_business,
+                ]);
+            }
+        }
+
+        $groupedBusiness = [];
+        foreach ($business as $item) {
+            $level = $item['level'];
+            if (!isset($groupedBusiness[$level])) {
+                $groupedBusiness[$level] = [];
+            }
+            $groupedBusiness[$level][] = $item;
+        }
+
+        ksort($groupedBusiness);
+        // Prepare the response
+        $total_amount = 0;
+        $total_user_count = 0;
+        $response = [];
+
+        foreach ($groupedBusiness as $level => $businessData) {
+            $level_total = 0;
+            $level_data = [];
+            foreach ($businessData as $index => $item) {
+                $amount = $item['total_business']->total_amount ?? 0;
+                $level_total += $amount;
+                $total_amount += $amount;
+                $total_user_count++;
+
+                $level_data[] = [
+                    'sl_no' => $index + 1,
+                    'name' => $item['name'],
+                    'user_id' => $item['user_id'],
+                    'sponsor_id' => $item['sponsor_id'],
+                    'reg_date' => formated_date($item['total_business']->start_date ?? '-', '-'),
+                    'amount' => $amount,
+                    'product' => get_products_by_order_id($item['total_business']->order_id ?? ''),
+                ];
+            }
+
+            $response[] = [
+                'level' => $level,
+                'total_amount' => $level_total,
+                'data' => $level_data,
+            ];
+        }
+
+        $data = [
+            'title' => 'Level Wise Business Report of ' . $request->user()->name,
+            'pdf_link' => route('member.business-report.level-wise-business-exportPdf', [$request->user()->user_id]),
+            'excel_link' => route('member.business-report.level-wise-business-exportExcel', [$request->user()->user_id]),
+            'grouped_business' => $response,
+            'users' => array_merge(getLeftSideMembers($request->user()->id),getRightSideMembers($request->user()->id)),
+            'total_amount' => $total_amount,
+            'total_user_count' => $total_user_count,
+        ];
+
+        return response()->json([
+            'status' => 'true',
+            'data' => $data,
+        ], 200);
+    }
+
 
     public function generate_date_wise_level_report(Request $request){
         if(isset($request->user_id)){
@@ -171,6 +277,126 @@ class BusinessReport extends Controller
         $data['pdf_link'] = route('member.business-report.level-wise-business-exportPdf',[$user->user_id,$startDate,$endDate]);
         $data['excel_link'] = route('member.business-report.level-wise-business-exportExcel',[$user->user_id,$startDate,$endDate]);
         return view('site.user_dashboard.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
+    }
+
+    public function generate_date_wise_level_report_api(Request $request)
+    {
+        if(!isset($request->start_date) && !isset($request->end_date)){
+            return response()->json(['status' => "false",'message' => 'Start Date & end Date is required'], 422);
+        }
+        if(isset($request->user_id)){
+            $user = User::where('user_id',$request->user_id)->first();
+        }else{
+            $user = $request->user();
+        }
+
+        if (!$user) {
+            return response()->json(['status' => "false",'message' => 'User not found'], 404);
+        }
+
+        $customerTree = get_customer_tree($user->user_id);
+
+        // Levels array to hold users grouped by level
+        $levels = [];
+        $levelData = build_customer_array($customerTree, $levels);
+
+        // Collect all users with their level into a single array
+        $usersWithLevels = [];
+        foreach ($levels as $levelKey => $customers) {
+            $currentLevel = substr($levelKey, 5); // Extract the level number from key
+            foreach ($customers as $customer) {
+                $usersWithLevels[] = [
+                    'id' => $customer['id'],
+                    'level' => (int)$currentLevel,
+                    'user_id' => $customer['user_id'],
+                    'name' => $customer['name'],
+                    'reg_date' => $customer['reg_date'],
+                    'position' => $customer['position'],
+                    'sponsor_id' => $customer['agent_id'],
+                    'status' => $customer['status'],
+                ];
+            }
+        }
+
+        $buyer_ids = array_column($usersWithLevels, 'id');
+
+
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
+                                ->where('is_provide_direct',1)
+                                ->whereDate('start_date', '>=', $startDate)
+                                ->whereDate('start_date', '<=', $endDate)
+                                ->orderBy('id','ASC')->get();
+
+        $business = [];
+        foreach ($total_businesss as $total_business) {
+            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
+                return $user['id'] == $total_business->user_id;
+            });
+            if (!empty($matchingUser)) {
+                $business[] = array_merge(current($matchingUser), [
+                    'total_business' => $total_business,
+                ]);
+            }
+        }
+
+        $groupedBusiness = [];
+        foreach ($business as $item) {
+            $level = $item['level'];
+            if (!isset($groupedBusiness[$level])) {
+                $groupedBusiness[$level] = [];
+            }
+            $groupedBusiness[$level][] = $item;
+        }
+
+        ksort($groupedBusiness);
+        // Prepare the response
+        $total_amount = 0;
+        $total_user_count = 0;
+        $response = [];
+
+        foreach ($groupedBusiness as $level => $businessData) {
+            $level_total = 0;
+            $level_data = [];
+            foreach ($businessData as $index => $item) {
+                $amount = $item['total_business']->total_amount ?? 0;
+                $level_total += $amount;
+                $total_amount += $amount;
+                $total_user_count++;
+
+                $level_data[] = [
+                    'sl_no' => $index + 1,
+                    'name' => $item['name'],
+                    'user_id' => $item['user_id'],
+                    'sponsor_id' => $item['sponsor_id'],
+                    'reg_date' => formated_date($item['total_business']->start_date ?? '-', '-'),
+                    'amount' => $amount,
+                    'product' => get_products_by_order_id($item['total_business']->order_id ?? ''),
+                ];
+            }
+
+            $response[] = [
+                'level' => $level,
+                'total_amount' => $level_total,
+                'data' => $level_data,
+            ];
+        }
+
+        $data = [
+            'title' => 'Level Wise Business Report of '.$user->name.' from '.formated_date($startDate).' to '.formated_date($endDate),
+            'pdf_link' => route('member.business-report.level-wise-business-exportPdf', [$user->user_id,$startDate,$endDate]),
+            'excel_link' => route('member.business-report.level-wise-business-exportExcel', [$user->user_id,$startDate,$endDate]),
+            'grouped_business' => $response,
+            'users' => array_merge(getLeftSideMembers($user->id),getRightSideMembers($user->id)),
+            'total_amount' => $total_amount,
+            'total_user_count' => $total_user_count,
+        ];
+
+        return response()->json([
+            'status' => 'true',
+            'data' => $data,
+        ], 200);
     }
 
     public function level_wise_business_exportPdf($user_id=null,$start_date=null, $end_date=null)
@@ -389,5 +615,35 @@ class BusinessReport extends Controller
         }
         return view('site.user_dashboard.reports.business_report.tree_wise',compact('rootUser'))->with($data);
     }
+
+
+    public function tree_wise_api(Request $request,$user_id=null)
+    {
+        // return $user_id;
+        $rootUser = empty($user_id) 
+            ? User::where('user_id', $request->user()->user_id)->first()
+            : User::where('role', 'agent')->where('user_id', $user_id)->first();
+
+        if (!$rootUser) {
+            return response()->json(['status' => "false",'message' => 'User not found'], 404);
+        }
+
+        $response = [
+            'status' => "true",
+            'data' => [
+                'name' => $rootUser->name,
+                'user_id' => $rootUser->user_id,
+                'user_image' => !empty($rootUser->user_image) 
+                    ? asset($rootUser->user_image) 
+                    : asset('dashboard_assets/images/users/user-14.png'),
+                'status' => $rootUser->status == 1 ? 'active' : 'inactive',
+                'left_business' => calculate_left_business($rootUser->id),
+                'right_business' => calculate_right_business($rootUser->id),
+            ],
+        ];
+
+        return response()->json($response);
+    }
+
 
 }

@@ -21,10 +21,17 @@ class ReportController extends Controller
 
     // Top Up Report
 
-    public function topup_report(){
-        $data['title'] = 'Topup Report';
-        $data['items'] = TopUp::where('user_id',Auth::id())->get();
-        return view('site.user_dashboard.reports.top_up_report')->with($data);
+    public function topup_report(Request $request){
+        if ($request->is('api/*')) {
+            return response()->json([  
+                'status' => "true",
+                'data' => TopUp::where('user_id',$request->user()->id)->get()
+            ], 200);
+        }else{
+            $data['title'] = 'Topup Report';
+            $data['items'] = TopUp::where('user_id',Auth::id())->get();
+            return view('site.user_dashboard.reports.top_up_report')->with($data);
+        }
     }
 
     public function generate_topup_report(Request $r){
@@ -36,11 +43,20 @@ class ReportController extends Controller
         return view('site.user_dashboard.reports.top_up_report')->with($data);
     }
 
-    public function remuneration_report(){
-        $data['title'] = 'Remuneration Report';
-        $data['items'] = SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
-                                        ->where('user_id',Auth::id())
-                                        ->get();
-        return view('site.user_dashboard.reports.remuneration_report')->with($data);
+    public function remuneration_report(Request $request){
+        if ($request->is('api/*')) {
+            return response()->json([  
+                'status' => "true",
+                'data' => SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
+                                        ->where('user_id',$request->user()->id)
+                                        ->get()
+            ], 200);
+        }else{
+            $data['title'] = 'Remuneration Report';
+            $data['items'] = SalaryBonus::leftJoin('remuneration_benefits','remuneration_benefits.id','salary_bonus.remuneration_benefit_id')
+                                            ->where('user_id',Auth::id())
+                                            ->get();
+            return view('site.user_dashboard.reports.remuneration_report')->with($data);
+        }
     }
 }

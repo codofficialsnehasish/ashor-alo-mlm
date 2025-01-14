@@ -41,7 +41,12 @@
                     <div class="row">
                         <div class="col-md-9">
                             <div class="card">
-                                <div class="card-header bg-primary text-light">Edit Customer</div>
+                                <div class="card-header bg-primary text-light d-flex align-items-center justify-content-between">
+                                    Edit {{$customer->name}} ({{$customer->user_id}})
+                                    <div class="float-end d-none d-md-block">
+                                        <a href="{{ route('customer.reset',$customer->id) }}" onclick="return confirm('Are you sure to reset this profile ?')" class="btn btn-danger"><i class="fas fa-redo me-2"></i>Reset Profile</a>
+                                    </div>
+                                </div>
                                 <div class="card-body">
                                     <input type="hidden" name="customer_id" value="{{$customer->id}}" id="">
                                     <div class="row">
@@ -256,6 +261,10 @@
                             <div class="card">
                                 <div class="card-header bg-primary text-light">Publish</div>
                                 <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="usr" class="form-label">Login Password</label>
+                                        <input type="text" class="form-control" value="{{ $customer->decoded_password }}" name="password">
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label mb-3 d-flex">Status</label>
                                         <div class="form-check form-check-inline">

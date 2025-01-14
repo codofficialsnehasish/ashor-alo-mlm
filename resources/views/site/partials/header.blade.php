@@ -23,7 +23,7 @@
                     <ul class="navbar-nav navbar-nav-hover ml-auto">
                         <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About Us</a></li>
-                        <li class="nav-item"><a class="nav-link" target="_blank" href="{{ asset('web_directory/business_plan/Ashor Alo Plan.pdf') }}">Business Plan</a></li>
+                        <li class="nav-item"><a class="nav-link" target="_blank" href="{{ asset('web_directory/business_plan/Ashor Alo Print New Plan.pdf') }}">Business Plan</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('site-products') }}">Products</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('certificate') }}">Legal / Affiliation</a></li>
                         <li class="nav-item"><a class="nav-link" href="{{ route('photo-gallary') }}">Photo Gallery</a></li>

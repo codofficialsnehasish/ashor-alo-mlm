@@ -96,8 +96,12 @@ class CornJobs extends Controller
                     ->whereDate('start_date','!=',date('Y-m-d'))
                     ->get();
 
-        DisburseRoiJob::dispatch($income_data);
-    } // tested 29-11-2024
+        // DisburseRoiJob::dispatch($income_data);
+        $chunks = $income_data->chunk(15);
+        foreach ($chunks as $chunk) {
+            DisburseRoiJob::dispatch($chunk);
+        }
+    } // tested 09-01-2025
 
     /*public function forcely_disburse_roi() {
         $income_data = TopUp::where('is_completed', 0)
@@ -183,8 +187,8 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2024, 12, 19);
-        $endDate = Carbon::create(2024, 12, 20);
+        $startDate = Carbon::create(2025, 1, 9);
+        $endDate = Carbon::create(2025, 1, 10);
         // $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
@@ -207,8 +211,12 @@ class CornJobs extends Controller
                         ->whereDate('start_date', '<', $date)
                         ->get();
 
-            DisburseRoiJob::dispatch($income_data);
-            // ForcelyDisburseRoiJob::dispatch($income_data,$date);
+            // DisburseRoiJob::dispatch($income_data);
+
+            $chunks = $income_data->chunk(15);
+            foreach ($chunks as $chunk) {
+                ForcelyDisburseRoiJob::dispatch($chunk,$date);
+            }
             
         }
     }
@@ -219,84 +227,88 @@ class CornJobs extends Controller
         $today_join_users = TopUp::whereDate('created_at',date('Y-m-d'))->where('is_provide_direct',1)->get();
 
         foreach($today_join_users as $join_data){
+            
             $custo = User::find($join_data->user_id);
             if(User::where('user_id',$custo->agent_id)->exists()){
                 $agent = User::where('user_id',$custo->agent_id)->first();
-                if($agent->status == 1){
-                    
-                    //Direct Bonus
-                    $mlm_settings = MLMSettings::first();
-                    $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
+                if(!AccountTransaction::where('user_id',$agent->id)->where('which_for','Direct Bonus')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$join_data->id)->exists()){
+                    if($agent->status == 1){
+                        
+                        //Direct Bonus
+                        $mlm_settings = MLMSettings::first();
+                        $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
 
-                    // $tds_amount = $user_bonus * ($mlm_settings->tds/100);
-                    // $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
-                    // $user_bonus -= $tds_amount+$repurchase_amount;
+                        // $tds_amount = $user_bonus * ($mlm_settings->tds/100);
+                        // $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
+                        // $user_bonus -= $tds_amount+$repurchase_amount;
 
-                    $transactionAdded = $this->transaction->make_transaction(
-                        $agent->id,
-                        $user_bonus,
-                        'Direct Bonus',
-                        1,
-                        $custo->id
-                    );
+                        $transactionAdded = $this->transaction->make_transaction(
+                            $agent->id,
+                            $user_bonus,
+                            'Direct Bonus',
+                            1,
+                            $custo->id,
+                            $join_data->id
+                        );
 
-                    // if(check_limit($agent->id)){
-                    //     if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
-                    //         $agent->account_balance += $user_bonus;
-                    //         // Direct Bonus transaction
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $user_bonus,
-                    //             'Direct Bonus',
-                    //             1
-                    //         );
-                    //     }else{
-                    //         $gap = get_user_limit($agent->id) - $agent->account_balance;
-                    //         $agent->account_balance += $gap;
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $gap,
-                    //             'Direct Bonus',
-                    //             1
-                    //         );
-                    //         $user_bonus = abs($user_bonus - $gap); 
-                    //         $agent->hold_balance += $user_bonus;
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $user_bonus,
-                    //             'Direct Bonus on Hold',
-                    //             1
-                    //         );
-                    //     }
-                    // }else{
-                    //     $agent->hold_balance += $user_bonus;
-                    //     $transactionAdded = $this->transaction->make_transaction(
-                    //         $agent->id,
-                    //         $user_bonus,
-                    //         'Direct Bonus on Hold',
-                    //         1
-                    //     );
-                    // }
+                        /*if(check_limit($agent->id)){
+                            if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
+                                $agent->account_balance += $user_bonus;
+                                // Direct Bonus transaction
+                                $transactionAdded = $this->transaction->make_transaction(
+                                    $agent->id,
+                                    $user_bonus,
+                                    'Direct Bonus',
+                                    1
+                                );
+                            }else{
+                                $gap = get_user_limit($agent->id) - $agent->account_balance;
+                                $agent->account_balance += $gap;
+                                $transactionAdded = $this->transaction->make_transaction(
+                                    $agent->id,
+                                    $gap,
+                                    'Direct Bonus',
+                                    1
+                                );
+                                $user_bonus = abs($user_bonus - $gap); 
+                                $agent->hold_balance += $user_bonus;
+                                $transactionAdded = $this->transaction->make_transaction(
+                                    $agent->id,
+                                    $user_bonus,
+                                    'Direct Bonus on Hold',
+                                    1
+                                );
+                            }
+                        }else{
+                            $agent->hold_balance += $user_bonus;
+                            $transactionAdded = $this->transaction->make_transaction(
+                                $agent->id,
+                                $user_bonus,
+                                'Direct Bonus on Hold',
+                                1
+                            );
+                        }*/
 
-                    $agent->update();
-        
-                    
-                    // $account = Account::first();
-                    // $account->tds_balance += $tds_amount;
-                    // $account->repurchase_balance += $repurchase_amount;
-                    // $account->update();
-                    // TDSAccount::create([
-                    //     'user_id'=>$agent->id,
-                    //     'amount'=>$tds_amount,
-                    //     'which_for'=>'Deducting from Direct bonus',
-                    //     'status'=>1
-                    // ]);
-                    // RepurchaseAccount::create([
-                    //     'user_id'=>$agent->id,
-                    //     'amount'=>$repurchase_amount,
-                    //     'which_for'=>'Deducting from Direct bonus',
-                    //     'status'=>1
-                    // ]);
+                        $agent->update();
+            
+                        
+                        /*$account = Account::first();
+                        $account->tds_balance += $tds_amount;
+                        $account->repurchase_balance += $repurchase_amount;
+                        $account->update();
+                        TDSAccount::create([
+                            'user_id'=>$agent->id,
+                            'amount'=>$tds_amount,
+                            'which_for'=>'Deducting from Direct bonus',
+                            'status'=>1
+                        ]);
+                        RepurchaseAccount::create([
+                            'user_id'=>$agent->id,
+                            'amount'=>$repurchase_amount,
+                            'which_for'=>'Deducting from Direct bonus',
+                            'status'=>1
+                        ]);*/
+                    }
                 }
             }
         }
@@ -311,76 +323,79 @@ class CornJobs extends Controller
             $custo = User::find($join_data->user_id);
             if(User::where('user_id',$custo->agent_id)->exists()){
                 $agent = User::where('user_id',$custo->agent_id)->first();
-                if($agent->status == 1){
-                    
-                    //Direct Bonus
-                    $mlm_settings = MLMSettings::first();
-                    $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
-                    // $tds_amount = $user_bonus * ($mlm_settings->tds/100);
-                    // $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
-                    // $user_bonus -= $tds_amount+$repurchase_amount;
+                if(!AccountTransaction::where('user_id',$agent->id)->where('which_for','Direct Bonus')->whereDate('created_at',$date)->where('topup_id',$join_data->id)->exists()){
+                    if($agent->status == 1){
+                        
+                        //Direct Bonus
+                        $mlm_settings = MLMSettings::first();
+                        $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
+                        // $tds_amount = $user_bonus * ($mlm_settings->tds/100);
+                        // $repurchase_amount = $user_bonus * ($mlm_settings->repurchase/100);
+                        // $user_bonus -= $tds_amount+$repurchase_amount;
 
 
-                    $transactionAdded = $this->transaction->make_transaction(
-                        $agent->id,
-                        $user_bonus,
-                        'Direct Bonus',
-                        1,
-                        $custo->id,
-                        // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                        // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    );
+                        $transactionAdded = $this->transaction->make_transaction(
+                            $agent->id,
+                            $user_bonus,
+                            'Direct Bonus',
+                            1,
+                            $custo->id,
+                            $join_data->id
+                            // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                            // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        );
 
 
 
-                    // if(check_limit($agent->id)){
-                    //     if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
-                    //         $agent->account_balance += $user_bonus;
-                    //         // Direct Bonus transaction
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $user_bonus,
-                    //             'Direct Bonus',
-                    //             1,
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //         );
-                    //     }else{
-                    //         $gap = get_user_limit($agent->id) - $agent->account_balance;
-                    //         $agent->account_balance += $gap;
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $gap,
-                    //             'Direct Bonus',
-                    //             1,
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //         );
-                    //         $user_bonus = abs($user_bonus - $gap); 
-                    //         $agent->hold_balance += $user_bonus;
-                    //         $transactionAdded = $this->transaction->make_transaction(
-                    //             $agent->id,
-                    //             $user_bonus,
-                    //             'Direct Bonus on Hold',
-                    //             1,
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //         );
-                    //     }
-                    // }else{
-                    //     $agent->hold_balance += $user_bonus;
-                    //     $transactionAdded = $this->transaction->make_transaction(
-                    //         $agent->id,
-                    //         $user_bonus,
-                    //         'Direct Bonus on Hold',
-                    //         1,
-                    //         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                    //     );
-                    // }
+                        // if(check_limit($agent->id)){
+                        //     if(get_user_limit($agent->id) > ($agent->account_balance + $user_bonus) ){
+                        //         $agent->account_balance += $user_bonus;
+                        //         // Direct Bonus transaction
+                        //         $transactionAdded = $this->transaction->make_transaction(
+                        //             $agent->id,
+                        //             $user_bonus,
+                        //             'Direct Bonus',
+                        //             1,
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //         );
+                        //     }else{
+                        //         $gap = get_user_limit($agent->id) - $agent->account_balance;
+                        //         $agent->account_balance += $gap;
+                        //         $transactionAdded = $this->transaction->make_transaction(
+                        //             $agent->id,
+                        //             $gap,
+                        //             'Direct Bonus',
+                        //             1,
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //         );
+                        //         $user_bonus = abs($user_bonus - $gap); 
+                        //         $agent->hold_balance += $user_bonus;
+                        //         $transactionAdded = $this->transaction->make_transaction(
+                        //             $agent->id,
+                        //             $user_bonus,
+                        //             'Direct Bonus on Hold',
+                        //             1,
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //             Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //         );
+                        //     }
+                        // }else{
+                        //     $agent->hold_balance += $user_bonus;
+                        //     $transactionAdded = $this->transaction->make_transaction(
+                        //         $agent->id,
+                        //         $user_bonus,
+                        //         'Direct Bonus on Hold',
+                        //         1,
+                        //         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //         Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
+                        //     );
+                        // }
 
 
-                    $agent->update();
+                        $agent->update();
+                    }
                 }
             }
         }
@@ -442,8 +457,16 @@ class CornJobs extends Controller
                     ->map(function ($transactions) {
                         return $transactions->pluck('payment_date')->unique()->count();
                     });
+                
+                // ProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $current_day, $lastSaturday, $current_day);
+                
+                // return $acc_transactions;
+                $chunks = $acc_transactions->chunk(15);
+                // return $chunks;
+                foreach ($chunks as $chunk) {
+                    ProcessWeeklyLevelBonusJob::dispatch($chunk, $lastSaturday, $current_day);
+                }
 
-                ProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $current_day, $lastSaturday, $current_day);
         // }else{
         //     return 'today in not friday';
         // }
@@ -619,20 +642,31 @@ class CornJobs extends Controller
                 }
             }*/
 
-            GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
+            $chunks = $transactions->chunk(15);
+            foreach ($chunks as $chunk) {
+                // GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
+                GeneratePayoutJob::dispatch($chunk, $lastSaturday, $current_day);
+            }
         // }else{
         //     return 'today in not friday';
         // }
     } // tested 29-11-2024
 
     public function forcely_generate_payout() {
-        $start_date = '2024-11-16';
-        $lastFriday = '2024-11-22';
+        $start_date = '2024-12-28';
+        $lastFriday = '2025-01-03';
         $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
                                             ->groupBy('user_id')
                                             ->pluck('user_id');
 
-        ForcelyGeneratePayoutJob::dispatch($transactions, $start_date, $lastFriday);
+        // ForcelyGeneratePayoutJob::dispatch($transactions, $start_date, $lastFriday);
+
+        $chunks = $transactions->chunk(ceil($transactions->count() / 16));
+        // return $chunks; die;
+        // Dispatch jobs for each chunk
+        foreach ($chunks as $chunk) {
+            ForcelyGeneratePayoutJob::dispatch($chunk, $start_date, $lastFriday);
+        }
     }
 
 
@@ -663,9 +697,5 @@ class CornJobs extends Controller
 
         echo 'success';
     }
-    
 
-    public function dummy_corn_test(){
-        // DummyJob::dispatch();
-    }
 }

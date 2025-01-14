@@ -237,7 +237,7 @@
                                             <!-- /.modal-dialog -->
                                         </div>--}}
 
-                                        {{-- <div class="modal fade" id="staticBackdrop{{$c->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                        <div class="modal fade" id="staticBackdrop{{$c->id}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -260,7 +260,7 @@
                                                     </form>
                                                 </div>
                                             </div>
-                                        </div> --}}
+                                        </div>
                                         @endforeach
                                         
                                     </tbody>

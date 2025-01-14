@@ -78,6 +78,16 @@ use App\Http\Controllers\Member\{
 };
 
 
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/database-backup', function () {
+    Artisan::call('backup:run');
+    // Artisan::call('backup:daily');
+    // return response()->json(['message' => 'Database Backuped successfully']);
+dd(Artisan::output());
+
+});
+
 //======================= Site Routes =====================
 
 Route::get("/",[Home::class,"home"])->name('home');
@@ -193,15 +203,21 @@ Route::middleware('auth')->group(function () {
         Route::controller(BusinessReport::class)->group( function () {
             Route::get("/level-wise","level_wise")->name('business-report.level');
             Route::post("/level-wise","generate_date_wise_level_report")->name('business-report.generate_date_wise_level_report');
-            Route::get("/level-wise-business-exportPdf/{user_id}/{start_date?}/{end_date?}","level_wise_business_exportPdf")->name('member.business-report.level-wise-business-exportPdf');
-            Route::get("/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}","level_wise_business_exportExcel")->name('member.business-report.level-wise-business-exportExcel');
+            // Route::get("/level-wise-business-exportPdf/{user_id}/{start_date?}/{end_date?}","level_wise_business_exportPdf")->name('member.business-report.level-wise-business-exportPdf');
+            // Route::get("/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}","level_wise_business_exportExcel")->name('member.business-report.level-wise-business-exportExcel');
 
             Route::get("/tree-wise","tree_wise")->name('business-report.tree');
         });
     });
 });
 
+Route::get("/member-dashboard/level-wise-business-exportPdf/{user_id}/{start_date?}/{end_date?}",[BusinessReport::class,"level_wise_business_exportPdf"])->name('member.business-report.level-wise-business-exportPdf');
+Route::get("/member-dashboard/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}",[BusinessReport::class,"level_wise_business_exportExcel"])->name('member.business-report.level-wise-business-exportExcel');
 
+
+Route::get("/web/welcome-letter/{user_id}",[Documents::class,"welcome_letter_app"])->name('my-documents.welcome-letter.app');
+Route::get("/web/id-card/{user_id}",[Documents::class,"id_card_app"])->name('my-documents.id-card.app');
+Route::get('payout/payout-statement/{id}',[PayoutController::class,'payout_statement_app'])->name('payout.payout-statement.app');
 
 
 
@@ -315,6 +331,7 @@ Route::middleware('auth.admin')->group(function () {
             Route::post("/add-customer",[Customers::class,"addcustomer"])->name('customer.add');
             Route::get("/show-customer",[Customers::class,"showcustomer"])->name('customer.show');
             Route::get("/delete-customer/{id}",[Customers::class,"customerdel"])->name('customer.delete');
+            Route::get("/reset-customer/{id}",[Customers::class,"reset_profile"])->name('customer.reset');
             Route::get("/edit-customer/{id}",[Customers::class,"edit_customer"])->name('customer.edit');
             Route::post("/update-customer",[Customers::class,"update_customer"])->name('customer.update');
             

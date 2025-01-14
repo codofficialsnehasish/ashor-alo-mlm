@@ -55,34 +55,48 @@ class DisburseRoiJob implements ShouldQueue
                 $user->update();
             }
             
+            $is_transacted = 0;
             if($data->is_provide_direct == 0){
-                $transaction->make_transaction(
-                    $data->user_id,
-                    $user_per_day_roi,
-                    'ROI Dailys',
-                    1
-                );
+                if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Dailys')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+                    $transaction->make_transaction(
+                        $data->user_id,
+                        $user_per_day_roi,
+                        'ROI Dailys',
+                        1,
+                        null,
+                        $data->id,
+                    );
+
+                    $is_transacted = 1;
+                }
             }else{
-                $transaction->make_transaction(
-                    $data->user_id,
-                    $user_per_day_roi,
-                    'ROI Daily',
-                    1,
-                    // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-                    // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-                );
+                if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Daily')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+                    $transaction->make_transaction(
+                        $data->user_id,
+                        $user_per_day_roi,
+                        'ROI Daily',
+                        1,
+                        null,
+                        $data->id,
+                        // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                        // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                    );
+                    $is_transacted = 1;
+                }
             }
 
-            $top_up = TopUp::find($data->id);
-            if(Carbon::now()->day == Carbon::parse($data->start_date)->day){
-                $top_up->month_count += 1;
+            if($is_transacted){
+                $top_up = TopUp::find($data->id);
+                if(Carbon::now()->day == Carbon::parse($data->start_date)->day){
+                    $top_up->month_count += 1;
+                }
+                $top_up->total_disbursed_amount += $user_per_day_roi;
+                if($top_up->month_count == $top_up->total_installment_month){
+                    $top_up->is_completed = 1;
+                    $top_up->end_date = now();
+                }
+                $top_up->save();
             }
-            $top_up->total_disbursed_amount += $user_per_day_roi;
-            if($top_up->month_count == $top_up->total_installment_month){
-                $top_up->is_completed = 1;
-                $top_up->end_date = now();
-            }
-            $top_up->save();
         }
     }
 }

@@ -300,8 +300,8 @@ class Customers extends Controller
             return '';
         }
 
-        $leftChild = $user ? $user->children->firstWhere('is_left', 1) : null;
-        $rightChild = $user ? $user->children->firstWhere('is_right', 1) : null;
+        $leftChild = $user ? $user->children->where('is_left', 1)->where('is_deleted', 0)->first() : null;
+        $rightChild = $user ? $user->children->where('is_right', 1)->where('is_deleted', 0)->first() : null;
 
         $html = '<li>';
         if(!empty($user->user_id) && $user->is_deleted != 1){
@@ -539,12 +539,60 @@ class Customers extends Controller
             $obj->upi_type = $r->upi_type;
             $obj->upi_number = $r->upi_number;
 
+            $obj->password = bcrypt($r->password);
+            $obj->decoded_password = $r->password;
+
             $res = $obj->update();
             if($res){
                 return redirect()->back()->with(['success'=>'Data Updated Successfully']);
             }else{
                 return redirect()->back()->with(['error'=>'Query Error']);
             }
+        }
+    }
+
+    public function reset_profile($id){
+        $obj = User::findOrFail($id);
+        $obj->email = null;
+        $obj->father_or_husband_name = null;
+        $obj->date_of_birth = null;
+        $obj->gender = null;
+        $obj->marital_status = null;
+        // $obj->phone = $r->phone;
+        // $obj->email = $r->email;
+        $obj->qualification = null;
+        $obj->occupation = null;
+        $obj->pin_code = null;
+        $obj->shipping_address = null;
+        $obj->address = null;
+        $obj->country = 0;
+        $obj->state = 0;
+        $obj->city = 0;
+
+        // nominee details
+        $obj->nominee_name = null;
+        $obj->nominee_relation = null;
+        $obj->nominee_dob = null;
+        $obj->nominee_address = null;
+        $obj->nominee_state_id = 0;
+        $obj->nominee_city_id = 0;
+
+        //account details
+        $obj->account_name = null;
+        $obj->bank_name = null;
+        $obj->account_number = null;
+        $obj->account_type = null;
+        $obj->ifsc_code = null;
+        $obj->pan_number = null;
+        $obj->upi_name = null;
+        $obj->upi_type = null;
+        $obj->upi_number = null;
+
+        $res = $obj->update();
+        if($res){
+            return redirect()->back()->with(['success'=>'Profile Reset Successfully']);
+        }else{
+            return redirect()->back()->with(['error'=>'Query Error, Try Again']);
         }
     }
 
