@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Route;  
 use App\Http\Controllers\CornJobs;
 use App\Http\Controllers\LocationController;
 
@@ -22,7 +22,10 @@ Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']
 
 Route::get('hold-wallet-replace-for-one-time',[CornJobs::class,'hold_wallet_replace_for_one_time']);
 
-Route::get('dummy-corn-test',[CornJobs::class,'dummy_corn_test']);
+
+Route::get('payout-details-check',[CornJobs::class,'see_payout_details_for_check']);
+Route::get('payout-test',[CornJobs::class,'process_to_make_payout_good']);
+Route::get('get-user-id-using-id',[CornJobs::class,'get_user_id_using_id']);
 
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
 Route::post('get-city-list',[LocationController::class,'get_city_list'])->name('get-city-list');

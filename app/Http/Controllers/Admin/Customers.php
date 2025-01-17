@@ -602,8 +602,16 @@ class Customers extends Controller
         // $parent = $user->parent;
         
         // Retrieve children of the user
-        $leftChild = $user->children->firstWhere('is_left', 1);
-        $rightChild = $user->children->firstWhere('is_right', 1);
+        // $leftChild = $user->children->firstWhere('is_left', 1);
+        // $rightChild = $user->children->firstWhere('is_right', 1);
+
+        $leftChild = $user->children->first(function ($child) {
+            return $child->is_left == 1 && $child->is_deleted != 1;
+        });
+        
+        $rightChild = $user->children->first(function ($child) {
+            return $child->is_right == 1 && $child->is_deleted != 1;
+        });
 
         if($leftChild || $rightChild){
             return redirect()->back()->with(['error'=>'Cannot delete this user as they have children.']);

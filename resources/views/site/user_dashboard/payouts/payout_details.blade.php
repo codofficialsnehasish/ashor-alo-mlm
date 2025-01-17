@@ -89,7 +89,7 @@
                                             <td>{{ $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction }}</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2">Less TDS {{ $payout->tds_persentage }}%</td>
+                                            <td colspan="2">Less {{--TDS--}}Service charge {{ $payout->tds_persentage }}%</td>
                                             <td>{{ $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction }}</td>
                                         </tr>
                                         <tr>

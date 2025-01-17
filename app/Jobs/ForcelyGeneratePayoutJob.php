@@ -168,7 +168,8 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $final_commission = $comission - $deduction;
         
                         // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet + $previous_unpaid_amount;
-                        $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
+                        // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
+                        $current_payout = $user->hold_balance + $final_commission;
     
                         
                         
@@ -216,7 +217,8 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $payout->hold_wallet_added = $user->hold_wallet;
         
                         // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0; //+ $previous_unpaid_amount
-                        $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission + $payout->hold_wallet_added) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                        // $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission + $payout->hold_wallet_added) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                        $payout->total_payout = (($total_product_return + $previous_unpaid_amount + $payout->hold_wallet_added) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
                         
                         if($payout->total_payout < 200){
                             $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
