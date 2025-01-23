@@ -49,7 +49,7 @@
                                                     <td>{{ get_user_id($kyc->user_id) }}</td>
                                                     <td>
                                                         @if($kyc->is_confirmed == 0) Pending
-                                                        @elseif($kyc->is_confirmed == 1) Completed
+                                                        @elseif($kyc->is_confirmed == 1) Completed at {{ format_datetime($kyc->confirmed_date) }}
                                                         @else Cancelled @endif
                                                     </td>
                                                     <td>{{ format_datetime($kyc->created_at) }}</td>
