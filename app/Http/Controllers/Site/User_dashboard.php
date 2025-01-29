@@ -17,6 +17,7 @@ use App\Models\LocationStates;
 use App\Models\LocationCities;
 use App\Models\RepurchaseAccount;
 use App\Models\Payout;
+use App\Models\Kyc;
 
 class User_dashboard extends Controller
 {
@@ -321,6 +322,10 @@ class User_dashboard extends Controller
             $user->state = $r->state;
             $user->city = $r->city;
             $res = $user->update();
+
+            update_kyc_status_on_update_profile($user->id);
+
+
             if ($r->is('api/*')) {
                 if($res){
                     return response()->json([
@@ -441,6 +446,8 @@ class User_dashboard extends Controller
             $user->upi_type = $r->upi_type;
             $user->upi_number = $r->upi_number;
             $res = $user->update();
+
+            update_kyc_status_on_update_profile($user->id);
         }else{
             $validator = Validator::make($r->all(), [
                 'account_name' => 'required',
@@ -467,6 +474,8 @@ class User_dashboard extends Controller
             $user->upi_type = $r->upi_type;
             $user->upi_number = $r->upi_number;
             $res = $user->update();
+
+            update_kyc_status_on_update_profile($user->id);
         }
            
         if ($r->is('api/*')) {

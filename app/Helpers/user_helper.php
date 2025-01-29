@@ -7,6 +7,7 @@
     use App\Models\User;
     use App\Models\OrderProducts;
     use App\Models\TopUp;
+    use App\Models\Kyc;
 
 
     if (!function_exists('get_user_details')){
@@ -219,6 +220,35 @@
                 return $up_to_amount;
             }else{
                 return 0;
+            }
+        }
+    }
+
+
+    if(!function_exists('update_kyc_status_on_update_profile')){
+        function update_kyc_status_on_update_profile($user_id){
+            if(Kyc::where('user_id',$user_id)->exists()){
+                $kyc = Kyc::where('user_id',$user_id)->first();
+                if($kyc->is_confirmed != 1){
+                    if($kyc->identy_proof_status != 1){
+                        $kyc->identy_proof_status = 0;
+                        $kyc->identy_proof_remarks = '';
+                    }
+                    if($kyc->address_proof_status != 1){
+                        $kyc->address_proof_status = 0;
+                        $kyc->address_proof_remarks = '';
+                    }
+                    if($kyc->bank_ac_proof_status != 1){
+                        $kyc->bank_ac_proof_status = 0;
+                        $kyc->bank_ac_proof_remarks = '';
+                    }
+                    if($kyc->pan_card_proof_status != 1){
+                        $kyc->pan_card_proof_status = 0;
+                        $kyc->pan_card_proof_remarks = '';
+                    }
+                    $kyc->is_confirmed = 0;
+                    $kyc->update();
+                }
             }
         }
     }
