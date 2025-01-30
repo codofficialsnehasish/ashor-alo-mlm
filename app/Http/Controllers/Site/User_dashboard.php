@@ -16,6 +16,7 @@ use App\Models\LocationCountries;
 use App\Models\LocationStates;
 use App\Models\LocationCities;
 use App\Models\RepurchaseAccount;
+use App\Models\RemunerationBenefit;
 use App\Models\Payout;
 use App\Models\Kyc;
 
@@ -69,12 +70,25 @@ class User_dashboard extends Controller
         $data['total_topup_amount'] = TopUp::where('user_id',Auth::id())->sum('total_amount');
         $data['total_left_business'] = calculate_left_business(Auth::id());
         $data['total_right_business'] = calculate_right_business(Auth::id());
-        $data['rank'] = get_member_rank(Auth::id());
+        // $data['rank'] = get_member_rank(Auth::id());
+        $data['rank'] = $this->get_rank_instantly(Auth::id());
         $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
         $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
         $data['current_week_business'] = calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id());
         $data['last_payment'] = Payout::where('user_id', Auth::id())->latest()->first();
         return view($this->view_path."dashboard")->with($data);
+    }
+
+    protected function get_rank_instantly($user_id){
+        $total_left_business = calculate_left_business($user_id);
+        $total_right_business = calculate_right_business($user_id);
+
+        $achieved_target = RemunerationBenefit::where('target', '<=', $total_left_business)
+                            ->where('target', '<=', $total_right_business)
+                            ->orderBy('target', 'DESC')
+                            ->first();
+        // print($achieved_target->rank); die;
+        return $achieved_target->rank ?? '';
     }
 
     public function member_dashboard_api(Request $request){
