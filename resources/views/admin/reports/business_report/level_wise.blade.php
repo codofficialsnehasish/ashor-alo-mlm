@@ -31,7 +31,7 @@
                             <form action="{{ route('report.business-report.generate_date_wise_level_report') }}" method="post">
                                 @csrf
                                 <div class="row">
-                                    <div class="mb-0 col-md-7">
+                                    <div class="mb-0 col-md-5">
                                         <label class="form-label">Search Using Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                             <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
@@ -45,6 +45,14 @@
                                             @foreach($users as $user)
                                             <option value="{{ $user->user_id }}">{{ $user->name }} ( {{ $user->user_id }} )</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="mb-0 col-md-2">
+                                        <label class="form-label">Choose Position</label>
+                                        <select class="form-control" name="position">
+                                            <option selected disabled value="">Select...</option>
+                                            <option value="Left">Left</option>
+                                            <option value="Right">Right</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2" style="margin-top: 29px !important;">
@@ -78,6 +86,7 @@
                                 <tr>
                                     <th class="text-wrap">Sl. No.</th>
                                     <th class="text-wrap">Name</th>
+                                    <th class="text-wrap">Position</th>
                                     <th class="text-wrap">Phone</th>
                                     <th class="text-wrap">Sponsor Id</th>
                                     <th class="text-wrap">Date</th>
@@ -95,19 +104,22 @@
                                     $total_user_count += 1;
                                 @endphp
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
-                                    <td>{{ $item['phone'] }}</td>
-                                    <td>{{ $item['sponsor_id'] }}</td>
-                                    <td>{{ formated_date($item['total_business']->start_date,'-') }}</td>
-                                    <td>{{ $item['total_business']->total_amount }}</td>
-                                    <td>{{ get_products_by_order_id($item['total_business']->order_id) }}</td>
+                                    <td class="text-wrap">{{ $loop->iteration }}</td>
+                                    <td class="text-wrap">{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
+                                    <td class="text-wrap">{{ $item['position'] }}</td>
+                                    <td class="text-wrap">{{ $item['phone'] }}</td>
+                                    <td class="text-wrap">{{ $item['sponsor_id'] }}</td>
+                                    <td class="text-wrap">{{ formated_date($item['total_business']->start_date,'-') }}</td>
+                                    <td class="text-wrap">{{ $item['total_business']->total_amount }}</td>
+                                    <td class="text-wrap">{{ get_products_by_order_id($item['total_business']->order_id) }}</td>
                                 </tr>
                                 @endforeach
                                 @endif
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

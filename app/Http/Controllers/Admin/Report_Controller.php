@@ -689,17 +689,38 @@ class Report_Controller extends Controller
         // return $usersWithLevels;
         // return $total_businesss;
 
+        // $business = [];
+        // foreach ($total_businesss as $total_business) {
+        //     $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business,$request) {
+        //         return $user['id'] == $total_business->user_id;
+        //     });
+        //     if (!empty($matchingUser)) {
+        //         $business[] = array_merge(current($matchingUser), [
+        //             'total_business' => $total_business,
+        //         ]);
+        //     }
+        // }
+
+        // Check if position filter is provided
+        $filterByPosition = isset($request->position) ? strtolower($request->position) : null;
+
         $business = [];
         foreach ($total_businesss as $total_business) {
-            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
-                return $user['id'] == $total_business->user_id;
+            $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business, $filterByPosition) {
+                if ($user['id'] != $total_business->user_id) {
+                    return false;
+                }
+                // Apply position filter only if it's set
+                return $filterByPosition ? strtolower($user['position']) === $filterByPosition : true;
             });
+            
             if (!empty($matchingUser)) {
                 $business[] = array_merge(current($matchingUser), [
                     'total_business' => $total_business,
                 ]);
             }
         }
+
 
         $groupedBusiness = [];
         foreach ($business as $item) {
