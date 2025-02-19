@@ -754,13 +754,20 @@ class Report_Controller extends Controller
 
         $data['title'] = 'Level Wise Business Report of '.$user->name.' from '.formated_date($startDate).' to '.formated_date($endDate);
         $data['users'] = User::where("role","!=","admin")->orderBy('name', 'asc')->get();
-        $data['pdf_link'] = route('report.business-report.level-wise-business-exportPdf',[$user->user_id,$startDate,$endDate]);
-        $data['excel_link'] = route('report.business-report.level-wise-business-exportExcel',[$user->user_id,$startDate,$endDate]);
+        $data['pdf_link'] = route('report.business-report.level-wise-business-exportPdf',[$user->user_id,$startDate,$endDate,$filterByPosition]);
+        $data['excel_link'] = route('report.business-report.level-wise-business-exportExcel',[$user->user_id,$startDate,$endDate,$filterByPosition]);
         return view('admin.reports.business_report.level_wise',compact('groupedBusiness'))->with($data);
     }
 
-    public function level_wise_business_exportPdf($user_id=null,$start_date=null, $end_date=null)
+    public function level_wise_business_exportPdf($user_id=null,$start_date=null, $end_date=null, $position=null)
     {
+        // echo $user_id;
+        // echo "<br>";
+        // echo $start_date;
+        // echo "<br>";
+        // echo $end_date;
+        // echo "<br>";
+        // echo $position; die;
         try {
             if(isset($user_id)){
                 $user = User::where('user_id',$user_id)->first();
@@ -805,10 +812,18 @@ class Report_Controller extends Controller
                                         ->orderBy('id','ASC')->get();
             }
 
+            // Check if position filter is provided
+            // $filterByPosition = !empty($position) ? strtolower($position) : null;
+
             $business = [];
             foreach ($total_businesss as $total_business) {
-                $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
-                    return $user['id'] == $total_business->user_id;
+                $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business,$position) {
+                    // return $user['id'] == $total_business->user_id;
+                    if ($user['id'] != $total_business->user_id) {
+                        return false;
+                    }
+                    // Apply position filter only if it's set
+                    return $position ? strtolower($user['position']) === $position : true;
                 });
                 if (!empty($matchingUser)) {
                     $business[] = array_merge(current($matchingUser), [
@@ -827,6 +842,7 @@ class Report_Controller extends Controller
             }
 
             ksort($groupedBusiness);
+
             if($start_date == null){
                 $title = 'Level Wise Business Report of '.$user->name;
             }else{
@@ -841,7 +857,7 @@ class Report_Controller extends Controller
         }
     }
 
-    public function level_wise_business_exportExcel($user_id=null,$start_date=null, $end_date=null)
+    public function level_wise_business_exportExcel($user_id=null,$start_date=null, $end_date=null, $position=null)
     {
         try {
             if(isset($user_id)){
@@ -889,8 +905,14 @@ class Report_Controller extends Controller
 
             $business = [];
             foreach ($total_businesss as $total_business) {
-                $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business) {
-                    return $user['id'] == $total_business->user_id;
+                $matchingUser = array_filter($usersWithLevels, function ($user) use ($total_business,$position) {
+                    // return $user['id'] == $total_business->user_id;
+
+                    if ($user['id'] != $total_business->user_id) {
+                        return false;
+                    }
+                    // Apply position filter only if it's set
+                    return $position ? strtolower($user['position']) === $position : true;
                 });
                 if (!empty($matchingUser)) {
                     $business[] = array_merge(current($matchingUser), [
@@ -910,7 +932,7 @@ class Report_Controller extends Controller
 
             ksort($groupedBusiness);
 
-            $headers = ['Sl. No.', 'Name', 'Phone', 'Sponsor ID', 'Level', 'Date', 'Amount', 'Product'];
+            $headers = ['Sl. No.', 'Name', 'User ID', 'Position', 'Phone', 'Sponsor ID', 'Level', 'Date', 'Amount', 'Product'];
 
             // Prepare the data for Excel export
             $data = [];
@@ -920,6 +942,8 @@ class Report_Controller extends Controller
                     $data[] = [
                         'Sl. No.' => $counter++,
                         'Name' => $item['name'],
+                        'User ID' => $item['user_id'],
+                        'Position' => $item['position'],
                         'Phone' => $item['phone'],
                         'Sponsor ID' => $item['sponsor_id'],
                         'Level' => 'Level '.$item['level'],

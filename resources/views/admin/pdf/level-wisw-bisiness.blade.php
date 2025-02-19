@@ -105,8 +105,9 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th class="text-wrap">Sl. No.</th>
+                                        {{-- <th class="text-wrap">Sl. No.</th> --}}
                                         <th class="text-wrap">Name</th>
+                                        <th class="text-wrap">Pos.</th>
                                         <th class="text-wrap">Phone</th>
                                         <th class="text-wrap">Sponsor ID</th>
                                         <th class="text-wrap">Date</th>
@@ -124,8 +125,9 @@
                                                 $total_user_count += 1;
                                             @endphp
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                {{-- <td>{{ $loop->iteration }}</td> --}}
                                                 <td>{{ $item['name'] }} ({{ $item['user_id'] }}) </td>
+                                                <td>{{ $item['position'] }}</td>
                                                 <td>{{ $item['phone'] }}</td>
                                                 <td>{{ $item['sponsor_id'] }}</td>
                                                 <td>{{ formated_date($item['total_business']->start_date, '-') }}</td>
