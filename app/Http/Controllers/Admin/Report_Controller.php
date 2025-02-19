@@ -732,7 +732,7 @@ class Report_Controller extends Controller
             // Add the current item to the level group
             $groupedBusiness[$level][] = $item;
         }
-
+ 
         ksort($groupedBusiness);
 
         $data['title'] = 'Level Wise Business Report of '.$user->name.' from '.formated_date($startDate).' to '.formated_date($endDate);

@@ -11,6 +11,7 @@ use App\Services\LevelBonusService;
 use Illuminate\Validation\Rule;
 use App\Models\User; 
 use App\Models\TopUp; 
+use App\Models\Kyc; 
 use App\Models\AccountTransaction;
 use App\Models\MLMSettings;
 use App\Models\TDSAccount;
@@ -589,6 +590,9 @@ class Customers extends Controller
         $obj->upi_number = null;
 
         $res = $obj->update();
+
+        
+        
         if($res){
             return redirect()->back()->with(['success'=>'Profile Reset Successfully']);
         }else{
