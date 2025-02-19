@@ -562,6 +562,23 @@ class Report_Controller extends Controller
         return view('admin.reports.remuneration_report')->with($data);
     }
 
+    public function remuneration_transaction_report(){
+        $data['title'] = 'Remuneration Transaction Report';
+        $data['items'] = AccountTransaction::where('which_for','Salary Bonus')->get();
+        return view('admin.reports.remuneration_transaction_report')->with($data);
+    }
+
+    public function generate_remuneration_transaction_report(Request $r){
+        $data['title'] = 'Remuneration Transaction Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $data['items'] = AccountTransaction::where('which_for','Salary Bonus')
+                        ->whereDate('created_at', '>=', $startDate)
+                        ->whereDate('created_at', '<=', $endDate)
+                        ->get();
+        return view('admin.reports.remuneration_transaction_report')->with($data);
+    }
+
     // End of Remuneration Report
 
 

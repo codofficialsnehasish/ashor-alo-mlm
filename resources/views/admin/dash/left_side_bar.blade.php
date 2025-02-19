@@ -122,10 +122,18 @@
                         <li><a href="{{ route('report.product-return-report') }}">Product Support Report</a></li>
                         <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
                         <li><a href="{{ route('report.payout-history') }}">Payout History</a></li>
-                        <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li>
+                        {{-- <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li> --}}
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow">Remuneration Report</a>
+                            <ul class="sub-menu" aria-expanded="true">
+                                <li><a href="{{ route('report.remuneration-transaction-report') }}">All Transaction</a></li>
+                                <li><a href="{{ route('report.remuneration-report') }}">All Report</a></li>
+                            </ul>
+                        </li>
                         <li><a href="{{ route('report.paid-unpaid-payment-report') }}">Paid Unpaid Payment Report</a></li>
                         <li><a href="{{ route('report.less-than-two-hundred-commission-repoet') }}">Commission Report of > 200</a></li>
-                        <li><a href="javascript: void(0);" class="has-arrow">Business Report</a>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow">Business Report</a>
                             <ul class="sub-menu" aria-expanded="true">
                                 <li><a href="{{ route('report.business-report.level') }}">Level Wise</a></li>
                                 <li><a href="{{ route('report.business-report.tree') }}">Tree Wise</a></li>

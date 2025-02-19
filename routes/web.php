@@ -473,6 +473,10 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/remuneration-report",[Report_Controller::class,"remuneration_report"])->name('report.remuneration-report');
             Route::post("/generate-remuneration-report",[Report_Controller::class,"generate_remuneration_report"])->name('report.generate-remuneration-report');
 
+            // Remuneration Transaction Report
+            Route::get("/remuneration-transaction-report",[Report_Controller::class,"remuneration_transaction_report"])->name('report.remuneration-transaction-report');
+            Route::post("/generate-remuneration-transaction-report",[Report_Controller::class,"generate_remuneration_transaction_report"])->name('report.generate-remuneration-transaction-report');
+
             Route::get("/level-wise",[Report_Controller::class,"level_wise"])->name('report.business-report.level');
             Route::post("/level-wise",[Report_Controller::class,"generate_date_wise_level_report"])->name('report.business-report.generate_date_wise_level_report');
             Route::get("/level-wise-business-exportPdf/{user_id}/{start_date?}/{end_date?}",[Report_Controller::class,"level_wise_business_exportPdf"])->name('report.business-report.level-wise-business-exportPdf');
