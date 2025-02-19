@@ -383,7 +383,7 @@
 
 
     if(!function_exists('calculate_left_business')){
-        function calculate_left_business($user_id){
+        function calculate_left_business($user_id,$start_date=null,$end_date=null){
             $left_side_members = getLeftSideMembers($user_id);
         
             if (empty($left_side_members)) {
@@ -395,8 +395,19 @@
             // $total_business = Orders::whereIn('buyer_id', $buyer_ids)
             //                     ->sum('price_total');
 
-            $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
-            ->sum('total_amount');
+            // $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
+            // ->sum('total_amount');
+
+            $query = TopUp::whereIn('user_id', $buyer_ids)
+                ->where('is_provide_direct', 1);
+
+            if (!empty($start_date) && !empty($end_date)) {
+                $query->whereDate('start_date', '>=', $start_date)
+                        ->whereDate('start_date', '<=', $end_date);
+            }
+
+            $total_business = $query->sum('total_amount');
+
             
             return $total_business;
         }
@@ -423,7 +434,7 @@
     }
 
     if(!function_exists('calculate_right_business')){
-        function calculate_right_business($user_id){
+        function calculate_right_business($user_id,$start_date=null,$end_date=null){
             $right_side_members = getRightSideMembers($user_id);
     
             if (empty($right_side_members)) {
@@ -435,8 +446,18 @@
             // $total_business = Orders::whereIn('buyer_id', $buyer_ids)
             //                         ->sum('price_total');
 
-            $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
-                                    ->sum('total_amount');
+            // $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
+            //                         ->sum('total_amount');
+
+            $query = TopUp::whereIn('user_id', $buyer_ids)
+                ->where('is_provide_direct', 1);
+
+            if (!empty($start_date) && !empty($end_date)) {
+                $query->whereDate('start_date', '>=', $start_date)
+                        ->whereDate('start_date', '<=', $end_date);
+            }
+
+            $total_business = $query->sum('total_amount');
             
             return $total_business;
         }

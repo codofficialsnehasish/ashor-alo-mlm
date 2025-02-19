@@ -43,6 +43,10 @@
                                     <!-- Search Form -->
                                     <div>
                                         <form action="{{ route('report.business-report.tree') }}" method="get" class="d-flex" id="search-form">
+                                            <div class="input-daterange input-group me-3" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
+                                                <input type="text" class="form-control" required name="start_date" placeholder="Start Date" value="" autocomplete="off" />
+                                                <input type="text" class="form-control" required name="end_date" placeholder="End Date" value="" autocomplete="off" />
+                                            </div>
                                             <input type="search" id="search-query" class="form-control form-control-sm me-2" placeholder="Search by name or ID" name="query" aria-controls="datatable-buttons" minlength="3" autocomplete="off">
                                             {{-- <input type="submit" class="btn btn-primary" value="Search"> --}}
                                         </form>
@@ -77,7 +81,7 @@
                                                             <div class="member-view-box n-ppost">
                                                                 <div class="member-footer">
                                                                     <div class="name"><span>Left Business</span></div>
-                                                                    <div class="downline"><span>{{ calculate_left_business($rootUser->id) }}</span></div>
+                                                                    <div class="downline"><span>{{ calculate_left_business($rootUser->id,$start_date,$end_date) }}</span></div>
                                                                 </div>
                                                             </div>
                                                         </a>
@@ -87,7 +91,7 @@
                                                             <div class="member-view-box n-ppost">
                                                                 <div class="member-footer">
                                                                     <div class="name"><span>Right Business</span></div>
-                                                                    <div class="downline"><span>{{ calculate_right_business($rootUser->id) }}</span></div>
+                                                                    <div class="downline"><span>{{ calculate_right_business($rootUser->id,$start_date,$end_date) }}</span></div>
                                                                 </div>
                                                             </div>
                                                         </a>

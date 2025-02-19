@@ -965,6 +965,9 @@ class Report_Controller extends Controller
 
     public function tree_wise(Request $request){
         $userId = $request->input('query');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
         $data['title'] = 'Tree Wise Business Report';
         if(empty($userId)){
             // return 0;
@@ -974,7 +977,7 @@ class Report_Controller extends Controller
             // return 1;
             $rootUser = User::where('role','agent')->where('user_id',$userId)->first();
         }
-        return view('admin.reports.business_report.tree_wise',compact('rootUser'))->with($data);
+        return view('admin.reports.business_report.tree_wise',compact('rootUser','start_date','end_date'))->with($data);
     }
 
 
