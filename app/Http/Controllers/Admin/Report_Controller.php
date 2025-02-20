@@ -403,7 +403,7 @@ class Report_Controller extends Controller
                     'Total Payout Amount' => $payout->total_payout,
                     'Account Name (As Per Bank)' => $user->account_name,
                     'Bank Name' => $user->bank_name,
-                    'Account Number' => $user->account_number,
+                    'Account Number' => "'".$user->account_number,
                     'IFSC' => $user->ifsc_code,
                     'Account Type' => $user->account_type,
                     'UPI Type' => $user->upi_type,
