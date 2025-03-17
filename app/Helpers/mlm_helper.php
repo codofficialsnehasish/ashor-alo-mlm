@@ -12,6 +12,8 @@
     use App\Models\RemunerationBenefit;
     use App\Models\SalaryBonus;
 
+    use Illuminate\Support\Facades\DB;
+
 
     // generate password
     if(!function_exists('generate_random_password')){
@@ -196,6 +198,51 @@
             // $total_acumulation = TopUp::where('user_id',$user_id)->where('is_completed',0)->sum('total_amount');
             
             return $total_acumulation ?? 0;
+        }
+    }
+
+
+    if(!function_exists('get_user_current_week_commision')){
+        function get_user_current_week_commision($user_id){
+            $today = Carbon::now();
+            $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            $current_day = Carbon::now();
+
+            // return format_date_for_db($lastSaturday);
+            // return format_date_for_db($current_day);
+            $total_deduction = 15;
+
+            $product_return = AccountTransaction::where(function ($query) {
+                                    $query->where('which_for', 'ROI Daily')
+                                        ->orWhere('which_for', 'ROI Dailys');
+                                })
+                                ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+                                ->where('user_id',$user_id)
+                                ->sum('amount');
+
+            $product_return_deduction = ($product_return * 5) / 100;
+            $total_product_return = $product_return - $product_return_deduction;
+            // return $total_product_return;
+
+            $direct_bonus = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+                                                ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+                                                ->where('user_id', $user_id)
+                                                ->sum('amount');
+
+            
+            
+            $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])
+                                                ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
+                                                ->where('user_id', $user_id)
+                                                ->sum('amount');
+
+                                                // return $lavel_bonus;
+            
+            $comission = $direct_bonus;
+            $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
+            $final_commission = $comission - $deduction;
+
+            return $final_commission + $total_product_return;
         }
     }
 

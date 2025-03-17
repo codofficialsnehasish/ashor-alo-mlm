@@ -32,6 +32,7 @@
                                             <!-- <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-primary ms-1">Message</button> -->
                                         </div>
                                         <h5 class="my-3">{{ Auth::user()->name }}</h5>
+                                        current amount : {{ get_user_current_week_commision(21) }}
                                         <p class="text-muted mb-1">ID - {{ Auth::user()->user_id }}</p>
                                         <p class="text-muted mb-2">Sponsor - {{ Auth::user()->agent_id }}</p>
                                         {{-- <p class="text-muted">Sponsor ID - {{ Auth::user()->agent_id }}</p> --}}

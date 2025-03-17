@@ -581,6 +581,16 @@ class Report_Controller extends Controller
 
     // End of Remuneration Report
 
+    // Hold Amount Report
+
+    public function hold_amount_report(){
+        $data['title'] = 'Hold Amount Report';
+        $data['items'] = User::where('role', 'agent')->where('status',1)->where('hold_balance','>',0)->get();
+        return view('admin.reports.hold_amount_report')->with($data);
+    }
+
+    // End of Hold Amount Report
+
 
 
 

@@ -35,6 +35,7 @@
                                 <li><a href="{{ route('franchise-benefit.index') }}">Franchise Benefit</a></li>
                             </ul>
                         </li>
+                        <li><a href="{{ route('activity.report') }}">Activity Report</a></li>
                     </ul>
                 </li>
 
@@ -122,7 +123,7 @@
                         <li><a href="{{ route('report.product-return-report') }}">Product Support Report</a></li>
                         <li><a href="{{ route('report.payout-report') }}">Payout Report</a></li>
                         <li><a href="{{ route('report.payout-history') }}">Payout History</a></li>
-                        {{-- <li><a href="{{ route('report.remuneration-report') }}">Remuneration Report</a></li> --}}
+                        <li><a href="{{ route('report.hold-amount-report') }}">Hold Amount Report</a></li>
                         <li>
                             <a href="javascript: void(0);" class="has-arrow">Remuneration Report</a>
                             <ul class="sub-menu" aria-expanded="true">

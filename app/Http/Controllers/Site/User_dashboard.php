@@ -54,7 +54,8 @@ class User_dashboard extends Controller
         $data['title'] = 'Dashboard';
         $data['total_income'] = $this->get_total_income(Auth::id());
         $data['total_commission'] = $this->calculate_total_commission('comission',Auth::id());
-        $data['hold_amount'] = $this->calculate_total_commission('hold',Auth::id());
+        // $data['hold_amount'] = $this->calculate_total_commission('hold',Auth::id());
+        $data['hold_amount'] = Auth::user()->hold_balance;
         $data['total_purchase'] = Orders::where('buyer_id',Auth::id())->sum('price_total');
         $data_customer = $this->get_all_customers(Auth::user()->user_id);
         $data['total_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
@@ -166,41 +167,70 @@ class User_dashboard extends Controller
     }
 
     public function calculate_total_commission($type,$id){
-        $mlm_settings = MLMSettings::first();
-        $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
-        $comission = $this->calculate_direct_bonus($id) + $this->calculate_level_bonus($id);
-        $deduction = ($comission * $total_deduction) / 100; // 15% of the commission
-        $final_commission = $comission - $deduction;
+        // $mlm_settings = MLMSettings::first();
+        // $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
 
-        $total_top_up_amount = TopUp::where('user_id',$id)->sum('total_amount');
-        $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',$id)->sum('amount');
-        $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
-        $product_return = $product_return - $product_return_deduction;
+        // $remuneration_benefits = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',$id)->sum('amount');
         
-        if($final_commission >= ($total_top_up_amount * 10)){
-            if($type == 'comission'){
-                return ($total_top_up_amount * 10) + $product_return;
-            }elseif($type == 'hold'){
-                return round($final_commission - ($total_top_up_amount * 10),2);
-            }
-        }else{
-            if($type == 'comission'){
-                return round(($final_commission + $product_return),2);
-            }
-            if($type == 'hold'){
-                return 0.00;
-            }
-        }
+        // $comission = $this->calculate_direct_bonus($id) + $this->calculate_level_bonus($id);
+        // $deduction = ($comission * $total_deduction) / 100; // 15% of the commission
+        // $final_commission = $comission - $deduction;
+
+        // $final_commission += $remuneration_benefits;
+
+        // $total_top_up_amount = TopUp::where('user_id',$id)->sum('total_amount');
+        // $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',$id)->sum('amount');
+        // $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
+        // $product_return = $product_return - $product_return_deduction;
+        
+        // if($final_commission >= ($total_top_up_amount * 10)){
+        //     if($type == 'comission'){
+        //         return ($total_top_up_amount * 10) + $product_return;
+        //     }elseif($type == 'hold'){
+        //         return round($final_commission - ($total_top_up_amount * 10),2);
+        //     }
+        // }else{
+        //     if($type == 'comission'){
+        //         return round(($final_commission + $product_return),2);
+        //     }
+        //     if($type == 'hold'){
+        //         return 0.00;
+        //     }
+        // }
+        $total = Payout::where('user_id', $id)
+                        ->selectRaw('
+                            SUM(direct_bonus - direct_bonus_tds_deduction - direct_bonus_repurchase_deduction) as direct_bonus, 
+                            SUM(lavel_bonus - lavel_bonus_tds_deduction - lavel_bonus_repurchase_deduction) as lavel_bonus, 
+                            SUM(remuneration_bonus - remuneration_bonus_tds_deduction - remuneration_bonus_repurchase_deduction) as remuneration_bonus, 
+                            SUM(roi - roi_tds_deduction) as roi
+                        ')
+                        ->first();
+                        
+        // Calculate the total sum
+        $grandTotal = $total->direct_bonus + $total->lavel_bonus + $total->remuneration_bonus + $total->roi;
+
+        return $grandTotal;
     }
 
     private function get_total_income($id){
-        $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',$id)->sum('amount');
-        $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',$id)->sum('amount');
-        $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
-        ->where('user_id', $id)
-        ->sum('amount');
+        // $lavel_bonus = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',$id)->sum('amount');
+        // $product_return = AccountTransaction::where('which_for','ROI Daily')->where('user_id',$id)->sum('amount');
+        // $transactions = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
+        // ->where('user_id', $id)
+        // ->sum('amount');
 
-        return $transactions + $lavel_bonus + $product_return;
+        // $remuneration_benefits = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',$id)->sum('amount');
+
+        // return $transactions + $lavel_bonus + $product_return + $remuneration_benefits;
+
+        $total = Payout::where('user_id', $id)
+                        ->selectRaw('SUM(direct_bonus) as direct_bonus, SUM(lavel_bonus) as lavel_bonus, SUM(remuneration_bonus) as remuneration_bonus, SUM(roi) as roi')
+                        ->first();
+                        
+        // Calculate the total sum
+        $grandTotal = $total->direct_bonus + $total->lavel_bonus + $total->remuneration_bonus + $total->roi;
+
+        return $grandTotal;
     }
 
     public function member_profile(){

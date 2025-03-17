@@ -52,7 +52,8 @@ use App\Http\Controllers\Admin\{
     AccountSwitchController,
     ContactUsController,
     PhotoGallaryController,
-    CertificateController
+    CertificateController,
+    LogActivityController,
 };
 
 
@@ -473,6 +474,9 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/remuneration-report",[Report_Controller::class,"remuneration_report"])->name('report.remuneration-report');
             Route::post("/generate-remuneration-report",[Report_Controller::class,"generate_remuneration_report"])->name('report.generate-remuneration-report');
 
+            // Hold Amount Report
+            Route::get("/hold-amount-report",[Report_Controller::class,"hold_amount_report"])->name('report.hold-amount-report');
+
             // Remuneration Transaction Report
             Route::get("/remuneration-transaction-report",[Report_Controller::class,"remuneration_transaction_report"])->name('report.remuneration-transaction-report');
             Route::post("/generate-remuneration-transaction-report",[Report_Controller::class,"generate_remuneration_transaction_report"])->name('report.generate-remuneration-transaction-report');
@@ -491,6 +495,8 @@ Route::middleware('auth.admin')->group(function () {
 
         Route::resource('photo-gallary', PhotoGallaryController::class);
         Route::resource('certificate', CertificateController::class);
+
+        Route::get('/activity-report', [LogActivityController::class, 'activityReport'])->name('activity.report');
 
     });
 });

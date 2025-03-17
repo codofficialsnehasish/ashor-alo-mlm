@@ -88,14 +88,18 @@
                                             <td colspan="2">Less Repurchase Wallet {{ $payout->repurchase_persentage }}%</td>
                                             <td>{{ $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction }}</td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="2">Less {{--TDS--}}Service charge {{ $payout->tds_persentage }}%</td>
+                                        {{-- <tr>
+                                            <td colspan="2">Less <!--TDS--> Service charge {{ $payout->tds_persentage }}%</td>
                                             <td>{{ $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction }}</td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
+                                            <td colspan="2">Less Service charge {{ $payout->tds_persentage }}%</td> {{-- $payout->service_charge_persentage --}}
+                                            <td>{{ $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction + $payout->roi_tds_deduction }}</td>
+                                        </tr>
+                                        {{-- <tr>
                                             <td colspan="2">Less Service Charge {{ $payout->service_charge_persentage }}%</td>
                                             <td>{{ $payout->roi_tds_deduction }}</td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <td colspan="2">Hold Amount</td>
                                             <td>{{ $payout->hold_amount }}</td>
