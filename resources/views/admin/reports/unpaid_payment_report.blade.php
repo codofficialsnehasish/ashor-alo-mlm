@@ -44,16 +44,16 @@
                                     <div class="mb-0 col-md-8">
                                         <label class="form-label">Search Using Payout Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
-                                            <input type="text" class="form-control" required name="start_date" placeholder="Payout Start Date" value="" autocomplete="off" />
-                                            <input type="text" class="form-control" required name="end_date" placeholder="Payout End Date" value="" autocomplete="off" />
+                                            <input type="text" class="form-control" required name="start_date" placeholder="Payout Start Date" value="{{ $start_date ?? ''}}" autocomplete="off" />
+                                            <input type="text" class="form-control" required name="end_date" placeholder="Payout End Date" value="{{ $end_date ?? ''}}" autocomplete="off" />
                                         </div>
                                     </div>
                                     <div class="mb-0 col-md-2">
                                         <label class="form-label">Choose Status</label>
                                         <select class="form-control" name="status">
-                                            <option value="all">All</option>
-                                            <option value="paid">Paid</option>
-                                            <option value="unpaid">Unpaid</option>
+                                            <option @if($status == 'all') selected @endif value="all">All</option>
+                                            <option @if($status == 'paid') selected @endif value="paid">Paid</option>
+                                            <option @if($status == 'unpaid') selected @endif value="unpaid">Unpaid</option>
                                         </select>
                                     </div>
                                     <div class="col-md-2" style="margin-top: 29px !important;">

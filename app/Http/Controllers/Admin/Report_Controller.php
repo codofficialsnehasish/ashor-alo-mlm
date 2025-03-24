@@ -560,6 +560,9 @@ class Report_Controller extends Controller
         // } else {
         //     $data['items'] = collect();
         // }
+        $data['start_date'] = '';
+        $data['end_date'] = '';
+        $data['status'] = '';
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
 
@@ -567,6 +570,10 @@ class Report_Controller extends Controller
         $data['title'] = 'Paid Unpaid Payment Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
+
+        $data['start_date'] = $r->start_date;
+        $data['end_date'] = $r->end_date;
+        $data['status'] = $r->status;
 
         if(!empty($r->status) && $r->status == 'paid'){
             $data['items'] = Payout::where('paid_unpaid','1')
