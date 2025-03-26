@@ -545,10 +545,21 @@ class Report_Controller extends Controller
 
     // End of Payout Report
 
+    // Paid Unpaid Report
+
     public function paid_unpaid_payment_report(){
         $data['title'] = 'Paid Unpaid Payment Report';
         // $data['items'] = Payout::where('paid_unpaid','0')->get();
-        $data['items'] = Payout::all();                      
+        // $data['items'] = Payout::all(); 
+        $data['items'] = Payout::where('total_payout','>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                })
+                                ->paginate(10)->withQueryString(); 
+                 
         // $lastDates = Payout::select('start_date', 'end_date')
         //                     ->orderBy('end_date', 'desc')
         //                     ->first();
@@ -579,21 +590,133 @@ class Report_Controller extends Controller
             $data['items'] = Payout::where('paid_unpaid','1')
                             ->whereDate('end_date', '>=', $startDate)
                             ->whereDate('start_date', '<=', $endDate)
-                            ->get();
+                            ->where('total_payout', '>', 0)
+                            ->whereHas('user', function ($query) {
+                                $query->where('block', 0) // Check if user is not blocked
+                                    ->whereHas('kyc', function ($kycQuery) {
+                                        $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                    });
+                            }) 
+                            ->paginate(10)->withQueryString();
+                            // ->get();
         }elseif(!empty($r->status) && $r->status == 'unpaid'){
             $data['items'] = Payout::where('paid_unpaid','0')
                                 ->whereDate('end_date', '>=', $startDate)
                                 ->whereDate('start_date', '<=', $endDate)
-                                ->get();
+                                ->where('total_payout', '>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                }) 
+                                ->paginate(10)->withQueryString();
+                                // ->get();
         }elseif(!empty($r->status) && $r->status == 'all'){
             $data['items'] = Payout::whereDate('end_date', '>=', $startDate)
                                 ->whereDate('start_date', '<=', $endDate)
-                                ->get();
+                                ->where('total_payout', '>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                }) 
+                                ->paginate(10)->withQueryString();
+                                // ->get();
         }else{
-            $data['items'] = Payout::all();
+            // $data['items'] = Payout::all();
+            $data['items'] = Payout::where('total_payout','>', 0)
+                                    ->whereHas('user', function ($query) {
+                                        $query->where('block', 0) // Check if user is not blocked
+                                            ->whereHas('kyc', function ($kycQuery) {
+                                                $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                            });
+                                    })
+                                    ->paginate(10)->withQueryString(); 
         }
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
+
+    // public function exportPdf(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+    //         $customers = User::where("role", "!=", "admin")
+    //                         ->where('is_deleted',0)
+    //                         ->whereAny([
+    //                                     'name',
+    //                                     'email',
+    //                                     'phone',
+    //                                     'agent_id',
+    //                                     'user_id'
+    //                                 ], 'like', '%'.$query.'%')
+    //                         ->orderBy('created_at', 'desc')->get();
+    //         // return $customers;
+
+    //         $pdf = Pdf::loadView('admin.pdf.customer', compact('customers'));
+    //         return $pdf->download('customers.pdf');
+    //     } catch (\Exception $e) {
+    //         return back()->with('error','An error occurred while generating the PDF. '.$e->getMessage());
+    //     }
+    // }
+
+    // public function exportExcel(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+    //         $customers = User::where("role", "!=", "admin")
+    //                         ->where('is_deleted',0)
+    //                         ->whereAny([
+    //                                     'name',
+    //                                     'email',
+    //                                     'phone',
+    //                                     'agent_id',
+    //                                     'user_id'
+    //                                 ], 'like', '%'.$query.'%')
+    //                         ->orderBy('created_at', 'desc')->get();
+            
+    //         $headers = [
+    //             'Name', 'Email', 'Phone', 'Agent ID', 'User ID', 'Created At'
+    //         ];
+
+    //         // Format data into an array
+    //         $data = $customers->map(function ($customer) {
+    //             return [
+    //                 'Name' => $customer->name,
+    //                 'Email' => $customer->email,
+    //                 'Phone' => $customer->phone,
+    //                 'Agent ID' => $customer->agent_id,
+    //                 'User ID' => $customer->user_id,
+    //                 'Created At' => $customer->created_at->format('Y-m-d H:i:s'),
+    //             ];
+    //         })->toArray();
+
+    //         array_unshift($data, $headers);
+
+    //         // Create an inline export class and use it to generate the Excel file
+    //         $export = new class($data) implements FromArray {
+    //             protected $data;
+
+    //             public function __construct(array $data)
+    //             {
+    //                 $this->data = $data;
+    //             }
+
+    //             public function array(): array
+    //             {
+    //                 return $this->data;
+    //             }
+    //         };
+
+    //         // Download the Excel file
+    //         return Excel::download($export, 'customers.xlsx');
+    //     } catch (\Exception $e) {
+    //         return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
+    //     }
+    // }
+
+    // End of Paid Unpaid Report
 
     public function less_than_two_hundred_commission_repoet(){
         $data['title'] = 'Commission Report of > 200';

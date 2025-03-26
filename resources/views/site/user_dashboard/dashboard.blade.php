@@ -60,7 +60,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Total Income</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_income }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_income ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -77,9 +77,9 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Total Commission</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_commission }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_commission ?? 0.00 }}</div>
                                             <div class="text-xs font-weight-bold text-danger text-uppercase mt-1">
-                                                Hold Amount : ₹{{ $hold_amount }}</div>
+                                                Hold Amount : ₹{{ $hold_amount ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -96,7 +96,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Direct Bonus</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $direct_bonus }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $direct_bonus ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -113,7 +113,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Level Bonus</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $level_bonus }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $level_bonus ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -130,7 +130,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Product Support</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $product_return }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $product_return ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -147,7 +147,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                                 Remuneration Benefits</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $remuneration_benefits }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $remuneration_benefits ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -164,7 +164,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 Repurchase Wallet</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $repurchase_bonus }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $repurchase_bonus ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -182,7 +182,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Direct Team Member</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $direct_team_member }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $direct_team_member ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -199,7 +199,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Left Team Member</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $left_team_member }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="left-team-member-show">{{ $left_team_member ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -216,7 +216,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                                 Right Team Member</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $right_team_member }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="right-team-member-show">{{ $right_team_member ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -233,7 +233,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                                 All Team Member</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $tree_team_member }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="all-team-member-show">{{ $tree_team_member ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -250,7 +250,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Level Team Member</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $level_team_member }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="level-team-member-show">{{ $level_team_member ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -260,7 +260,7 @@
                             </div>
                         </div>
 
-                        <!-- Earnings (Monthly) Card Example -->
+                        <!-- Active Team Member -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-info shadow h-100 py-2">
                                 <div class="card-body">
@@ -271,10 +271,10 @@
                                             </div>
                                             <div class="row no-gutters align-items-center">
                                                 <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $total_active_team_member }}</div>
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800 team-count">{{ $total_active_team_member ?? 0.00 }}</div>
                                                 </div>
                                                 <div class="col">
-                                                    @if($total_team_member != 0 && $total_active_team_member != 0 )
+                                                    @if(!empty($total_team_member) && ($total_team_member != 0 && $total_active_team_member != 0) )
                                                     @php $percentage = ($total_active_team_member / $total_team_member) * 100 @endphp
                                                     <div class="progress progress-sm mr-2">
                                                         <div class="progress-bar bg-info" role="progressbar"
@@ -306,7 +306,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                                 Rank</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $rank }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="rank-show">{{ $rank ?? '' }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-poll fa-2x text-gray-300"></i>
@@ -323,7 +323,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Total Top Up Amount</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_topup_amount }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_topup_amount ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -340,7 +340,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Left Business</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_left_business }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="left-business-show">₹ {{ $total_left_business ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -357,7 +357,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Right Business</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $total_right_business }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="right-business-show">₹ {{ $total_right_business ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -374,7 +374,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Current Week Business</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ $current_week_business }}</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="current-week-business-show">₹ {{ $current_week_business ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
@@ -383,6 +383,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
@@ -406,5 +407,154 @@
 
             </div>
             <!-- End of Main Content -->
+
+            @section('script')
+            <script>
+                $(document).ready(function() {
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-left-team-member') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#left-team-member-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#left-team-member-show').text(response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-right-team-member') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#right-team-member-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#right-team-member-show').text(response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-tree-team-member') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#all-team-member-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#all-team-member-show').text(response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-level-team-member') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#level-team-member-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#level-team-member-show').text(response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-total-left-business') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#left-business-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#left-business-show').text('₹ '+response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-total-right-business') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#right-business-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#right-business-show').text('₹ '+response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-rank') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#rank-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#rank-show').text(response);
+                        }
+                    });
+
+                    $.ajax({
+                        url: "{{ route('member-dashboard.get-current-week-business') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#current-week-business-show').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#current-week-business-show').text('₹ '+response);
+                        }
+                    });
+
+                    function updateTeamProgress() {
+                        let totalTeamMembers = 0;
+                        let totalActiveMembers = 0;
+
+                        // Show "Calculating..." before fetching data
+                        $('.team-count').text('Calculating...');
+                        $('.progress-bar').css('width', '0%').attr('aria-valuenow', '0');
+
+                        // Fetch total team members
+                        $.ajax({
+                            url: "{{ route('member-dashboard.get-total-team-member') }}",
+                            type: 'POST',
+                            data: { _token: "{{ csrf_token() }}" },
+                            success: function(response) {
+                                totalTeamMembers = parseFloat(response) || 0;
+                                checkAndUpdateProgress();
+                            }
+                        });
+
+                        // Fetch total active team members
+                        $.ajax({
+                            url: "{{ route('member-dashboard.get-total-active-team-member') }}",
+                            type: 'POST',
+                            data: { _token: "{{ csrf_token() }}" },
+                            success: function(response) {
+                                totalActiveMembers = parseFloat(response) || 0;
+                                checkAndUpdateProgress();
+                            }
+                        });
+
+                        function checkAndUpdateProgress() {
+                            if (totalTeamMembers !== 0) {
+                                let percentage = (totalActiveMembers / totalTeamMembers) * 100;
+                                $('.team-count').text(totalActiveMembers.toFixed(2));
+                                $('.progress-bar').css('width', percentage + '%').attr('aria-valuenow', percentage);
+                            } else {
+                                $('.team-count').text('0.00');
+                                $('.progress-bar').css('width', '0%').attr('aria-valuenow', '0');
+                            }
+                        }
+                    }
+
+                    // Call the function on page load or when needed
+                    updateTeamProgress();
+
+
+                });
+            </script>
+            @endsection
 
             @include('site.user_dashboard.partials.footer')

@@ -133,6 +133,26 @@ Route::middleware('auth')->group(function () {
     Route::prefix('member-dashboard')->group(function () {
 
         Route::get("/",[User_dashboard::class,"member_dashboard"])->name('member-dashboard');
+
+        Route::post("/get-total-team-member",[User_dashboard::class,"get_total_team_member"])->name('member-dashboard.get-total-team-member');
+        Route::post("/get-total-active-team-member",[User_dashboard::class,"get_total_active_team_member"])->name('member-dashboard.get-total-active-team-member');
+        
+        Route::post("/get-left-team-member",[User_dashboard::class,"get_left_team_member"])->name('member-dashboard.get-left-team-member');
+        Route::post("/get-right-team-member",[User_dashboard::class,"get_right_team_member"])->name('member-dashboard.get-right-team-member');
+        Route::post("/get-tree-team-member",[User_dashboard::class,"get_tree_team_member"])->name('member-dashboard.get-tree-team-member');
+        Route::post("/get-level-team-member",[User_dashboard::class,"get_level_team_member"])->name('member-dashboard.get-level-team-member');
+        Route::post("/get-total-left-business",[User_dashboard::class,"get_total_left_business"])->name('member-dashboard.get-total-left-business');
+        Route::post("/get-total-right-business",[User_dashboard::class,"get_total_right_business"])->name('member-dashboard.get-total-right-business');
+        Route::post("/get-rank",[User_dashboard::class,"get_rank"])->name('member-dashboard.get-rank');
+        Route::post("/get-current-week-business",[User_dashboard::class,"get_current_week_business"])->name('member-dashboard.get-current-week-business');
+        
+        
+        
+
+
+        
+
+
         Route::get("/member-profile",[User_dashboard::class,"member_profile"])->name('member-profile');
         Route::get("/{id}/update-profile",[User_dashboard::class,"update_profile"])->name('member.update-profile');
         Route::post("/process-update-profile",[User_dashboard::class,"process_update_profile"])->name('member.process-update-profile');
@@ -467,6 +487,7 @@ Route::middleware('auth.admin')->group(function () {
 
             Route::get("/paid-unpaid-payment-report",[Report_Controller::class,"paid_unpaid_payment_report"])->name('report.paid-unpaid-payment-report');
             Route::post("/generate-paid-unpaid-payment-report",[Report_Controller::class,"generate_paid_unpaid_payment_report"])->name('report.generate-paid-unpaid-payment-report');
+            Route::get("/generate-paid-unpaid-payment-report",[Report_Controller::class,"generate_paid_unpaid_payment_report"])->name('report.generate-paid-unpaid-payment-report');
 
             Route::get("/less-than-two-hundred-commission-repoet",[Report_Controller::class,"less_than_two_hundred_commission_repoet"])->name('report.less-than-two-hundred-commission-repoet');
 

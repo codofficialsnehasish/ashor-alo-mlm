@@ -49,36 +49,74 @@ class User_dashboard extends Controller
     }
     
 
-    public function member_dashboard(){
-        set_time_limit(300);
+    // public function member_dashboard(){
+    //     set_time_limit(300);
+    //     $data['title'] = 'Dashboard';
+    //     $data['total_income'] = $this->get_total_income(Auth::id());
+    //     $data['total_commission'] = $this->calculate_total_commission('comission',Auth::id());
+    //     // $data['hold_amount'] = $this->calculate_total_commission('hold',Auth::id());
+    //     $data['hold_amount'] = Auth::user()->hold_balance;
+    //     $data['total_purchase'] = Orders::where('buyer_id',Auth::id())->sum('price_total');
+
+    //     $data_customer = $this->get_all_customers(Auth::user()->user_id);
+    //     $data['total_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
+    //     $data['total_active_team_member'] = activated_right(Auth::user()->id) + activated_left(Auth::user()->id);
+    
+    //     $data['direct_bonus'] = $this->calculate_direct_bonus(Auth::id());
+    //     $data['level_bonus'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',Auth::id())->sum('amount');
+    //     $data['product_return'] = AccountTransaction::where('which_for','ROI Daily')->where('user_id',Auth::id())->sum('amount');
+    //     $data['direct_team_member'] = User::where('agent_id',Auth::user()->user_id)->count();
+    //     $data['left_team_member'] = total_left(Auth::id());
+    //     $data['right_team_member'] = total_right(Auth::id());
+    //     $data['tree_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
+    //     $data['level_team_member'] = get_total_level_team_member(Auth::user()->user_id);
+    //     $data['total_topup_amount'] = TopUp::where('user_id',Auth::id())->sum('total_amount');
+
+    //     $data['total_left_business'] = calculate_left_business(Auth::id());
+    //     $data['total_right_business'] = calculate_right_business(Auth::id());
+    //     // $data['rank'] = get_member_rank(Auth::id());
+    //     $data['rank'] = $this->get_rank_instantly(Auth::id());
+
+    //     $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
+    //     $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
+    
+    //     $data['current_week_business'] = calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id());
+    
+    //     $data['last_payment'] = Payout::where('user_id', Auth::id())->latest()->first();
+    //     return view($this->view_path."dashboard")->with($data);
+    // }
+
+    public function member_dashboard() {
         $data['title'] = 'Dashboard';
         $data['total_income'] = $this->get_total_income(Auth::id());
         $data['total_commission'] = $this->calculate_total_commission('comission',Auth::id());
-        // $data['hold_amount'] = $this->calculate_total_commission('hold',Auth::id());
         $data['hold_amount'] = Auth::user()->hold_balance;
         $data['total_purchase'] = Orders::where('buyer_id',Auth::id())->sum('price_total');
-        $data_customer = $this->get_all_customers(Auth::user()->user_id);
-        $data['total_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
-        $data['total_active_team_member'] = activated_right(Auth::user()->id) + activated_left(Auth::user()->id);
         $data['direct_bonus'] = $this->calculate_direct_bonus(Auth::id());
         $data['level_bonus'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',Auth::id())->sum('amount');
         $data['product_return'] = AccountTransaction::where('which_for','ROI Daily')->where('user_id',Auth::id())->sum('amount');
         $data['direct_team_member'] = User::where('agent_id',Auth::user()->user_id)->count();
-        $data['left_team_member'] = total_left(Auth::id());
-        $data['right_team_member'] = total_right(Auth::id());
-        $data['tree_team_member'] = total_left(Auth::id()) + total_right(Auth::id());
-        $data['level_team_member'] = get_total_level_team_member(Auth::user()->user_id);
         $data['total_topup_amount'] = TopUp::where('user_id',Auth::id())->sum('total_amount');
-        $data['total_left_business'] = calculate_left_business(Auth::id());
-        $data['total_right_business'] = calculate_right_business(Auth::id());
-        // $data['rank'] = get_member_rank(Auth::id());
-        $data['rank'] = $this->get_rank_instantly(Auth::id());
         $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
         $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
-        $data['current_week_business'] = calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id());
         $data['last_payment'] = Payout::where('user_id', Auth::id())->latest()->first();
-        return view($this->view_path."dashboard")->with($data);
+        return view($this->view_path . "dashboard")->with($data);
     }
+
+    public function get_total_team_member(){ return total_left(Auth::id()) + total_right(Auth::id()); }
+    public function get_total_active_team_member(){ return activated_right(Auth::user()->id) + activated_left(Auth::user()->id); }
+    public function get_left_team_member(){ return total_left(Auth::id()); }
+    public function get_right_team_member(){ return total_right(Auth::id()); }
+    public function get_tree_team_member(){ return total_left(Auth::id()) + total_right(Auth::id()); }
+    public function get_level_team_member(){ return get_total_level_team_member(Auth::user()->user_id); }
+    public function get_total_left_business(){ return calculate_left_business(Auth::id()); }
+    public function get_total_right_business(){ return calculate_right_business(Auth::id()); }
+    public function get_rank(){ return $this->get_rank_instantly(Auth::id()); }
+    public function get_current_week_business(){ return calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id()); }
+    
+    
+    
+    
 
     protected function get_rank_instantly($user_id){
         $total_left_business = calculate_left_business($user_id);
