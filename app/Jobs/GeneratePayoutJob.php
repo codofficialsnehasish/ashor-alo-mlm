@@ -270,7 +270,7 @@ class GeneratePayoutJob implements ShouldQueue
 
                     $payout->previous_unpaid_amount = $previous_unpaid_amount;
 
-                    $payout->hold_wallet_added = $user->hold_wallet;   
+                    $payout->hold_wallet_added = $user->hold_wallet;
     
                     // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
                     // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
