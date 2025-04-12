@@ -100,6 +100,8 @@ class User_dashboard extends Controller
         $data['remuneration_benefits'] = AccountTransaction::where('which_for','Salary Bonus')->where('user_id',Auth::id())->sum('amount');
         $data['repurchase_bonus'] = RepurchaseAccount::where('user_id',Auth::id())->sum('amount');
         $data['last_payment'] = Payout::where('user_id', Auth::id())->latest()->first();
+
+        $data['dilse_amount'] = TopUp::where('user_id',Auth::id())->where('is_personal_business',1)->sum('total_amount');
         return view($this->view_path . "dashboard")->with($data);
     }
 

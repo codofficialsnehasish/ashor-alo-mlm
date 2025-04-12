@@ -111,6 +111,13 @@
                 }else{
                     $data_array['is_provide_direct'] = 1; 
                 }
+
+                if($product->is_dilse == 1){
+                    $data_array['is_personal_business'] = 1;
+                    $data_array['is_provide_direct'] = 0; 
+                }else{
+                    $data_array['is_personal_business'] = 1;
+                }
                 
                 return $data_array;
             }else{

@@ -591,7 +591,26 @@ class Customers extends Controller
 
         $res = $obj->update();
 
+        $kyc = Kyc::where('user_id', $obj->id)->first();
+        if ($kyc) {
+            if (!empty($kyc->identy_proof) && file_exists(public_path($kyc->identy_proof))) {
+                unlink(public_path($kyc->identy_proof));
+            }
         
+            if (!empty($kyc->address_proof) && file_exists(public_path($kyc->address_proof))) {
+                unlink(public_path($kyc->address_proof));
+            }
+        
+            if (!empty($kyc->bank_ac_proof) && file_exists(public_path($kyc->bank_ac_proof))) {
+                unlink(public_path($kyc->bank_ac_proof));
+            }
+        
+            if (!empty($kyc->pan_card_proof) && file_exists(public_path($kyc->pan_card_proof))) {
+                unlink(public_path($kyc->pan_card_proof));
+            }
+
+            $kyc->delete();
+        }
         
         if($res){
             return redirect()->back()->with(['success'=>'Profile Reset Successfully']);

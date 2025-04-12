@@ -179,6 +179,17 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label mb-3 d-flex">Is Dil Se Product ?</label>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="is_dilse1" name="is_dilse" class="form-check-input" value="1" {{ check_uncheck(1,$product->is_dilse) }}>
+                                            <label class="form-check-label" for="is_dilse1">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="is_dilse2" name="is_dilse" class="form-check-input" value="0" {{ check_uncheck(0,$product->is_dilse) }}>
+                                            <label class="form-check-label" for="is_dilse2">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label mb-3 d-flex">Visiblity</label>
                                         <div class="form-check form-check-inline">
                                             <input type="radio" id="customRadioInline1" name="is_visible" class="form-check-input" value="1" {{ check_uncheck(1,$product->is_visible) }}>

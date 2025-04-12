@@ -67,7 +67,7 @@ class Report_Controller extends Controller
 
     public function investor_return_report(){
         $data['title'] = 'Investor Return Report';
-        $data['items'] = TopUp::all();
+        $data['items'] = TopUp::where('is_personal_business',0)->get();
         $data['mlm_settings'] = MLMSettings::first();
         return view('admin.reports.investor_return_report')->with($data);
     }
@@ -78,7 +78,7 @@ class Report_Controller extends Controller
         $endDate = $r->end_date;
         $data['mlm_settings'] = MLMSettings::first();
         $data['items'] = TopUp::whereDate('start_date', '>=', $startDate)
-        ->whereDate('start_date', '<=', $endDate)->get();
+        ->whereDate('start_date', '<=', $endDate)->where('is_personal_business',0)->get();
         return view('admin.reports.investor_return_report')->with($data);
     }
 
@@ -1212,4 +1212,28 @@ class Report_Controller extends Controller
 
 
     // End of Business Report
+
+
+
+
+    // Dilse Report
+
+    public function dilse_plan_report(){
+        $data['title'] = 'Dilse Plan Report';
+        $data['items'] = TopUp::where('is_personal_business',1)->get();
+        $data['mlm_settings'] = MLMSettings::first();
+        return view('admin.reports.dilse_plan_report')->with($data);
+    }
+
+    public function generate_dilse_plan_report(Request $r){
+        $data['title'] = 'Dilse Plan Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $data['mlm_settings'] = MLMSettings::first();
+        $data['items'] = TopUp::whereDate('start_date', '>=', $startDate)
+        ->whereDate('start_date', '<=', $endDate)->where('is_personal_business',1)->get();
+        return view('admin.reports.dilse_plan_report')->with($data);
+    }
+
+    // End of Dilse Report
 }

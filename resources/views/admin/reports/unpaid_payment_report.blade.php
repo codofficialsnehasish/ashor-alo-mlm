@@ -120,8 +120,8 @@
                             </table> --}}
 
                             <div id="datatable-buttons_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-                                <div class="row align-items-center">
-                                    {{-- <div class="col-sm-12 col-md-6">
+                                {{-- <div class="row align-items-center">
+                                    <div class="col-sm-12 col-md-6">
                                         <div class="dt-buttons btn-group flex-wrap"> 
                                             <form action="{{ route('customer.exportExcel') }}" method="get">
                                                 <input type="hidden" name="query" value="{{ request('query') }}">
@@ -132,16 +132,16 @@
                                                 <button type="submit" class="btn btn-secondary">Export PDF</button>
                                             </form>
                                         </div>
-                                    </div> --}}
-                                    {{-- <div class="col-sm-12 col-md-6">
+                                    </div>
+                                    <div class="col-sm-12 col-md-6">
                                         <div id="datatable-buttons_filter" class="dataTables_filter">
                                             <form action="{{ route('customer.show') }}" method="get">
                                                 <label>Search:<input type="search" class="form-control form-control-sm" placeholder="" name="query" aria-controls="datatable-buttons" minlength="3"></label>
                                                 <input type="submit" value="Search">
                                             </form>
                                         </div>
-                                    </div> --}}
-                                </div>
+                                    </div>
+                                </div> --}}
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <table class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">

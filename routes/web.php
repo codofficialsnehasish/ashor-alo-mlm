@@ -221,6 +221,8 @@ Route::middleware('auth')->group(function () {
                 Route::post("/generate-income-report","generate_income_report")->name('report.generate-income-report');
 
                 Route::get("/remuneration-report","remuneration_report")->name('userreport.remuneration-report');
+                Route::get("/dilse-plan-report","dilse_plan_report")->name('userreport.dilse-plan-report');
+                
             });
         });
 
@@ -386,6 +388,8 @@ Route::middleware('auth.admin')->group(function () {
             Route::post("update-pan-card-proof-status",[KycController::class,"update_pan_card_proof_status"])->name('kyc.update-pan-card-proof-status');
 
             Route::post("update-kyc-status",[KycController::class,"update_kyc_status"])->name('kyc.update-kyc-status');
+
+            Route::get('/{id}/activity', [KycController::class, 'activity'])->name('kyc.activity');
         });
 
         //=========================== Top Up Requests ==============================
@@ -508,6 +512,10 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}/{position?}",[Report_Controller::class,"level_wise_business_exportExcel"])->name('report.business-report.level-wise-business-exportExcel');
             
             Route::get("/tree-wise",[Report_Controller::class,"tree_wise"])->name('report.business-report.tree');
+        
+            // Dilse Report
+            Route::get("/dilse-plan-report",[Report_Controller::class,"dilse_plan_report"])->name('report.dilse-plan-report');
+            Route::post("/generate-dilse-plan-report",[Report_Controller::class,"generate_dilse_plan_report"])->name('report.generate-dilse-plan-report');
         });
 
         Route::get('/contact-us-massages',[ContactUsController::class,'index'])->name('admin.contact-us');

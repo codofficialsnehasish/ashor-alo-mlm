@@ -512,9 +512,6 @@ class CornJobs extends Controller
             // new vertion on 19-02-2025 (only get those user who are active in user table)
             $transactions = User::where('role','agent')->where('status',1)->where('is_deleted',0)->pluck('id');
 
-            // return response()->json(['transaction'=>$transactions,'users' => $users]);
-            // return $users;
-
             /*foreach($transactions as $user_id){
                 $user = User::find($user_id);
                 if($user){
@@ -684,134 +681,128 @@ class CornJobs extends Controller
 
 
 
-    // public function hold_wallet_replace_for_one_time(){
-    //     // Query 1
-    //     // SELECT user_id,SUM(hold_wallet) as total_hold, COUNT(*) AS row_count FROM `payouts` GROUP BY user_id;
+    public function hold_wallet_replace_for_one_time(){
+        // Query 1
+        // SELECT user_id,SUM(hold_wallet) as total_hold, COUNT(*) AS row_count FROM `payouts` GROUP BY user_id;
 
-    //     // Query 2
-    //     // SELECT user_id, SUM(hold_wallet) AS total_hold, COUNT(*) AS row_count FROM payouts GROUP BY user_id HAVING total_hold > 0 AND row_count > 1;
+        // Query 2
+        // SELECT user_id, SUM(hold_wallet) AS total_hold, COUNT(*) AS row_count FROM payouts GROUP BY user_id HAVING total_hold > 0 AND row_count > 1;
 
-    //     $results = Payout::selectRaw('user_id, SUM(hold_wallet) as total_hold, COUNT(*) as row_count')
-    //                     ->groupBy('user_id')
-    //                     ->havingRaw('total_hold > 0')
-    //                     ->havingRaw('row_count > 1')
-    //                     ->get();
-    //     // return $results;
-    //     foreach($results as $result){
-    //         $user = User::find($result->user_id);
-    //         $user->hold_wallet = $result->total_hold;
-    //         $user->update();
-    //     }
+        $results = Payout::selectRaw('user_id, SUM(hold_wallet) as total_hold, COUNT(*) as row_count')
+                        ->groupBy('user_id')
+                        ->havingRaw('total_hold > 0')
+                        ->havingRaw('row_count > 1')
+                        ->get();
+        // return $results;
+        foreach($results as $result){
+            $user = User::find($result->user_id);
+            $user->hold_wallet = $result->total_hold;
+            $user->update();
+        }
 
-    //     echo 'success';
-    // }
-
-    // public function get_user_id_using_id(){
-    //     $arr = [19,34,36,43,44,51,52,56,57,58,60,131,146,236,288,305,306,324,338,354,360,372,395,407,408,409,445,446,467,481,493,495,512,539,544,564,565,567,578,591,593,596,600,611,618,648,656,657,671,690,695,696,711,721,732,778,780,781,788,793,799,800,820,831,848,851,852,859,881,892,893,907,908,920,922,923,928,934,937,938,940,941,943,949,966,968,969,972,973,974,976,981,984,986,1010,1025,1060,1067,1076,1111,1115,1118,1121,1126,1147,1163,1183,1205,1206,1208,1209,1211,1217,1222,1223,1230,1233,1234,1238,1239,1255];
-    //     $users = User::whereIn('id',$arr)->get(['user_id','name']);
-    //     return $users;
-    // }
+        echo 'success';
+    }
 
 
-    // public function see_payout_details_for_check(){
+    public function see_payout_details_for_check(){
 
-    //     // Fetch the ranked payouts
-    //     $rankedPayouts = DB::table('payouts')
-    //         ->select(
-    //             'payouts.*',
-    //             DB::raw('ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS rank')
-    //         )
-    //         ->fromSub(function ($query) {
-    //             $query->from('payouts');
-    //         }, 'payouts');
+        // Fetch the ranked payouts
+        $rankedPayouts = DB::table('payouts')
+            ->select(
+                'payouts.*',
+                DB::raw('ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS rank')
+            )
+            ->fromSub(function ($query) {
+                $query->from('payouts');
+            }, 'payouts');
 
-    //     // Fetch the final results
-    //     $results = DB::table(DB::raw("({$rankedPayouts->toSql()}) AS RankedPayouts"))
-    //         ->mergeBindings($rankedPayouts) // Merge bindings from the subquery
-    //         ->select(
-    //             'id',
-    //             'user_id',
-    //             'start_date',
-    //             'end_date',
-    //             DB::raw('(direct_bonus - direct_bonus_tds_deduction - direct_bonus_repurchase_deduction) AS direct_bonus_calculated'),
-    //             DB::raw('(lavel_bonus - lavel_bonus_tds_deduction - lavel_bonus_repurchase_deduction) AS lavel_bonus_calculated'),
-    //             DB::raw('(remuneration_bonus - remuneration_bonus_tds_deduction - remuneration_bonus_repurchase_deduction) AS remuneration_bonus_calculated'),
-    //             DB::raw('(roi - roi_tds_deduction) AS roi_calculated'),
-    //             'hold_amount_added',
-    //             'hold_amount',
-    //             'hold_wallet_added',
-    //             'hold_wallet',
-    //             'previous_unpaid_amount',
-    //             'total_payout',
-    //             'paid_unpaid'
-    //         )
-    //         ->where('rank', '<=', 3)
-    //         ->orderBy('user_id', 'ASC')
-    //         ->orderBy('id', 'ASC')
-    //         ->get();
-    //     $title = 'check';
-    //     return view('welcome',compact('results','title'));
+        // Fetch the final results
+        $results = DB::table(DB::raw("({$rankedPayouts->toSql()}) AS RankedPayouts"))
+            ->mergeBindings($rankedPayouts) // Merge bindings from the subquery
+            ->select(
+                'id',
+                'user_id',
+                'start_date',
+                'end_date',
+                DB::raw('(direct_bonus - direct_bonus_tds_deduction - direct_bonus_repurchase_deduction) AS direct_bonus_calculated'),
+                DB::raw('(lavel_bonus - lavel_bonus_tds_deduction - lavel_bonus_repurchase_deduction) AS lavel_bonus_calculated'),
+                DB::raw('(remuneration_bonus - remuneration_bonus_tds_deduction - remuneration_bonus_repurchase_deduction) AS remuneration_bonus_calculated'),
+                DB::raw('(roi - roi_tds_deduction) AS roi_calculated'),
+                'hold_amount_added',
+                'hold_amount',
+                'hold_wallet_added',
+                'hold_wallet',
+                'previous_unpaid_amount',
+                'total_payout',
+                'paid_unpaid'
+            )
+            ->where('rank', '<=', 3)
+            ->orderBy('user_id', 'ASC')
+            ->orderBy('id', 'ASC')
+            ->get();
+        $title = 'check';
+        return view('welcome',compact('results','title'));
 
-    // }
+    }
 
 
 
-    // public function process_to_make_payout_good(){
-    //     // $distinctUserCount = Payout::distinct('user_id')->pluck('user_id');
-    //     $distinctUserCount = Payout::distinct('user_id')
-    //                             ->where('hold_wallet_added', '!=', 0)
-    //                             ->where('hold_wallet', '!=', 0)
-    //                             ->where('hold_amount', '=', 0)
-    //                             ->whereBetween('end_date', ['2024-12-27', '2025-01-10'])
-    //                             ->pluck('user_id');
+    public function process_to_make_payout_good(){
+        // $distinctUserCount = Payout::distinct('user_id')->pluck('user_id');
+        $distinctUserCount = Payout::distinct('user_id')
+                                ->where('hold_wallet_added', '!=', 0)
+                                ->where('hold_wallet', '!=', 0)
+                                ->where('hold_amount', '=', 0)
+                                ->whereBetween('end_date', ['2024-12-27', '2025-01-10'])
+                                ->pluck('user_id');
 
-    //     // return $distinctUserCount;
-    //     foreach($distinctUserCount as $user){
-    //         $payouts = Payout::where('user_id', $user)->orderBy('id', 'desc') ->take(3)->get()->sortBy('id');
-    //         // return $payouts;
+        // return $distinctUserCount;
+        foreach($distinctUserCount as $user){
+            $payouts = Payout::where('user_id', $user)->orderBy('id', 'desc') ->take(3)->get()->sortBy('id');
+            // return $payouts;
             
-    //         $direct_bonus = 0;
-    //         $lavel_bonus = 0;
-    //         $roi = 0;
+            $direct_bonus = 0;
+            $lavel_bonus = 0;
+            $roi = 0;
 
-    //         echo $user."<br>";
-    //         // if($user != 19){ continue; }
-    //         $last_hold_wallet = 0;
+            echo $user."<br>";
+            // if($user != 19){ continue; }
+            $last_hold_wallet = 0;
 
-    //         $iteration = 1;
-    //         foreach($payouts as $payout){
-    //             $direct_bonus = 0;
-    //             $lavel_bonus = 0;
-    //             $roi = 0;
-    //             $remuneration_bonus = 0;
-    //             // return $last_hold_wallet;
+            $iteration = 1;
+            foreach($payouts as $payout){
+                $direct_bonus = 0;
+                $lavel_bonus = 0;
+                $roi = 0;
+                $remuneration_bonus = 0;
+                // return $last_hold_wallet;
 
-    //             $payout->hold_wallet_added = $last_hold_wallet; // last hold wallet balance added to payout 
-    //             // echo $last_hold_wallet."<br>";
-    //             // echo "executing...";
-    //             if($iteration++ == 1){
-    //                 $last_hold_wallet = $payout->hold_wallet;
-    //                 continue;
-    //             }else{
-    //                 $direct_bonus = $payout->direct_bonus - $payout->direct_bonus_tds_deduction - $payout->direct_bonus_repurchase_deduction;
-    //                 $lavel_bonus = $payout->lavel_bonus - $payout->lavel_bonus_tds_deduction - $payout->lavel_bonus_repurchase_deduction;
-    //                 $remuneration_bonus = $payout->remuneration_bonus - $payout->remuneration_bonus_tds_deduction - $payout->remuneration_bonus_repurchase_deduction;
-    //                 $roi = $payout->roi - $payout->roi_tds_deduction;
+                $payout->hold_wallet_added = $last_hold_wallet; // last hold wallet balance added to payout 
+                // echo $last_hold_wallet."<br>";
+                // echo "executing...";
+                if($iteration++ == 1){
+                    $last_hold_wallet = $payout->hold_wallet;
+                    continue;
+                }else{
+                    $direct_bonus = $payout->direct_bonus - $payout->direct_bonus_tds_deduction - $payout->direct_bonus_repurchase_deduction;
+                    $lavel_bonus = $payout->lavel_bonus - $payout->lavel_bonus_tds_deduction - $payout->lavel_bonus_repurchase_deduction;
+                    $remuneration_bonus = $payout->remuneration_bonus - $payout->remuneration_bonus_tds_deduction - $payout->remuneration_bonus_repurchase_deduction;
+                    $roi = $payout->roi - $payout->roi_tds_deduction;
 
-    //                 $total_payout = $direct_bonus+$lavel_bonus+$remuneration_bonus+$roi+$last_hold_wallet;
-    //                 $payout->hold_wallet = $total_payout;
-    //                 // return $total_payout;
-    //                 $payout->save();
-    //                 $last_hold_wallet = $payout->hold_wallet;
+                    $total_payout = $direct_bonus+$lavel_bonus+$remuneration_bonus+$roi+$last_hold_wallet;
+                    $payout->hold_wallet = $total_payout;
+                    // return $total_payout;
+                    $payout->save();
+                    $last_hold_wallet = $payout->hold_wallet;
                     
 
-    //                 // update to user hold waller in user model 
-    //                 $user_model = User::find($user);
-    //                 $user_model->hold_wallet = $last_hold_wallet;
-    //                 $user_model->update();
-    //             }
-    //         }
-    //     }
-    // }
+                    // update to user hold waller in user model 
+                    $user_model = User::find($user);
+                    $user_model->hold_wallet = $last_hold_wallet;
+                    $user_model->update();
+                }
+            }
+        }
+    }
 
 }

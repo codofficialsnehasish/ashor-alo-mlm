@@ -140,6 +140,8 @@
                                 <li><a href="{{ route('report.business-report.tree') }}">Tree Wise</a></li>
                             </ul>
                         </li>
+                        <li><a href="{{ route('report.dilse-plan-report') }}">Dilse Plan Report</a></li>
+                        
                     </ul>
                 </li>
 

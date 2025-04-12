@@ -56,32 +56,34 @@ class DisburseRoiJob implements ShouldQueue
             }
             
             $is_transacted = 0;
-            if($data->is_provide_direct == 0){
-                if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Dailys')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
-                    $transaction->make_transaction(
-                        $data->user_id,
-                        $user_per_day_roi,
-                        'ROI Dailys',
-                        1,
-                        null,
-                        $data->id,
-                    );
-
-                    $is_transacted = 1;
-                }
-            }else{
-                if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Daily')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
-                    $transaction->make_transaction(
-                        $data->user_id,
-                        $user_per_day_roi,
-                        'ROI Daily',
-                        1,
-                        null,
-                        $data->id,
-                        // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-                        // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
-                    );
-                    $is_transacted = 1;
+            if($data->is_personal_business != 1){
+                if($data->is_provide_direct == 0 && $data->is_personal_business != 1 ){
+                    if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Dailys')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+                        $transaction->make_transaction(
+                            $data->user_id,
+                            $user_per_day_roi,
+                            'ROI Dailys',
+                            1,
+                            null,
+                            $data->id,
+                        );
+    
+                        $is_transacted = 1;
+                    }
+                }else{
+                    if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Daily')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+                        $transaction->make_transaction(
+                            $data->user_id,
+                            $user_per_day_roi,
+                            'ROI Daily',
+                            1,
+                            null,
+                            $data->id,
+                            // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                            // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                        );
+                        $is_transacted = 1;
+                    }
                 }
             }
 

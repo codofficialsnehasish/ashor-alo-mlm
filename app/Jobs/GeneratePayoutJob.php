@@ -24,6 +24,8 @@ use App\Models\Payout;
 use App\Models\RemunerationBenefit;
 use App\Models\SalaryBonus;
 
+use Carbon\Carbon;
+
 use Illuminate\Support\Facades\Log;
 
 class GeneratePayoutJob implements ShouldQueue
@@ -61,6 +63,49 @@ class GeneratePayoutJob implements ShouldQueue
                     //calculating the limit
                     $total_top_up_amount = TopUp::where('user_id',$user_id)->sum('total_amount');
                     $limit = $total_top_up_amount * 10;
+
+
+                    //Personal Income
+                    $dillse_personal_income = 0;
+                    $dilse_service_charge_deduction = 0;
+
+                    $personal_incomes = TopUp::where('user_id',$user_id)->where('is_personal_business',1)->where('is_completed',0)->get();
+                    if($personal_incomes->isNotEmpty()){
+                        foreach($personal_incomes as $p_income){
+                            $date = $p_income->start_date;
+
+                            // $day = Carbon::parse($date)->format('d');
+                            $day = Carbon::parse($date)->day;
+                            $from = Carbon::parse($this->lastSaturday)->day;
+                            $to = Carbon::parse($this->current_day)->day;
+                            // Handle month wraparound (e.g., 29 → 1)
+
+                            if ($from > $to) {
+                                // Check if $day >= $from (e.g., 29,30,31) OR $day <= $to (e.g., 1,2,...)
+                                $isInRange = ($day >= $from) || ($day <= $to);
+                            } else {
+                                // Normal case (e.g., 1 → 7)
+                                $isInRange = ($day >= $from) && ($day <= $to);
+                            }
+                        
+                            if ($isInRange) {
+                                $dillse_personal_income = $p_income->installment_amount_per_month;
+                                $p_income->month_count += 1;
+                                $p_income->total_disbursed_amount += $dillse_personal_income;
+                                $p_income->update();
+                        
+                                $dilse_service_charge_deduction = ($dillse_personal_income * 5) / 100;
+                                // $dillse_personal_income -= $dilse_service_charge_deduction;
+                            }
+                        }
+                    }
+
+
+
+
+                    //end of personal income
+
+
 
                     $remuneration_salary = 0;
 
@@ -214,19 +259,31 @@ class GeneratePayoutJob implements ShouldQueue
                     $payout->remuneration_bonus_tds_deduction = $remuneration_salary * ($mlm_settings->tds/100);
                     $payout->remuneration_bonus_repurchase_deduction = $remuneration_salary * ($mlm_settings->repurchase/100);
     
+                    $payout->dilse_payout_amount = $dillse_personal_income;   
+                    $payout->dilse_service_charge_deduction = $dilse_service_charge_deduction;
+
+                    // $payout->dilse_payout_amount = 0.00;
+                    // $payout->dilse_service_charge_deduction = 0.00;
+
                     $payout->roi = $product_return;
                     $payout->roi_tds_deduction = $product_return_deduction;
 
                     $payout->previous_unpaid_amount = $previous_unpaid_amount;
 
-                    $payout->hold_wallet_added = $user->hold_wallet;
+                    $payout->hold_wallet_added = $user->hold_wallet;   
     
                     // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
                     // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
-
+  
                     // $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission + $payout->hold_wallet_added) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                    
+
                     $payout->total_payout = (($total_product_return + $previous_unpaid_amount + $payout->hold_wallet_added) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
                     
+                    // Log::info('User is: ' . $payout->user_id. ' Total payout '.$payout->total_payout. ' dilse_payout_amount '. $payout->dilse_payout_amount);
+                    $payout->total_payout += ($payout->dilse_payout_amount - $payout->dilse_service_charge_deduction);
+                    // Log::info('User is: ' . $payout->user_id. ' after add dilse Total payout '.$payout->total_payout);
+
                     if($payout->total_payout < 200){
                         $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
                         $payout->total_payout = 0.00;
@@ -244,8 +301,21 @@ class GeneratePayoutJob implements ShouldQueue
                     $account = Account::first();
                     $account->tds_balance += $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction;
                     $account->repurchase_balance += $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
-                    $account->service_charge_balance += $payout->roi_tds_deduction;
+                    $account->service_charge_balance += ($payout->roi_tds_deduction + $payout->dilse_service_charge_deduction);
                     $account->update();
+
+                    if($payout->dilse_service_charge_deduction != 0){
+                        $transaction->make_transaction(
+                            $user->id,
+                            $payout->dilse_service_charge_deduction,
+                            'DilSe Monthly Payment',
+                            1,
+                            null,
+                            // $data->id,
+                            // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                            // Carbon::parse($this->date)->format('Y-m-d H:i:s'),
+                        );
+                    }
 
                     TDSAccount::create([
                         'user_id'=>$user->id,
@@ -261,7 +331,7 @@ class GeneratePayoutJob implements ShouldQueue
                     ]);
                     ServiceChargeAccount::create([
                         'user_id'=>$user->id,
-                        'amount'=>$payout->roi_tds_deduction,
+                        'amount'=>$payout->roi_tds_deduction + $payout->dilse_service_charge_deduction,
                         'which_for'=>'Deducting from Payout',
                         'status'=>1
                     ]);

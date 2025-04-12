@@ -345,8 +345,16 @@ class KycController extends Controller
 
     public function all_kycs(){
         $data['title'] = 'All KYC';
-        $data['kycs'] = Kyc::all();
+        // $data['kycs'] = Kyc::all();
+        $data['kycs'] = Kyc::with('activities.causer')->get();
         return view('admin.kyc.all_kyc')->with($data);
+    }
+
+    public function activity($id)
+    {
+        $kyc = Kyc::with('activities.causer')->findOrFail($id);
+
+        return view('admin.kyc.kyc-activity-log', compact('kyc'));
     }
 
     public function kyc_details(string $id){

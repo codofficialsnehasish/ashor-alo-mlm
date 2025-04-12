@@ -59,4 +59,11 @@ class ReportController extends Controller
             return view('site.user_dashboard.reports.remuneration_report')->with($data);
         }
     }
+
+    public function dilse_plan_report(){
+        $data['title'] = 'Dilse Plan Report';
+        $data['items'] = TopUp::where('is_personal_business',1)->where('user_id',Auth::id())->get();
+        $data['mlm_settings'] = MLMSettings::first();
+        return view('site.user_dashboard.reports.dilse_plan_report')->with($data);
+    }
 }
