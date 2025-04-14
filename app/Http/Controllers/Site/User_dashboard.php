@@ -90,7 +90,9 @@ class User_dashboard extends Controller
         $data['title'] = 'Dashboard';
         $data['total_income'] = $this->get_total_income(Auth::id());
         $data['total_commission'] = $this->calculate_total_commission('comission',Auth::id());
-        $data['hold_amount'] = Auth::user()->hold_balance;
+        $last_hold_amount = Payout::where('user_id', Auth::id())->latest()->value('hold_amount');
+        // $data['hold_amount'] = Auth::user()->hold_balance;
+        $data['hold_amount'] = $last_hold_amount;
         $data['total_purchase'] = Orders::where('buyer_id',Auth::id())->sum('price_total');
         $data['direct_bonus'] = $this->calculate_direct_bonus(Auth::id());
         $data['level_bonus'] = AccountTransaction::whereIn('which_for', ['Level Bonus','Level Bonus on Hold'])->where('user_id',Auth::id())->sum('amount');
