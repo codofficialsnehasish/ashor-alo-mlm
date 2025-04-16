@@ -10,4 +10,9 @@ class OrderProducts extends Model
     use HasFactory;
     protected $table = "order_products";
     protected $primaryKey = "id";
+
+    public function product()
+    {
+        return $this->belongsTo(Products::class);
+    }
 }

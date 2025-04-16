@@ -35,7 +35,10 @@ class Order extends Controller
 
     public function index(){
         $data['title'] = 'Orders';
-        $data['orders'] = Orders::all();
+        // $data['orders'] = Orders::all();
+        $data['orders'] = Orders::whereDoesntHave('orderItem.product', function ($query) {
+            $query->where('is_addon', 1);
+        })->get();
         return view($this->view_path."content")->with($data);
     }
 

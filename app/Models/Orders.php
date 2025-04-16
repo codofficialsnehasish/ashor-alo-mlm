@@ -15,4 +15,9 @@ class Orders extends Model
     {
         return $this->belongsTo(User::class, 'buyer_id', 'id');
     }
+
+    public function orderItem()
+    {
+        return $this->hasOne(OrderProducts::class,'order_id');
+    }
 }
