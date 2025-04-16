@@ -21,7 +21,7 @@ Route::get('generate-payout-in-saturday-to-friday',[CornJobs::class,'generate_pa
 Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']);
 
 Route::get('hold-wallet-replace-for-one-time',[CornJobs::class,'hold_wallet_replace_for_one_time']);
-
+Route::get('custom-provide-roi-toa-user',[CornJobs::class,'custom_provide_roi_toa_user']);
 
 Route::get('payout-details-check',[CornJobs::class,'see_payout_details_for_check']);
 Route::get('payout-test',[CornJobs::class,'process_to_make_payout_good']);
@@ -535,7 +535,19 @@ Route::middleware('auth.admin')->group(function () {
 
 
 
+Route::get('/clear-all', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    
+    return 'All caches cleared!';
+});
 
+Route::get('/create-storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage link has been created successfully!';
+});
 
 
 

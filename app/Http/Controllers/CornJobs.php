@@ -444,7 +444,8 @@ class CornJobs extends Controller
     public function level_bonus_in_saturday_to_friday() {
         // if (Carbon::now()->isFriday()) {
                 $today = Carbon::now();
-                $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+                // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+                $lastSaturday = Carbon::create(2025, 3, 29);
                 $current_day = Carbon::now();
             
                 // Process in chunks and dispatch each chunk to a queue job
@@ -497,7 +498,8 @@ class CornJobs extends Controller
     public function generate_payout_in_saturday_to_friday() {
         // if (Carbon::now()->isFriday()) {
             $today = Carbon::now();
-            $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
+            $lastSaturday = Carbon::create(2025, 3, 29);
             $current_day = Carbon::now();
 
             // $mlm_settings = MLMSettings::first();
@@ -803,6 +805,80 @@ class CornJobs extends Controller
                 }
             }
         }
+    }
+
+    public function custom_provide_roi_toa_user(){
+
+        $user_id = 2223;
+        $user_per_day_roi = 500.00;
+        $top_up_id = 847;
+
+        $startDate = Carbon::create(2025, 4, 6);
+        $endDate = Carbon::create(2025, 4, 8);
+        // $endDate = Carbon::now();
+        $dates = [];
+        // while ($startDate->lte($endDate)) {
+        while ($startDate->lt($endDate)) {
+            $dates[] = $startDate->toDateString(); // Add the current date to the array
+            // break;
+            $startDate->addDay(); // Move to the next day
+        }
+
+        // return $dates;
+
+        // Output the dates
+        foreach ($dates as $date) {
+            if(!AccountTransaction::where('user_id',$user_id)->where('which_for','ROI Daily')->whereDate('created_at',$date)->where('topup_id',$top_up_id)->exists()){
+                $this->transaction->make_transaction(
+                    $user_id,
+                    $user_per_day_roi,
+                    'ROI Daily',
+                    1,
+                    null,
+                    $top_up_id,
+                    Carbon::parse($date)->format('Y-m-d H:i:s'),
+                    Carbon::parse($date)->format('Y-m-d H:i:s'),
+                );
+                echo "Working ...";
+                echo "<br>";
+            }
+        }
+
+        // foreach ($dates as $date) {
+        //     if($data->is_provide_direct == 0 && $data->is_personal_business != 1 ){
+        //         if(!AccountTransaction::where('user_id',$user_id)->where('which_for','ROI Dailys')->whereDate('created_at',$date)->where('topup_id',$top_up_id)->exists()){
+        //         // if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Dailys')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+        //             $transaction->make_transaction(
+        //                 $user_id,
+        //                 $user_per_day_roi,
+        //                 'ROI Dailys',
+        //                 1,
+        //                 null,
+        //                 $top_up_id,
+        //                 Carbon::parse($date)->format('Y-m-d H:i:s'),
+        //                 Carbon::parse($date)->format('Y-m-d H:i:s'),
+        //             );
+
+        //             echo "Working ... ROI Dailys ...";
+        //             echo "<br>";
+        //         }
+        //     }else{
+        //         if(!AccountTransaction::where('user_id',$user_id)->where('which_for','ROI Daily')->whereDate('created_at',$date)->where('topup_id',$top_up_id)->exists()){
+        //             $this->transaction->make_transaction(
+        //                 $user_id,
+        //                 $user_per_day_roi,
+        //                 'ROI Daily',
+        //                 1,
+        //                 null,
+        //                 $top_up_id,
+        //                 Carbon::parse($date)->format('Y-m-d H:i:s'),
+        //                 Carbon::parse($date)->format('Y-m-d H:i:s'),
+        //             );
+        //             echo "Working ... ROI Daily ...";
+        //             echo "<br>";
+        //         }
+        //     }
+        // }
     }
 
 }

@@ -65,7 +65,7 @@ class GeneratePayoutJob implements ShouldQueue
                     $limit = $total_top_up_amount * 10;
 
 
-                    //Personal Income
+                    //Personal Income DilSe Plan
                     $dillse_personal_income = 0;
                     $dilse_service_charge_deduction = 0;
 
@@ -100,9 +100,6 @@ class GeneratePayoutJob implements ShouldQueue
                         }
                     }
 
-
-
-
                     //end of personal income
 
 
@@ -110,7 +107,8 @@ class GeneratePayoutJob implements ShouldQueue
                     $remuneration_salary = 0;
 
                     // Remuneration Benefits or Salary Income
-                    if ($this->current_day->day <= 7) {
+                    // if ($this->current_day->day <= 7) {
+                    if ($this->current_day->day <= 15) {
                         $total_left_business = calculate_left_business($user_id);
                         $total_right_business = calculate_right_business($user_id);
 
@@ -212,8 +210,12 @@ class GeneratePayoutJob implements ShouldQueue
                     $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
                     $final_commission = $comission - $deduction;
     
+                    $last_hold_amount = Payout::where('user_id', $user->id)->latest()->value('hold_amount') ?? 0;
+                    $last_hold_wallet_amount = Payout::where('user_id', $user->id)->latest()->value('hold_wallet') ?? 0;
+                    Log::info('last_hold_amount: ' . $last_hold_amount. ' last_hold_wallet_amount '.$last_hold_wallet_amount);
                     // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
-                    $current_payout = $user->hold_balance + $final_commission;
+                    // $current_payout = $user->hold_balance + $final_commission;
+                    $current_payout = $last_hold_amount + $final_commission;
 
                     
                     
@@ -239,7 +241,8 @@ class GeneratePayoutJob implements ShouldQueue
                         //     echo $user->hold_balance; die;
                         // }
                         // then pay the hold amount
-                        $payout->hold_amount_added = $user->hold_balance;
+                        // $payout->hold_amount_added = $user->hold_balance;
+                        $payout->hold_amount_added = $last_hold_amount; 
                         $user->hold_balance = 0;
                     }else{
                         // after limit hold
@@ -247,7 +250,8 @@ class GeneratePayoutJob implements ShouldQueue
                         // $user->hold_balance += $payout->hold_amount;
 
                         if($limit <= $total_payout){
-                            $payout->hold_amount = $user->hold_balance + $final_commission;
+                            // $payout->hold_amount = $user->hold_balance + $final_commission;
+                            $payout->hold_amount = $last_hold_amount + $final_commission;
                             $user->hold_balance += $final_commission;
                         }else{
                             $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
@@ -270,7 +274,9 @@ class GeneratePayoutJob implements ShouldQueue
 
                     $payout->previous_unpaid_amount = $previous_unpaid_amount;
 
-                    $payout->hold_wallet_added = $user->hold_wallet;
+                    // $payout->hold_wallet_added = $user->hold_wallet;
+                    $payout->hold_wallet_added = $last_hold_wallet_amount;
+                    
     
                     // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
                     // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
