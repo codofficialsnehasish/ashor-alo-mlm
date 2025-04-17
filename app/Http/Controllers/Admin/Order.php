@@ -232,6 +232,7 @@ class Order extends Controller
 
         $ROI = calculate_ROI($total_amount, $category, $order_id, $total_acumulation);
         // print_r($ROI);die;
+
         if(!empty($ROI)){
             $top_up = new TopUp();
             $top_up->entry_by = Auth::user()->name.'('.get_role(Auth::id()).')';
@@ -246,6 +247,7 @@ class Order extends Controller
             $top_up->installment_amount_per_month = $ROI['installment_amount_per_month'];
             $top_up->is_provide_direct = $ROI['is_provide_direct'];
             $top_up->is_personal_business = $ROI['is_personal_business'];
+            $top_up->is_special_business = $ROI['is_special_business'];
             $top_up->save();
     
             $custo = User::find($user_id);

@@ -190,6 +190,17 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label mb-3 d-flex">Is Special Product ?</label>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="is_special_product1" name="is_special_product" class="form-check-input" value="1" {{ check_uncheck(1,$product->is_special_product) }}>
+                                            <label class="form-check-label" for="is_special_product1">Yes</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" id="is_special_product2" name="is_special_product" class="form-check-input" value="0" {{ check_uncheck(1,$product->is_special_product) }}>
+                                            <label class="form-check-label" for="is_special_product2">No</label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label mb-3 d-flex">Visiblity</label>
                                         <div class="form-check form-check-inline">
                                             <input type="radio" id="customRadioInline1" name="is_visible" class="form-check-input" value="1" {{ check_uncheck(1,$product->is_visible) }}>

@@ -69,6 +69,7 @@ class Products_controller extends Controller
             $product->is_visible = $r->is_visible;
             $product->is_addon = $r->is_addon;
             $product->is_dilse = $r->is_dilse;
+            $product->is_special_product = $r->is_special_product;
             $res = $product->save();
             if($res){
                 return redirect()->back()->with(['success'=>'Data added Successfully']);
@@ -124,6 +125,7 @@ class Products_controller extends Controller
             $product->is_visible = $r->is_visible;
             $product->is_addon = $r->is_addon;
             $product->is_dilse = $r->is_dilse;
+            $product->is_special_product = $r->is_special_product;
             $res = $product->update();
             if($res){
                 return redirect()->back()->with(['success'=>'Data Updated Successfully']);

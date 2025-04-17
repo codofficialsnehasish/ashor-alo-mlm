@@ -118,6 +118,14 @@
                 }else{
                     $data_array['is_personal_business'] = 0;
                 }
+
+                if($product->is_special_product == 1){
+                    $data_array['is_special_business'] = 1;
+                    $data_array['is_personal_business'] = 0;
+                    $data_array['is_provide_direct'] = 0; 
+                }else{
+                    $data_array['is_special_business'] = 0;
+                }
                 
                 return $data_array;
             }else{
