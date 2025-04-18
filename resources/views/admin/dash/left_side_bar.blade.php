@@ -141,7 +141,8 @@
                             </ul>
                         </li>
                         <li><a href="{{ route('report.dilse-plan-report') }}">Dilse Plan Report</a></li>
-                        
+                        <li><a href="{{ route('report.addon-report') }}">Add On Report</a></li>
+                        <li><a href="{{ route('report.product-delevery-report') }}">Product Delevery Report</a></li>
                     </ul>
                 </li>
 

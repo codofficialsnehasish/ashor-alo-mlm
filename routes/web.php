@@ -516,6 +516,18 @@ Route::middleware('auth.admin')->group(function () {
             // Dilse Report
             Route::get("/dilse-plan-report",[Report_Controller::class,"dilse_plan_report"])->name('report.dilse-plan-report');
             Route::post("/generate-dilse-plan-report",[Report_Controller::class,"generate_dilse_plan_report"])->name('report.generate-dilse-plan-report');
+        
+            // Add On Report
+            Route::get("/addon-report",[Report_Controller::class,"addon_report"])->name('report.addon-report');
+            Route::post("/generate-addon-report",[Report_Controller::class,"generate_addon_report"])->name('report.generate-addon-report');
+
+            // Product Delevery Report
+            Route::get("/product-delevery-report",[Report_Controller::class,"product_delevery_report"])->name('report.product-delevery-report');
+            Route::get("/generate-product-delevery-report",[Report_Controller::class,"generate_product_delevery_report"])->name('report.generate-product-delevery-report');
+
+            // Export Routes of Product Delevery Report
+            Route::get("/export-product-delivery-excel", [Report_Controller::class, "exportExcel"])->name('report.exportExcel');
+            Route::get("/export-product-delivery-pdf", [Report_Controller::class, "exportPdf"])->name('report.exportPdf');
         });
 
         Route::get('/contact-us-massages',[ContactUsController::class,'index'])->name('admin.contact-us');

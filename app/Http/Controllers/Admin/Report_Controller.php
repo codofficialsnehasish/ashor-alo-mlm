@@ -13,12 +13,18 @@ use App\Models\RepurchaseAccount;
 use App\Models\Payout;
 use App\Models\RemunerationBenefit;
 use App\Models\SalaryBonus;
+use App\Models\Orders;
+
+
+
+
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Maatwebsite\Excel\Concerns\FromArray;
+use Maatwebsite\Excel\Concerns\WithHeadings;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use App\Exports\CustomValueBinder;
@@ -383,72 +389,72 @@ class Report_Controller extends Controller
         return view('admin.reports.payout_report_details')->with($data);
     }
 
-    // public function payoutExportExcel($start_date, $end_date)
-    // {
-    //     try {
-    //         $payouts = Payout::where('start_date', $start_date)
-    //                             ->where('end_date', $end_date)
-    //                             ->where('total_payout', '>', 0)
-    //                             ->whereHas('user', function ($query) {
-    //                                 $query->where('block', 0) // Check if user is not blocked
-    //                                     ->whereHas('kyc', function ($kycQuery) {
-    //                                         $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
-    //                                     });
-    //                             })
-    //                             ->get();
+    /*public function payoutExportExcel($start_date, $end_date)
+    {
+        try {
+            $payouts = Payout::where('start_date', $start_date)
+                                ->where('end_date', $end_date)
+                                ->where('total_payout', '>', 0)
+                                ->whereHas('user', function ($query) {
+                                    $query->where('block', 0) // Check if user is not blocked
+                                        ->whereHas('kyc', function ($kycQuery) {
+                                            $kycQuery->where('is_confirmed', 1); // Check if KYC is completed
+                                        });
+                                })
+                                ->get();
             
-    //         $headers = [
-    //             'Name', 'ID', 'Total Payout Amount', 'Account Name (As Per Bank)', 'Bank Name', 'Account Number', 'IFSC', 'Account Type', 'UPI Type', 'UPI Number', 'UPI Name'
-    //         ];
+            $headers = [
+                'Name', 'ID', 'Total Payout Amount', 'Account Name (As Per Bank)', 'Bank Name', 'Account Number', 'IFSC', 'Account Type', 'UPI Type', 'UPI Number', 'UPI Name'
+            ];
 
-    //         // Format data into an array
-    //         $data = $payouts->map(function ($payout) {
-    //             $user = $user = get_user_details($payout->user_id);
-    //             return [
-    //                 'Name' => get_name($payout->user_id),
-    //                 'ID' => get_user_id($payout->user_id),
-    //                 'Total Payout Amount' => $payout->total_payout,
-    //                 'Account Name (As Per Bank)' => $user->account_name,
-    //                 'Bank Name' => $user->bank_name,
-    //                 'Account Number' => (string) $user->account_number,
-    //                 'IFSC' => $user->ifsc_code,
-    //                 'Account Type' => $user->account_type,
-    //                 'UPI Type' => $user->upi_type,
-    //                 'UPI Number' => $user->upi_number,
-    //                 'UPI Name' => $user->upi_name,
-    //             ];
-    //         })->toArray();
+            // Format data into an array
+            $data = $payouts->map(function ($payout) {
+                $user = $user = get_user_details($payout->user_id);
+                return [
+                    'Name' => get_name($payout->user_id),
+                    'ID' => get_user_id($payout->user_id),
+                    'Total Payout Amount' => $payout->total_payout,
+                    'Account Name (As Per Bank)' => $user->account_name,
+                    'Bank Name' => $user->bank_name,
+                    'Account Number' => (string) $user->account_number,
+                    'IFSC' => $user->ifsc_code,
+                    'Account Type' => $user->account_type,
+                    'UPI Type' => $user->upi_type,
+                    'UPI Number' => $user->upi_number,
+                    'UPI Name' => $user->upi_name,
+                ];
+            })->toArray();
 
-    //         array_unshift($data, $headers);
+            array_unshift($data, $headers);
 
-    //         // Create an inline export class and use it to generate the Excel file
-    //         $export = new class($data) implements FromArray, WithColumnFormatting {
-    //             protected $data;
+            // Create an inline export class and use it to generate the Excel file
+            $export = new class($data) implements FromArray, WithColumnFormatting {
+                protected $data;
 
-    //             public function __construct(array $data)
-    //             {
-    //                 $this->data = $data;
-    //             }
+                public function __construct(array $data)
+                {
+                    $this->data = $data;
+                }
 
-    //             public function array(): array
-    //             {
-    //                 return $this->data;
-    //             }
+                public function array(): array
+                {
+                    return $this->data;
+                }
 
-    //             public function columnFormats(): array
-    //             {
-    //                 return [
-    //                     'F' => NumberFormat::FORMAT_TEXT,
-    //                 ];
-    //             }
-    //         };
+                public function columnFormats(): array
+                {
+                    return [
+                        'F' => NumberFormat::FORMAT_TEXT,
+                    ];
+                }
+            };
 
-    //         // Download the Excel file
-    //         return Excel::download($export, 'payout.xlsx');
-    //     } catch (\Exception $e) {
-    //         return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
-    //     }
-    // }
+            // Download the Excel file
+            return Excel::download($export, 'payout.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
+        }
+    }*/
 
     public function payoutExportExcel($start_date, $end_date)
     {
@@ -638,83 +644,83 @@ class Report_Controller extends Controller
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
 
-    // public function exportPdf(Request $request)
-    // {
-    //     try {
-    //         $query = $request->input('query');
-    //         $customers = User::where("role", "!=", "admin")
-    //                         ->where('is_deleted',0)
-    //                         ->whereAny([
-    //                                     'name',
-    //                                     'email',
-    //                                     'phone',
-    //                                     'agent_id',
-    //                                     'user_id'
-    //                                 ], 'like', '%'.$query.'%')
-    //                         ->orderBy('created_at', 'desc')->get();
-    //         // return $customers;
+    /*public function exportPdf(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+            $customers = User::where("role", "!=", "admin")
+                            ->where('is_deleted',0)
+                            ->whereAny([
+                                        'name',
+                                        'email',
+                                        'phone',
+                                        'agent_id',
+                                        'user_id'
+                                    ], 'like', '%'.$query.'%')
+                            ->orderBy('created_at', 'desc')->get();
+            // return $customers;
 
-    //         $pdf = Pdf::loadView('admin.pdf.customer', compact('customers'));
-    //         return $pdf->download('customers.pdf');
-    //     } catch (\Exception $e) {
-    //         return back()->with('error','An error occurred while generating the PDF. '.$e->getMessage());
-    //     }
-    // }
+            $pdf = Pdf::loadView('admin.pdf.customer', compact('customers'));
+            return $pdf->download('customers.pdf');
+        } catch (\Exception $e) {
+            return back()->with('error','An error occurred while generating the PDF. '.$e->getMessage());
+        }
+    }*/
 
-    // public function exportExcel(Request $request)
-    // {
-    //     try {
-    //         $query = $request->input('query');
-    //         $customers = User::where("role", "!=", "admin")
-    //                         ->where('is_deleted',0)
-    //                         ->whereAny([
-    //                                     'name',
-    //                                     'email',
-    //                                     'phone',
-    //                                     'agent_id',
-    //                                     'user_id'
-    //                                 ], 'like', '%'.$query.'%')
-    //                         ->orderBy('created_at', 'desc')->get();
+    /*public function exportExcel(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+            $customers = User::where("role", "!=", "admin")
+                            ->where('is_deleted',0)
+                            ->whereAny([
+                                        'name',
+                                        'email',
+                                        'phone',
+                                        'agent_id',
+                                        'user_id'
+                                    ], 'like', '%'.$query.'%')
+                            ->orderBy('created_at', 'desc')->get();
             
-    //         $headers = [
-    //             'Name', 'Email', 'Phone', 'Agent ID', 'User ID', 'Created At'
-    //         ];
+            $headers = [
+                'Name', 'Email', 'Phone', 'Agent ID', 'User ID', 'Created At'
+            ];
 
-    //         // Format data into an array
-    //         $data = $customers->map(function ($customer) {
-    //             return [
-    //                 'Name' => $customer->name,
-    //                 'Email' => $customer->email,
-    //                 'Phone' => $customer->phone,
-    //                 'Agent ID' => $customer->agent_id,
-    //                 'User ID' => $customer->user_id,
-    //                 'Created At' => $customer->created_at->format('Y-m-d H:i:s'),
-    //             ];
-    //         })->toArray();
+            // Format data into an array
+            $data = $customers->map(function ($customer) {
+                return [
+                    'Name' => $customer->name,
+                    'Email' => $customer->email,
+                    'Phone' => $customer->phone,
+                    'Agent ID' => $customer->agent_id,
+                    'User ID' => $customer->user_id,
+                    'Created At' => $customer->created_at->format('Y-m-d H:i:s'),
+                ];
+            })->toArray();
 
-    //         array_unshift($data, $headers);
+            array_unshift($data, $headers);
 
-    //         // Create an inline export class and use it to generate the Excel file
-    //         $export = new class($data) implements FromArray {
-    //             protected $data;
+            // Create an inline export class and use it to generate the Excel file
+            $export = new class($data) implements FromArray {
+                protected $data;
 
-    //             public function __construct(array $data)
-    //             {
-    //                 $this->data = $data;
-    //             }
+                public function __construct(array $data)
+                {
+                    $this->data = $data;
+                }
 
-    //             public function array(): array
-    //             {
-    //                 return $this->data;
-    //             }
-    //         };
+                public function array(): array
+                {
+                    return $this->data;
+                }
+            };
 
-    //         // Download the Excel file
-    //         return Excel::download($export, 'customers.xlsx');
-    //     } catch (\Exception $e) {
-    //         return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
-    //     }
-    // }
+            // Download the Excel file
+            return Excel::download($export, 'customers.xlsx');
+        } catch (\Exception $e) {
+            return back()->with('error','An error occurred while generating the Excel. '.$e->getMessage());
+        }
+    }*/
 
     // End of Paid Unpaid Report
 
@@ -1236,4 +1242,265 @@ class Report_Controller extends Controller
     }
 
     // End of Dilse Report
+
+
+    // Add On Report
+
+    public function addon_report(){
+        $data['title'] = 'Add On Report';
+        // $data['items'] = TopUp::whereDate('start_date',date('Y-m-d'))->get();
+        $data['items'] = TopUp::where('is_provide_direct',0)->where('is_personal_business',0)->where('is_special_business',0)->orderBy('id','desc')->get();
+        return view('admin.reports.addon_report')->with($data);
+    }
+
+    public function generate_addon_report(Request $r){
+        $data['title'] = 'Add On Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $data['start_date'] = $r->start_date;
+        $data['end_date'] = $r->end_date;
+        $data['items'] = TopUp::whereDate('created_at', '>=', $startDate)
+                                ->whereDate('created_at', '<=', $endDate)
+                                ->where('is_provide_direct',0)
+                                ->where('is_personal_business',0)
+                                ->where('is_special_business',0)
+                                ->orderBy('id','desc')->get();
+        return view('admin.reports.addon_report')->with($data);
+    }
+
+    // End of Add On Report
+
+    // Add Product Delevery Report
+
+    // public function product_delevery_report(){
+    //     $data['title'] = 'Product Delevery Report';
+    //     $data['items'] = Orders::whereDoesntHave('orderItem.product', function ($query) {
+    //         $query->where('is_addon', 1);
+    //     })
+    //     ->orderBy('id','desc')
+    //     ->paginate(10)->withQueryString(); 
+    //     // ->get();
+                
+    //     $data['start_date'] = '';
+    //     $data['end_date'] = '';
+    //     $data['status'] = '';
+    //     return view('admin.reports.product_delevery_report')->with($data);
+    // }
+
+    // public function generate_product_delevery_report(Request $r){
+    //     // return $r->all();
+    //     $data['title'] = 'Product Delevery Report';
+    //     $startDate = $r->start_date;
+    //     $endDate = $r->end_date;
+    //     $status = $r->status;
+
+    //     $query = Orders::whereDoesntHave('orderItem.product', function ($query) {
+    //         $query->where('is_addon', 1);
+    //     })
+    //     ->whereDate('created_at', '>=', $startDate)
+    //     ->whereDate('created_at', '<=', $endDate);
+    
+    //     if ($status != -1) {
+    //         $query->where('status', $status);
+    //     }
+        
+    //     $data['items'] = $query->orderBy('id', 'asc')
+    //         ->paginate(10)
+    //         ->withQueryString();
+    //     // ->get();
+
+    //     $data['start_date'] = $r->start_date;
+    //     $data['end_date'] = $r->end_date;
+    //     $data['status'] = $r->status;
+    //     return view('admin.reports.product_delevery_report')->with($data);
+    // }
+
+    public function product_delevery_report(Request $r)
+    {
+        $data['title'] = 'Product Delivery Report';
+        $query = Orders::whereDoesntHave('orderItem.product', function ($q) {
+            $q->where('is_addon', 1);
+        });
+
+        if ($r->filled('query')) {
+            $search = $r->query;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"))
+                ->orWhere('buyer_id', 'like', "%{$search}%");
+            });
+        }
+
+        $data['items'] = $query->orderBy('id','desc')->paginate(10)->withQueryString();
+        $data['start_date'] = '';
+        $data['end_date'] = '';
+        $data['status'] = '';
+        return view('admin.reports.product_delevery_report')->with($data);
+    }
+
+    public function generate_product_delevery_report(Request $request){
+        $data['title'] = 'Product Delivery Report';
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+        $status = $request->status;
+        $search = $request->input('query');
+        // return $request->all();
+    
+        $query = Orders::whereDoesntHave('orderItem.product', function ($query) {
+            $query->where('is_addon', 1);
+        });
+    
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        }
+    
+        if ($status != -1) {
+            $query->where('status', $status);
+        }
+    
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+    
+        $data['items'] = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
+    
+        $data['start_date'] = $startDate;
+        $data['end_date'] = $endDate;
+        $data['status'] = $status;
+    
+        return view('admin.reports.product_delevery_report')->with($data);
+    }
+
+    public function exportExcel(Request $r)
+    {
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $status = $r->status;
+
+        $query = Orders::with('user')
+            ->whereDoesntHave('orderItem.product', function ($query) {
+                $query->where('is_addon', 1);
+            })
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate);
+
+        if ($status != -1) {
+            $query->where('status', $status);
+        }
+
+        $orders = $query->orderBy('id', 'asc')->get();
+
+        $data = [];
+
+        foreach ($orders as $order) {
+            $data[] = [
+                format_datetime($order->created_at),
+                '#' . $order->order_number,
+                $order->user->name ?? '',
+                get_user_id($order->buyer_id),
+                $order->price_total,
+                $order->payment_method,
+                $order->payment_status,
+                $order->order_status,
+                $order->status ? (!empty($order->delivered_date) ? format_datetime($order->delivered_date) : format_datetime($order->updated_at)) : '',
+                $order->placed_by,
+            ];
+        }
+
+        $headings = [
+            'Place Date',
+            'Order ID',
+            'User Name',
+            'User ID',
+            'Total Price',
+            'Payment Method',
+            'Payment Status',
+            'Order Status',
+            'Delivered At',
+            'Created By',
+        ];
+
+        return Excel::download(new class($data, $headings) implements FromArray, WithHeadings {
+            protected $data;
+            protected $headings;
+
+            public function __construct(array $data, array $headings)
+            {
+                $this->data = $data;
+                $this->headings = $headings;
+            }
+
+            public function array(): array
+            {
+                return $this->data;
+            }
+
+            public function headings(): array
+            {
+                return $this->headings;
+            }
+        }, 'product_delivery_report.xlsx');
+    }
+
+    public function exportPdf(Request $r)
+    {
+        $title = 'Product Delivery Report';
+        $orders = $this->getFilteredOrders($r)->get();
+        $pdf = PDF::loadView('admin.pdf.product_delivery_pdf', compact('orders','title'));
+        return $pdf->download('product_delivery_report.pdf');
+    }
+
+    // Optional reusable filter
+    private function getFilteredOrders($r)
+    {
+        $query = Orders::whereDoesntHave('orderItem.product', function ($q) {
+            $q->where('is_addon', 1);
+        });
+        
+        $originalQuery = clone $query; // Save the original query for fallback
+        $filtersApplied = false;
+        
+        // Apply filters if present
+        if ($r->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $r->start_date);
+            $filtersApplied = true;
+        }
+        
+        if ($r->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $r->end_date);
+            $filtersApplied = true;
+        }
+        
+        if ($r->filled('status') && $r->status != -1) {
+            $query->where('status', $r->status);
+            $filtersApplied = true;
+        }
+        
+        if ($r->filled('query')) {
+            $search = $r->query;
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn($u) => $u->where('name', 'like', "%{$search}%"))
+                  ->orWhere('buyer_id', 'like', "%{$search}%");
+            });
+            $filtersApplied = true;
+        }
+        
+        // If no filters matched, fallback to original query
+        if (!$filtersApplied) {
+            $query = $originalQuery;
+        }
+        
+        return $query->orderBy('id', 'desc');
+        
+    }
+    
+
+    // End of Product Delevery Report
 }
