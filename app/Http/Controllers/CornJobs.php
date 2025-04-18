@@ -499,7 +499,7 @@ class CornJobs extends Controller
         // if (Carbon::now()->isFriday()) {
             $today = Carbon::now();
             // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-            $lastSaturday = Carbon::create(2025, 3, 29);
+            $lastSaturday = Carbon::create(2025, 4, 16);
             $current_day = Carbon::now();
 
             // $mlm_settings = MLMSettings::first();

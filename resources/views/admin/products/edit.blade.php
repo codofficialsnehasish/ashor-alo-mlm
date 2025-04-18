@@ -196,7 +196,7 @@
                                             <label class="form-check-label" for="is_special_product1">Yes</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" id="is_special_product2" name="is_special_product" class="form-check-input" value="0" {{ check_uncheck(1,$product->is_special_product) }}>
+                                            <input type="radio" id="is_special_product2" name="is_special_product" class="form-check-input" value="0" {{ check_uncheck(0,$product->is_special_product) }}>
                                             <label class="form-check-label" for="is_special_product2">No</label>
                                         </div>
                                     </div>

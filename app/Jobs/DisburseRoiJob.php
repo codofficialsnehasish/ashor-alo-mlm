@@ -56,8 +56,22 @@ class DisburseRoiJob implements ShouldQueue
             }
             
             $is_transacted = 0;
-            if($data->is_personal_business != 1 && $data->is_special_business != 1){
-                if($data->is_provide_direct == 0 && $data->is_personal_business != 1 ){
+            if($data->is_special_business != 1){
+            // if($data->is_personal_business != 1 && $data->is_special_business != 1){
+                if($data->is_personal_business == 1){
+                    if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','DILSE Daily')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
+                        $transaction->make_transaction(
+                            $data->user_id,
+                            $user_per_day_roi,    
+                            'DILSE Daily',
+                            1,
+                            null,
+                            $data->id,
+                        );
+    
+                        $is_transacted = 1;
+                    }  
+                }elseif($data->is_provide_direct == 0 && $data->is_personal_business != 1 ){
                     if(!AccountTransaction::where('user_id',$data->user_id)->where('which_for','ROI Dailys')->whereDate('created_at',date('Y-m-d'))->where('topup_id',$data->id)->exists()){
                         $transaction->make_transaction(
                             $data->user_id,
