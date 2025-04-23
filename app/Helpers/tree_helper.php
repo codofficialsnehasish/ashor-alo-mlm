@@ -4,6 +4,7 @@
     use App\Models\User;
     use App\Models\Orders;
     use App\Models\TopUp;
+    use App\Models\Payout;
     use Illuminate\Support\Facades\DB;
     // first version
     // if (!function_exists('render_customer_tree')) {
@@ -463,12 +464,15 @@
         }
     }
 
-    if(!function_exists('calculate_right_current_week_business')){
+    if(!function_exists('calculate_right_current_week_business')){  
         function calculate_right_current_week_business($user_id){
 
             $today = Carbon::now();
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
             $current_day = Carbon::now();
+
+            $last_payout_date = Payout::latest('end_date')->first()?->end_date;
+            $lastSaturday = Carbon::parse($last_payout_date ?? now());
 
             $right_side_members = getRightSideMembers($user_id);
     
@@ -496,6 +500,9 @@
             $today = Carbon::now();
             $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
             $current_day = Carbon::now();
+
+            $last_payout_date = Payout::latest('end_date')->first()?->end_date;
+            $lastSaturday = Carbon::parse($last_payout_date ?? now());
             
             $left_side_members = getLeftSideMembers($user_id);
         
