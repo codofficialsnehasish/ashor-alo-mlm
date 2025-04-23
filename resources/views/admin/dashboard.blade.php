@@ -238,7 +238,7 @@
                                                 <div class="float-start mini-stat-img me-4">
                                                     <img src="{{ asset('dashboard_assets/images/services-icon/31.png') }}" alt="">
                                                 </div>
-                                                <h5 class="font-size-16 text-uppercase text-white-50">Current Week Business</h5>
+                                                <h5 class="font-size-16 text-uppercase text-white-50"><!--Current Week Business-->Current Fortnight Business</h5>
                                                 <h4 class="fw-medium font-size-24" style="color:white;">{{ $current_week_business }}</h4>
                                             </div>
                                         </div>
