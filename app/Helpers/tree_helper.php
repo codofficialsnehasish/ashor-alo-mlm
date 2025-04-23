@@ -399,8 +399,13 @@
             // $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
             // ->sum('total_amount');
 
+            // $query = TopUp::whereIn('user_id', $buyer_ids)
+            //     ->where('is_provide_direct', 1)->orWhere('is_special_business',1);
             $query = TopUp::whereIn('user_id', $buyer_ids)
-                ->where('is_provide_direct', 1);
+            ->where(function ($q) {
+                $q->where('is_provide_direct', 1)
+                    ->orWhere('is_special_business', 1);
+            });
 
             if (!empty($start_date) && !empty($end_date)) {
                 $query->whereDate('start_date', '>=', $start_date)
@@ -450,8 +455,14 @@
             // $total_business = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)
             //                         ->sum('total_amount');
 
+            // $query = TopUp::whereIn('user_id', $buyer_ids)
+            //     ->where('is_provide_direct', 1);
             $query = TopUp::whereIn('user_id', $buyer_ids)
-                ->where('is_provide_direct', 1);
+            ->where(function ($q) {
+                $q->where('is_provide_direct', 1)
+                    ->orWhere('is_special_business', 1);
+            });
+  
 
             if (!empty($start_date) && !empty($end_date)) {
                 $query->whereDate('start_date', '>=', $start_date)
@@ -464,7 +475,7 @@
         }
     }
 
-    if(!function_exists('calculate_right_current_week_business')){  
+    if(!function_exists('calculate_right_current_week_business')){
         function calculate_right_current_week_business($user_id){
 
             $today = Carbon::now();
@@ -472,7 +483,7 @@
             $current_day = Carbon::now();
 
             $last_payout_date = Payout::latest('end_date')->first()?->end_date;
-            $lastSaturday = Carbon::parse($last_payout_date ?? now());
+            $lastSaturday = Carbon::parse($last_payout_date ?? now())->addDay();
 
             $right_side_members = getRightSideMembers($user_id);
     
@@ -486,7 +497,11 @@
             //                         ->sum('price_total');
 
             $total_business = TopUp::whereIn('user_id', $buyer_ids)
-                        ->where('is_provide_direct', 1)
+                        // ->where('is_provide_direct', 1)
+                        ->where(function ($q) {
+                            $q->where('is_provide_direct', 1)
+                                ->orWhere('is_special_business', 1);
+                        })
                         ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
                         ->sum('total_amount');
             
@@ -502,7 +517,7 @@
             $current_day = Carbon::now();
 
             $last_payout_date = Payout::latest('end_date')->first()?->end_date;
-            $lastSaturday = Carbon::parse($last_payout_date ?? now());
+            $lastSaturday = Carbon::parse($last_payout_date ?? now())->addDay();
             
             $left_side_members = getLeftSideMembers($user_id);
         
@@ -514,7 +529,11 @@
             // return $buyer_ids;
 
             $total_business = TopUp::whereIn('user_id', $buyer_ids)
-                        ->where('is_provide_direct', 1)
+                        // ->where('is_provide_direct', 1)
+                        ->where(function ($q) {
+                            $q->where('is_provide_direct', 1)
+                                ->orWhere('is_special_business', 1);
+                        })
                         ->whereBetween(DB::raw('DATE(created_at)'), [format_date_for_db($lastSaturday), format_date_for_db($current_day)])
                         ->sum('total_amount');
             

@@ -829,7 +829,13 @@ class Report_Controller extends Controller
         $buyer_ids = array_column($usersWithLevels, 'id');
         // return count($buyer_ids);
         // return $buyer_ids;
-        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)->where('is_provide_direct',1)->orderBy('id','ASC')->get();
+        $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
+                                // ->where('is_provide_direct',1)
+                                ->where(function($query) {
+                                    $query->where('is_provide_direct', 1)
+                                          ->orWhere('is_special_business', 1);
+                                })
+                                ->orderBy('id','ASC')->get();
 
         // return count($total_businesss);
         // return $usersWithLevels;
@@ -909,7 +915,11 @@ class Report_Controller extends Controller
         $startDate = $request->start_date;
         $endDate = $request->end_date;
         $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
-                                ->where('is_provide_direct',1)
+                                // ->where('is_provide_direct',1)
+                                ->where(function($query) {
+                                    $query->where('is_provide_direct', 1)
+                                          ->orWhere('is_special_business', 1);
+                                })
                                 ->whereDate('start_date', '>=', $startDate)
                                 ->whereDate('start_date', '<=', $endDate)
                                 ->orderBy('id','ASC')->get();
@@ -1018,7 +1028,11 @@ class Report_Controller extends Controller
                 $startDate = $start_date;
                 $endDate = $end_date;
                 $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
-                                        ->where('is_provide_direct',1)
+                                        // ->where('is_provide_direct',1)
+                                        ->where(function($query) {
+                                            $query->where('is_provide_direct', 1)
+                                                  ->orWhere('is_special_business', 1);
+                                        })
                                         ->whereDate('start_date', '>=', $startDate)
                                         ->whereDate('start_date', '<=', $endDate)
                                         ->orderBy('id','ASC')->get();
@@ -1109,7 +1123,11 @@ class Report_Controller extends Controller
                 $startDate = $start_date;
                 $endDate = $end_date;
                 $total_businesss = TopUp::whereIn('user_id', $buyer_ids)
-                                        ->where('is_provide_direct',1)
+                                        // ->where('is_provide_direct',1)
+                                        ->where(function($query) {
+                                            $query->where('is_provide_direct', 1)
+                                                  ->orWhere('is_special_business', 1);
+                                        })
                                         ->whereDate('start_date', '>=', $startDate)
                                         ->whereDate('start_date', '<=', $endDate)
                                         ->orderBy('id','ASC')->get();
