@@ -442,6 +442,7 @@ class CornJobs extends Controller
     }*/
 
     public function level_bonus_in_saturday_to_friday() {
+        return 0;
         // if (Carbon::now()->isFriday()) {
                 $today = Carbon::now();
                 // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
@@ -496,6 +497,7 @@ class CornJobs extends Controller
     }   
     
     public function generate_payout_in_saturday_to_friday() {
+        return 0;
         // if (Carbon::now()->isFriday()) {
             $today = Carbon::now();
             // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date

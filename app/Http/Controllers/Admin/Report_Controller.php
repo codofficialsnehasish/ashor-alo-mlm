@@ -1369,8 +1369,8 @@ class Report_Controller extends Controller
         });
     
         if ($startDate && $endDate) {
-            $query->whereDate('created_at', '>=', $startDate)
-                  ->whereDate('created_at', '<=', $endDate);
+            $query->whereDate('delivered_date', '>=', $startDate)
+                  ->whereDate('delivered_date', '<=', $endDate);
         }
     
         if ($status != -1) {
