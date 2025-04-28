@@ -233,7 +233,7 @@ class Order extends Controller
 
         $ROI = calculate_ROI($total_amount, $category, $order_id, $total_acumulation);
         // print_r($ROI);die;
-
+        
         if(!empty($ROI)){
             $top_up = new TopUp();
             $top_up->entry_by = Auth::user()->name.'('.get_role(Auth::id()).')';

@@ -1405,8 +1405,8 @@ class Report_Controller extends Controller
             ->whereDoesntHave('orderItem.product', function ($query) {
                 $query->where('is_addon', 1);
             })
-            ->whereDate('created_at', '>=', $startDate)
-            ->whereDate('created_at', '<=', $endDate);
+            ->whereDate('delivered_date', '>=', $startDate)
+            ->whereDate('delivered_date', '<=', $endDate);
 
         if ($status != -1) {
             $query->where('status', $status);
@@ -1486,12 +1486,12 @@ class Report_Controller extends Controller
         
         // Apply filters if present
         if ($r->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $r->start_date);
+            $query->whereDate('delivered_date', '>=', $r->start_date);
             $filtersApplied = true;
         }
         
         if ($r->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $r->end_date);
+            $query->whereDate('delivered_date', '<=', $r->end_date);
             $filtersApplied = true;
         }
         

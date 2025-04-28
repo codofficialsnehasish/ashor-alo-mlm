@@ -373,7 +373,7 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                <!-- Current Week Business --> Current Fortnight Business</div>
+                                                <!--Current Week Business-->Current Fortnight Business</div>
                                             <div class="h5 mb-0 font-weight-bold text-gray-800" id="current-week-business-show">₹ {{ $current_week_business ?? 0.00 }}</div>
                                         </div>
                                         <div class="col-auto">
