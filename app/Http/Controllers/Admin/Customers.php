@@ -420,7 +420,7 @@ class Customers extends Controller
             'agentid' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    $agentExists = \App\Models\User::where('user_id', $value)
+                    $agentExists = \App\Models\User::where('user_id', $value)  
                         ->where('is_deleted', 0)
                         ->exists();
 

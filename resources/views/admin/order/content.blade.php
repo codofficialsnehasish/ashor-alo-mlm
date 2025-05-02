@@ -61,6 +61,7 @@
                                                     <th class="text-wrap">Order ID</th>
                                                     <th class="text-wrap">User Name</th>
                                                     <th class="text-wrap">User ID</th>
+                                                    <th class="text-wrap">Product Category</th>
                                                     <th class="text-wrap">Total Price</th>
                                                     <th class="text-wrap">Payment Method</th>
                                                     <th class="text-wrap">Payment Status</th>
@@ -84,6 +85,7 @@
                                                         <span class="label">Discount Price :</span><span class="value">{{ $order->discounted_price }}</span><br><hr>
                                                         <span class="label">Total Price :</span><span class="value">{{ $order->price_total }}</span><br>
                                                     </td> -->
+                                                    <td>{{ get_product_category_name_by_order_id($order->id) }}</td>
                                                     <td>{{ $order->price_total }}</td>
                                                     <td>{{ $order->payment_method }}</td>
                                                     <td>

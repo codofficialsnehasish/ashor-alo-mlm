@@ -442,11 +442,13 @@ class CornJobs extends Controller
     }*/
 
     public function level_bonus_in_saturday_to_friday() {
-        return 0;
+        // return 0;
         // if (Carbon::now()->isFriday()) {
                 $today = Carbon::now();
                 // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-                $lastSaturday = Carbon::create(2025, 3, 29);
+                // $lastSaturday = Carbon::create(2025, 3, 29);
+                $last_payout_date = Payout::latest('end_date')->first()?->end_date;
+                $lastSaturday = Carbon::parse($last_payout_date ?? now())->addDay();
                 $current_day = Carbon::now();
             
                 // Process in chunks and dispatch each chunk to a queue job
@@ -463,7 +465,7 @@ class CornJobs extends Controller
                 // ProcessWeeklyLevelBonusJob::dispatch($acc_transactions, $current_day, $lastSaturday, $current_day);
                 
                 // return $acc_transactions;
-                $chunks = $acc_transactions->chunk(15);
+                $chunks = $acc_transactions->chunk(5);
                 // return $chunks;
                 foreach ($chunks as $chunk) {
                     ProcessWeeklyLevelBonusJob::dispatch($chunk, $lastSaturday, $current_day);
@@ -497,11 +499,13 @@ class CornJobs extends Controller
     }   
     
     public function generate_payout_in_saturday_to_friday() {
-        return 0;
+        // return 0;
         // if (Carbon::now()->isFriday()) {
             $today = Carbon::now();
             // $lastSaturday = $today->isSaturday() ? $today : $today->previous(Carbon::SATURDAY); // Get last Saturday's date
-            $lastSaturday = Carbon::create(2025, 3, 29);
+            // $lastSaturday = Carbon::create(2025, 3, 29);
+            $last_payout_date = Payout::latest('end_date')->first()?->end_date;
+            $lastSaturday = Carbon::parse($last_payout_date ?? now())->addDay();
             $current_day = Carbon::now();
 
             // $mlm_settings = MLMSettings::first();
@@ -651,7 +655,8 @@ class CornJobs extends Controller
                 }
             }*/
 
-            $chunks = $transactions->chunk(15);
+            // $chunks = $transactions->chunk(15);
+            $chunks = $transactions->chunk(5);
             foreach ($chunks as $chunk) {
                 // GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
                 GeneratePayoutJob::dispatch($chunk, $lastSaturday, $current_day);
