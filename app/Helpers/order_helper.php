@@ -68,3 +68,14 @@
         }
     }
 
+    if (!function_exists('get_order_by_order_id')){
+        function get_order_by_order_id($order_id){
+            $order = Orders::find($order_id);
+            if($order){
+                return $order;
+            }else{
+                return null;
+            }
+        }
+    }
+

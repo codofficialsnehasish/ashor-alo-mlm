@@ -70,6 +70,7 @@
                                         <th class="text-wrap">Amount</th>
                                         <th class="text-wrap">Category</th>
                                         <th class="text-wrap">Product</th>
+                                        <th class="text-wrap">Payment Mode</th>
                                         <th class="text-wrap">Date</th>
                                         <th class="text-wrap">Entry By</th>
                                     </tr>
@@ -80,12 +81,14 @@
                                     @foreach($items as $item)
                                     @php $user++ @endphp
                                     @php $amount += $item->total_amount @endphp
+                                    @php $order = get_order_by_order_id($item->order_id) @endphp
                                     <tr>
                                         <td>{{ get_user_id($item->user_id) }}</td>
                                         <td>{{ get_name($item->user_id) }}</td>
                                         <td>{{ $item->total_amount }}</td>
                                         <td>{{ get_product_category_name_by_order_id($item->order_id) }}</td>
                                         <td>{{ get_products_by_order_id($item->order_id) }}</td>
+                                        <td>{{ $order->payment_method }}</td>
                                         <td>{{ formated_date($item->start_date) }}</td>
                                         <td class="text-wrap">{{ $item->entry_by }}</td>
                                     </tr>
@@ -96,6 +99,7 @@
                                         <td></td>
                                         <td><b>Total User - {{ $user }}</b></td>
                                         <td><b>Total Amount - {{ $amount }}</b></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
