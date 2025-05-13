@@ -14,7 +14,7 @@
                 <div class="row align-items-center justify-content-between">
                     <div class="col-md-7 col-lg-6">
                         <div class="hero-content-left text-white">
-                            <h1 class="display-2">Forget Password !</h1>
+                            <h1 class="display-2">Forget Password !</h1> 
                             <p class="lead">
                                 Keep your face always toward the sunshine - and shadows will fall behind you.
                             </p>
@@ -31,13 +31,32 @@
                                 <!--login form-->
                                 <form class="login-signup-form" action="{{ url('/password-reset-process') }}" method="POST">
                                     @csrf
+
                                     <div class="form-group">
+                                        <label class="font-weight-bold">Select Recovery Option</label>
+                                        <select class="form-control" id="recovery-method" name="recovery_method" required>
+                                            <option value="phone" selected>Forget by Phone Number</option>
+                                            <option value="user_id">Forget by User ID</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" id="phone-group">
                                         <label class="font-weight-bold">Phone Number</label>
                                         <div class="input-group input-group-merge">
                                             <div class="input-icon">
                                                 <i class="ti-mobile"></i>
                                             </div>
                                             <input type="number" class="form-control" name="phone" placeholder="Enter your phone number" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" id="user-id-group" style="display: none;">
+                                        <label class="font-weight-bold">User ID</label>
+                                        <div class="input-group input-group-merge">
+                                            <div class="input-icon">
+                                                <i class="ti-user"></i>
+                                            </div>
+                                            <input type="text" class="form-control" name="user_id" placeholder="Enter your User ID">
                                         </div>
                                     </div>
                                     <!-- Password -->
@@ -78,4 +97,11 @@
 
     </div>
 
+    <script>
+        document.getElementById('recovery-method').addEventListener('change', function () {
+            var method = this.value;
+            document.getElementById('phone-group').style.display = method === 'phone' ? 'block' : 'none';
+            document.getElementById('user-id-group').style.display = method === 'user_id' ? 'block' : 'none';
+        });
+    </script>
     @include('site/partials/footer')

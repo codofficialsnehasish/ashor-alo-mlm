@@ -263,10 +263,32 @@ class Authentication extends Controller
     }
 
     public function password_reset_process(Request $r){
+        // return $r->all();
+        // $validator = Validator::make($r->all(), [
+        //     'recovery_method' => 'required|in:phone,user_id',
+        //     'phone' => 'required|digits:10|regex:/^[6789]/|exists:users,phone',
+        //     // 'password' => 'required|min:4',
+        //     'user_id' => 'required|digits:8|exists:users,agent_id',
+        // ]);
         $validator = Validator::make($r->all(), [
-            'phone' => 'required|digits:10|regex:/^[6789]/|exists:users,phone',
-            // 'password' => 'required|min:4',
+            'recovery_method' => 'required|in:phone,user_id',
+
+            'phone' => [
+                'required_if:recovery_method,phone',
+                'digits:10',
+                'regex:/^[6789]/',
+                'exists:users,phone',
+                'nullable',
+            ],
+
+            'user_id' => [
+                'required_if:recovery_method,user_id',
+                'digits:8',
+                'exists:users,agent_id',
+                'nullable',
+            ],
         ]);
+
         if ($validator->fails()) {
             if ($r->is('api/*')) {
                 return response()->json(['status' => "false",'errors' => $validator->errors()], 422);
@@ -279,7 +301,17 @@ class Authentication extends Controller
             // return $this->forget_password($r->phone);
 
             // in second version date - 30-12-2024
-            $user = User::where('phone',$r->phone)->first();
+            // $user = User::where('phone',$r->phone)->first();
+            if ($r->recovery_method === 'phone') {
+                $user = User::where('phone', $r->phone)->first();
+            } else {
+                $user = User::where('user_id', $r->user_id)->first();
+            }
+            
+            if (!$user) {
+                return back()->with('error', 'User not found.')->withInput();
+            }
+
             $responce = $this->smsService->sendSMS('91'.$user->phone,$user->user_id,$user->decoded_password);
             // return $responce['statusCode'];
             if(!empty($responce)){
