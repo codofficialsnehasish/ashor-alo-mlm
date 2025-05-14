@@ -40,6 +40,13 @@ $(document).ready(function() {
         buttons: ["copy", "excel", "pdf", "colvis"]
     }).buttons().container().appendTo("#datatable-buttons_wrapper .col-md-6:eq(0)");
 
+    $("#datatable-buttons-sell-report").DataTable({
+        lengthChange: false,
+        buttons: ["copy", "excel", "pdf", "colvis"],
+        order: [[6, 'asc']],
+    }).buttons().container().appendTo("#datatable-buttons-sell-report_wrapper .col-md-6:eq(0)");
+    
+
     
 
     // Apply the form styling once
