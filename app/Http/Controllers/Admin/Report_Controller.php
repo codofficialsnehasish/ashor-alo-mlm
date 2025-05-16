@@ -468,7 +468,12 @@ class Report_Controller extends Controller
                                             $kycQuery->where('is_confirmed', 1);
                                         });
                                 })
-                                ->get();
+                                // ->get();
+                                ->with('user') // Include user details
+                                ->get()
+                                ->sortBy(function ($payout) {
+                                    return strtolower(optional($payout->user)->name);
+                                });
 
             $export = new class($payouts) extends CustomValueBinder implements FromCollection, WithMapping, WithCustomValueBinder {
                 protected $payouts;
