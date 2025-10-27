@@ -35,4 +35,9 @@ class Home extends Controller
         return view('site.terms_and_condition')->with($data);
     }
 
+    public function site_privacy_policy(){
+        $data['title'] = 'Privacy Policy';
+        return view('site.privacy_policy')->with($data);
+    }
+
 }

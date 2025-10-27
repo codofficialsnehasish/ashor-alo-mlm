@@ -10,5 +10,5 @@ class ServiceChargeAccount extends Model
     use HasFactory;
     protected $table = "service_charge_account";
     protected $primaryKey = "id";
-    protected $fillable = ['user_id', 'amount'];
+    protected $fillable = ['user_id', 'amount', 'which_for', 'status'];
 }

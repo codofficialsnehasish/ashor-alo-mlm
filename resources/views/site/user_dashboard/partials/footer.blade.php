@@ -71,7 +71,15 @@
     <!-- Sweet alert init js-->
     <script src="{{ asset('dashboard_assets/js/pages/sweet-alerts.init.js') }}"></script>
 
-
+    <script src="{{ asset('dashboard_assets/libs/select2/js/select2.full.min.js') }}"></script>
+    <script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            placeholder: "Select an option",
+            allowClear: true
+        });
+    });
+    </script>
     <!-- Click Lavel Show -->
 
     <!-- toast message -->

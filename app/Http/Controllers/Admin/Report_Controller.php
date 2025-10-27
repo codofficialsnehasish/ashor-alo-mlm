@@ -538,13 +538,43 @@ class Report_Controller extends Controller
     public function payout_history(){
         $data['title'] = 'Payout History';
         // $lastPayout = Payout::where('user_id', Auth::id())->latest()->first();
-        $data['items'] =  Payout::select(
-                                'user_id',
-                                DB::raw('SUM(total_payout) as total_payout'),
-                                // DB::raw('(SELECT id FROM payouts AS p WHERE p.user_id = payouts.user_id ORDER BY p.created_at DESC LIMIT 1) as last_payout_id')
-                            )
-                            ->groupBy('user_id')
-                            ->get();
+        // $data['items'] =  Payout::select(
+        //                         'user_id',
+        //                         DB::raw('SUM(total_payout) as total_payout'),
+        //                         // DB::raw('(SELECT id FROM payouts AS p WHERE p.user_id = payouts.user_id ORDER BY p.created_at DESC LIMIT 1) as last_payout_id')
+        //                     )
+        //                     ->groupBy('user_id')
+        //                     ->get();
+
+        $data['items'] = Payout::select('user_id')
+            ->groupBy('user_id')
+            ->get()
+            ->map(function ($item) {
+                // ✅ Sum of all paid payouts
+                $paidSum = Payout::where('user_id', $item->user_id)
+                    ->where('paid_unpaid', '1')
+                    ->sum('total_payout');
+
+                // ✅ Only the latest unpaid payout (if exists)
+                $latestUnpaid = Payout::where('user_id', $item->user_id)
+                    // ->where('paid_unpaid', 0)
+                    ->orderBy('id','desc')
+                    ->first();
+
+                // ✅ Final amount = paid sum + latest unpaid (if available)
+                if($latestUnpaid->paid_unpaid=='0'){
+                    $item->total_payout = $paidSum + ($latestUnpaid->total_payout ?? 0);
+                }else{
+                    $item->total_payout = $paidSum;
+                    // $item->total_payout = $latestUnpaid;
+                }
+                // $item->latest_unpaid_id = $latestUnpaid->id ?? null;
+                // $item->latest_unpaid_date = $latestUnpaid->created_at ?? null;
+
+                return $item;
+            });
+        // return $data;
+
         return view('admin.reports.payout_history')->with($data);
     }
 
@@ -589,6 +619,11 @@ class Report_Controller extends Controller
     }
 
     public function generate_paid_unpaid_payment_report(Request $r){
+        if($r->button == "excel_download"){
+            $export = $this->generate_paid_unpaid_payment_reportExportExcel($r);
+            return Excel::download($export, 'payout_report.xlsx');
+        }
+
         $data['title'] = 'Paid Unpaid Payment Report';
         $startDate = $r->start_date;
         $endDate = $r->end_date;
@@ -647,6 +682,93 @@ class Report_Controller extends Controller
                                     ->paginate(10)->withQueryString(); 
         }
         return view('admin.reports.unpaid_payment_report')->with($data);
+    }
+
+    
+    public function generate_paid_unpaid_payment_reportExportExcel(Request $r)
+    {
+        $start_date = $r->start_date;
+        $end_date = $r->end_date;
+        $status = $r->status;
+
+        // try {
+            $query = Payout::where('total_payout', '>', 0)
+                        ->whereHas('user', function ($query) {
+                            $query->where('block', 0)
+                                ->whereHas('kyc', function ($kycQuery) {
+                                    $kycQuery->where('is_confirmed', 1);
+                                });
+                        });
+                        
+            // Apply date range filters
+            $query->whereDate('end_date', '>=', $start_date)
+                ->whereDate('start_date', '<=', $end_date);
+
+            // Apply status filter if provided
+            if ($status == 'paid') {
+                $query->where('paid_unpaid', '1');
+            } elseif ($status == 'unpaid') {
+                $query->where('paid_unpaid', '0');
+            }
+
+            $payouts = $query->with('user')
+                            ->get()
+                            ->sortBy(function ($payout) {
+                                return strtolower(optional($payout->user)->name);
+                            });
+
+            $export = new class($payouts) extends CustomValueBinder implements FromCollection, WithHeadings, WithMapping, WithCustomValueBinder {
+                protected $payouts;
+                protected $totalAmount = 0;
+
+                public function __construct($payouts)
+                {
+                    $this->payouts = $payouts;
+                }
+
+                public function collection()
+                {
+                    return $this->payouts;
+                }
+
+                public function headings(): array
+                {
+                    return [
+                        'Name',
+                        'ID',
+                        'Total Payout Amount',
+                        'Payout Date',
+                        'Account Name (As Per Bank)',
+                        'Bank Name',
+                        'Account Number',
+                        'IFSC',
+                        'Account Type'
+                    ];
+                }
+
+                public function map($payout): array
+                {
+                    $user = get_user_details($payout->user_id);
+                    $this->totalAmount += $payout->total_payout;
+                    
+                    return [
+                        get_name($payout->user_id),
+                        get_user_id($payout->user_id),
+                        $payout->total_payout,
+                        $payout->start_date . ' - ' . $payout->end_date,
+                        $user->account_name,
+                        $user->bank_name,
+                        (string) $user->account_number, // Convert to string to prevent Excel auto-formatting
+                        $user->ifsc_code,
+                        $user->account_type,
+                    ];
+                }
+            };
+            // dd($export);
+            return $export;
+        // } catch (\Exception $e) {
+        //     return back()->with('error', 'An error occurred while generating the Excel. ' . $e->getMessage());
+        // }
     }
 
     /*public function exportPdf(Request $request)

@@ -57,15 +57,21 @@ class KycController extends Controller
     }
 
     public function upload_kyc_data(Request $request){
+        $messages = [
+            'identityFile.max' => 'The identity proof file must not be greater than 5MB.',
+            'addressFile.max'  => 'The address proof file must not be greater than 5MB.',
+            'bankFile.max'     => 'The bank proof file must not be greater than 5MB.',
+            'panProofFile.max' => 'The PAN proof file must not be greater than 5MB.',
+        ];
         $validator = Validator::make($request->all(), [
             'identy_proof_type' => 'required',
             'address_proof_type' => 'required',
             'bank_proof_type' => 'required',
-            'identityFile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'addressFile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'bankFile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'panProofFile' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+            'identityFile' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'addressFile' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'bankFile' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+            'panProofFile' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+        ],$messages);
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator->errors());
         }else{

@@ -115,6 +115,8 @@ class GeneratePayoutJob implements ShouldQueue
 
                         $achieved_target = RemunerationBenefit::where('target', '<=', $total_left_business)
                                             ->where('target', '<=', $total_right_business)
+                                            ->where('visiblity',1)
+                                            ->where('is_deleted',0)
                                             ->orderBy('target', 'DESC')
                                             ->first();
 
@@ -203,6 +205,10 @@ class GeneratePayoutJob implements ShouldQueue
                     $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
                     $total_product_return = $product_return - $product_return_deduction;
 
+                    // repurchase deduction from investment
+                    $product_return_repurchase_deduction =  ($total_product_return * $mlm_settings->repurchase ) / 100;
+                    $total_product_return = $product_return - $product_return_repurchase_deduction;
+
                     $dilse_return_deduction = ($dilse_return * $mlm_settings->tds) / 100;
                     $total_dilse_return = $dilse_return - $dilse_return_deduction;
         
@@ -282,6 +288,7 @@ class GeneratePayoutJob implements ShouldQueue
 
                     $payout->roi = $product_return;
                     $payout->roi_tds_deduction = $product_return_deduction;
+                    $payout->roi_repurchase_deduction = $product_return_repurchase_deduction;
 
                     $payout->previous_unpaid_amount = $previous_unpaid_amount;
 
@@ -301,7 +308,7 @@ class GeneratePayoutJob implements ShouldQueue
                     $payout->total_payout += $total_dilse_return;
                     // Log::info('User is: ' . $payout->user_id. ' after add dilse Total payout '.$payout->total_payout);
 
-                    if($payout->total_payout < 200){
+                    if($payout->total_payout < 500){
                         $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
                         $payout->total_payout = 0.00;
                     }else{
@@ -333,6 +340,14 @@ class GeneratePayoutJob implements ShouldQueue
                         'which_for'=>'Deducting from Payout',
                         'status'=>1
                     ]);
+
+                    RepurchaseAccount::create([
+                        'user_id'=>$user->id,
+                        'amount'=>$payout->roi_repurchase_deduction,
+                        'which_for'=>'Roi Repurchase',
+                        'status'=>1
+                    ]);
+
                     ServiceChargeAccount::create([
                         'user_id'=>$user->id,
                         'amount'=>$payout->roi_tds_deduction + $payout->dilse_service_charge_deduction,

@@ -239,7 +239,7 @@
                                                     <img src="{{ asset('dashboard_assets/images/services-icon/31.png') }}" alt="">
                                                 </div>
                                                 <h5 class="font-size-16 text-uppercase text-white-50"><!--Current Week Business--> Current Fortnight Business</h5>
-                                                <h4 class="fw-medium font-size-24" style="color:white;">{{ $current_week_business }}</h4>
+                                                <h4 class="fw-medium font-size-24" style="color:white;" id="current-week-business">{{ $current_week_business }}</h4>
                                             </div>
                                         </div>
                                     </a>
@@ -250,5 +250,20 @@
                 </div>
                 <!-- End Page-content -->
 
+                @section('script')
+                <script>
+                    $.ajax({
+                        url: "{{ route('dashboard.admin-get-current-week-business') }}",
+                        type: 'POST',
+                        data:{_token:"{{ csrf_token() }}"},
+                        beforeSend: function() {
+                            $('#current-week-business').text('Calculating...');
+                        },
+                        success: function(response) {
+                            $('#current-week-business').text('₹ '+response);
+                        }
+                    });
+                </script>
+                @endsection
                 
                 @include("admin/dash/footer")

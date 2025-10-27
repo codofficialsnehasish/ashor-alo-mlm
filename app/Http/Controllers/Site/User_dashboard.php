@@ -117,7 +117,8 @@ class User_dashboard extends Controller
     public function get_total_right_business(){ return calculate_right_business(Auth::id()); }
     public function get_rank(){ return $this->get_rank_instantly(Auth::id()); }
     public function get_current_week_business(){ return calculate_right_current_week_business(Auth::id()) + calculate_left_current_week_business(Auth::id()); }
-    
+    public function get_current_week_left_business(){ return calculate_left_current_week_business(Auth::id()); }
+    public function get_current_week_right_business(){ return calculate_right_current_week_business(Auth::id()); }
     
     
     

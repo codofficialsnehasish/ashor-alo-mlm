@@ -413,14 +413,14 @@ class Customers extends Controller
     public function addcustomer(Request $r){
         $validator = Validator::make($r->all(), [
             'membername' => 'required|string|max:255',
-            'mobile' => 'required|digits:10|regex:/^[6789]/|unique:users,phone',
+            'mobile' => 'required|digits:10|regex:/^[6789]/|unique:users,phone,NULL,id,is_deleted,0',
             // 'email' => 'required|email|unique:users,email',
             // 'password' => 'required|min:4',
             // 'agentid' => 'exists:users,user_id',
             'agentid' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    $agentExists = \App\Models\User::where('user_id', $value)  
+                    $agentExists = \App\Models\User::where('user_id', $value)
                         ->where('is_deleted', 0)
                         ->exists();
 

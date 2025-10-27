@@ -77,9 +77,7 @@
                                             <input type="file" class="custom-file-input" name="identityFile" id="identityFile" required>
                                             <label class="custom-file-label" for="identityFile">Bank Proof</label>
                                         </div>
-                                        @endif        
-
-                                        
+                                        @endif
                                     </div>
                                     
                                     <div class="col-md-4 mt-3">

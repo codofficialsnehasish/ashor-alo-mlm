@@ -51,7 +51,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
 
         foreach($this->transactions as $user_id){
             if(!Payout::where('user_id',$user_id)->where('end_date',$this->lastFriday)->exists()){
-                Log::info("user_id ".$user_id.", end_date ".$this->lastFriday);
+                // Log::info("user_id ".$user_id.", end_date ".$this->lastFriday);
                 $mlm_settings = MLMSettings::first();
                 $total_deduction = $mlm_settings->tds + $mlm_settings->repurchase;
                 
@@ -63,7 +63,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
     
                         $remuneration_salary = 0;
                         // Remuneration Benefits or Salary Income
-                        if (Carbon::parse($this->lastFriday)->day <= 7) {
+                        if (Carbon::parse($this->lastFriday)->day <= 15) {
                             $total_left_business = calculate_left_business($user_id);
                             $total_right_business = calculate_right_business($user_id);
     
@@ -77,6 +77,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                                     $salary = SalaryBonus::where('user_id',$user_id)->first();
                                     if($achieved_target->id == $salary->remuneration_benefit_id && $salary->month_count <= $achieved_target->month_validity){
                                         $salary->month_count += 1;
+                                        $salary->amount = $achieved_target->bonus;
                                         $remuneration_salary = $achieved_target->bonus;
                                         $salary->update();
     
@@ -148,9 +149,19 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                                                                 ->whereBetween(DB::raw('DATE(created_at)'), [$this->start_date,$this->lastFriday])
                                                                 ->where('user_id',$user_id)
                                                                 ->sum('amount');
+
+                        $dilse_return = AccountTransaction::where(function ($query) {
+                                                                $query->where('which_for', 'DILSE Daily');
+                                                            })
+                                                            ->whereBetween(DB::raw('DATE(created_at)'), [$this->start_date,$this->lastFriday])
+                                                            ->where('user_id',$user_id)
+                                                            ->sum('amount');
                                                                 
                         $product_return_deduction = ($product_return * $mlm_settings->tds) / 100;
                         $total_product_return = $product_return - $product_return_deduction;
+
+                        $dilse_return_deduction = ($dilse_return * $mlm_settings->tds) / 100;
+                        $total_dilse_return = $dilse_return - $dilse_return_deduction;
             
                         $direct_bonus = AccountTransaction::whereIn('which_for', ['Direct Bonus', 'Direct Bonus on Hold'])
                                                             ->whereBetween(DB::raw('DATE(created_at)'), [$this->start_date,$this->lastFriday])
@@ -167,9 +178,12 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $deduction = ($comission * $total_deduction) / 100; // 15% of the deduction
                         $final_commission = $comission - $deduction;
         
-                        // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet + $previous_unpaid_amount;
+                        $last_hold_amount = Payout::where('user_id', $user->id)->latest()->value('hold_amount') ?? 0;
+                        $last_hold_wallet_amount = Payout::where('user_id', $user->id)->latest()->value('hold_wallet') ?? 0;
+                        Log::info('last_hold_amount: ' . $last_hold_amount. ' last_hold_wallet_amount '.$last_hold_wallet_amount);
                         // $current_payout = $user->hold_balance + $final_commission + $user->hold_wallet;
-                        $current_payout = $user->hold_balance + $final_commission;
+                        // $current_payout = $user->hold_balance + $final_commission;
+                        $current_payout = $last_hold_amount + $final_commission;
     
                         
                         
@@ -191,13 +205,21 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
     
                         // Checking for hold amount
                         if(($limit - ($current_payout + $total_payout)) >= 0){
-                            // then pay the hold amount
-                            $payout->hold_amount_added = $user->hold_balance;
+                            // if($user->id == 4){
+                            //     echo $user->hold_balance; die;
+                            // }
+                                // then pay the hold amount
+                            // $payout->hold_amount_added = $user->hold_balance;
+                            $payout->hold_amount_added = $last_hold_amount; 
                             $user->hold_balance = 0;
                         }else{
                             // after limit hold
+                            // $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
+                            // $user->hold_balance += $payout->hold_amount;
+
                             if($limit <= $total_payout){
-                                $payout->hold_amount = $user->hold_balance + $final_commission;
+                            // $payout->hold_amount = $user->hold_balance + $final_commission;
+                            $payout->hold_amount = $last_hold_amount + $final_commission;
                                 $user->hold_balance += $final_commission;
                             }else{
                                 $payout->hold_amount = abs($limit - ($current_payout + $total_payout));
@@ -208,17 +230,33 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $payout->remuneration_bonus = $remuneration_salary;
                         $payout->remuneration_bonus_tds_deduction = $remuneration_salary * ($mlm_settings->tds/100);
                         $payout->remuneration_bonus_repurchase_deduction = $remuneration_salary * ($mlm_settings->repurchase/100);
+    
+                        $payout->dilse_payout_amount = $dilse_return;   
+                        $payout->dilse_service_charge_deduction = $dilse_return_deduction;
+
+                        // $payout->dilse_payout_amount = 0.00;
+                        // $payout->dilse_service_charge_deduction = 0.00;
         
                         $payout->roi = $product_return;
                         $payout->roi_tds_deduction = $product_return_deduction;
     
                         $payout->previous_unpaid_amount = $previous_unpaid_amount;
     
-                        $payout->hold_wallet_added = $user->hold_wallet;
+                        // $payout->hold_wallet_added = $user->hold_wallet;
+                        $payout->hold_wallet_added = $last_hold_wallet_amount;
+            
         
-                        // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0; //+ $previous_unpaid_amount
+                        // $payout->total_payout = ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount)) ?? 0 ;
+                        // $payout->total_payout = max(0, ($total_product_return + (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))) ?? 0;
+  
                         // $payout->total_payout = (($total_product_return + $previous_unpaid_amount) + (max(0, ( (($payout->hold_amount_added + $final_commission + $payout->hold_wallet_added) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                    
+
                         $payout->total_payout = (($total_product_return + $previous_unpaid_amount + $payout->hold_wallet_added) + (max(0, ( (($payout->hold_amount_added + $final_commission) - $payout->hold_amount))))) ?? 0; //+ $previous_unpaid_amount
+                    
+                        // Log::info('User is: ' . $payout->user_id. ' Total payout '.$payout->total_payout. ' dilse_payout_amount '. $payout->dilse_payout_amount);
+                        $payout->total_payout += $total_dilse_return;
+                        // Log::info('User is: ' . $payout->user_id. ' after add dilse Total payout '.$payout->total_payout);
                         
                         if($payout->total_payout < 200){
                             $user->hold_wallet = $payout->hold_wallet = $payout->total_payout;
@@ -237,7 +275,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         $account = Account::first();
                         $account->tds_balance += $payout->direct_bonus_tds_deduction + $payout->lavel_bonus_tds_deduction + $payout->remuneration_bonus_tds_deduction;
                         $account->repurchase_balance += $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction;
-                        $account->service_charge_balance += $payout->roi_tds_deduction;
+                    $account->service_charge_balance += ($payout->roi_tds_deduction + $payout->dilse_service_charge_deduction);
                         $account->update();
     
                         TDSAccount::create([
@@ -254,7 +292,7 @@ class ForcelyGeneratePayoutJob implements ShouldQueue
                         ]);
                         ServiceChargeAccount::create([
                             'user_id'=>$user->id,
-                            'amount'=>$payout->roi_tds_deduction,
+                            'amount'=>$payout->roi_tds_deduction + $payout->dilse_service_charge_deduction,
                             'which_for'=>'Deducting from Payout',
                             'status'=>1
                         ]);

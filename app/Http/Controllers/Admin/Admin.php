@@ -136,8 +136,14 @@ class Admin extends Controller
         $data['contac_us'] = ContactUs::all()->count();
         $root = User::whereNull('parent_id')->where('role','agent')->first();
         // return calculate_left_current_week_business($root->id);
-        $data['current_week_business'] = calculate_left_current_week_business($root->id) + calculate_right_current_week_business($root->id);
+        // $data['current_week_business'] = calculate_left_current_week_business($root->id) + calculate_right_current_week_business($root->id);
+        $data['current_week_business'] = 0;
         return view("admin/dashboard")->with($data);
+    }
+
+    public function admin_get_current_week_business(){
+        $root = User::whereNull('parent_id')->where('role','agent')->first();
+        return calculate_left_current_week_business($root->id) + calculate_right_current_week_business($root->id);
     }
 
     //==========xxxxxxx=======End of Dashboard===========xxxxxx=======

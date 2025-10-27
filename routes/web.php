@@ -8,23 +8,30 @@ use App\Http\Controllers\LocationController;
 
 Route::get('disburse-roi',[CornJobs::class,'disburse_roi']); //main route for ROI & Direct Bonus
 
-Route::get('forcely-disburse-roi',[CornJobs::class,'forcely_disburse_roi']);
+// Route::get('forcely-disburse-roi',[CornJobs::class,'forcely_disburse_roi']);
 
 Route::get('process-direct-bonus',[CornJobs::class,'process_direct_bonus']);
 
-Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
+// Route::get('forcely-process-direct-bonus',[CornJobs::class,'forcely_process_direct_bonus']);
+// Route::get('forcely-process-direct-bonus-one-time',[CornJobs::class,'forcely_process_direct_bonus_one_time']);
+Route::get('check-test-payout-time',[CornJobs::class,'check_test_payout_time']);
 
-Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']); //main route for Weekly Level Bonus
-Route::get('forcely-level-bonus-in-saturday-to-friday',[CornJobs::class,'forcely_level_bonus_in_saturday_to_friday']);
 
-Route::get('generate-payout-in-saturday-to-friday',[CornJobs::class,'generate_payout_in_saturday_to_friday']); //main route for Weekly Payout Generate
-Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']);
+//main method of level generate
+// Route::get('level-bonus-in-saturday-to-friday',[CornJobs::class,'level_bonus_in_saturday_to_friday']); //main route for Weekly Level Bonus
 
-Route::get('hold-wallet-replace-for-one-time',[CornJobs::class,'hold_wallet_replace_for_one_time']);
-Route::get('custom-provide-roi-toa-user',[CornJobs::class,'custom_provide_roi_toa_user']);
+// Route::get('forcely-level-bonus-in-saturday-to-friday',[CornJobs::class,'forcely_level_bonus_in_saturday_to_friday']);
 
-Route::get('payout-details-check',[CornJobs::class,'see_payout_details_for_check']);
-Route::get('payout-test',[CornJobs::class,'process_to_make_payout_good']);
+//main method of payout generate
+// Route::get('generate-payout-in-saturday-to-friday',[CornJobs::class,'generate_payout_in_saturday_to_friday']); //main route for Weekly Payout Generate
+
+// Route::get('forcely-generate-payout',[CornJobs::class,'forcely_generate_payout']);
+
+// Route::get('hold-wallet-replace-for-one-time',[CornJobs::class,'hold_wallet_replace_for_one_time']);
+// Route::get('custom-provide-roi-toa-user',[CornJobs::class,'custom_provide_roi_toa_user']);
+
+// Route::get('payout-details-check',[CornJobs::class,'see_payout_details_for_check']);
+// Route::get('payout-test',[CornJobs::class,'process_to_make_payout_good']);
 Route::get('get-user-id-using-id',[CornJobs::class,'get_user_id_using_id']);
 
 Route::post('get-state-list',[LocationController::class,'get_state_list'])->name('get-state-list');
@@ -102,11 +109,20 @@ Route::get("/contact-us",[Contact_us::class,"contact_us"])->name('contact_us');
 Route::post("/submit-contact-us",[Contact_us::class,"process_contact_us_data"])->name('contact_us.submit');
 Route::get("/site-products",[ProductController::class,"index"])->name('site-products');
 Route::get("/site-terms-and-conditions",[Home::class,"site_terms_and_conditions"])->name('site-terms-and-conditions');
+Route::get("/privacy-policy",[Home::class,"site_privacy_policy"])->name('site-privacy-policy');
 
 
 //======================= Login Routes =====================
 Route::get("/login",[Authentication::class,"login"])->name('site-login');
+// Route::get('/login', function () {
+//     return view('site.maintenance');
+// })->name('site-login');
+
 Route::get("/sign-up",[Authentication::class,"signup"]);
+// Route::get('/sign-up', function () {
+//     return view('site.maintenance');
+// });
+
 Route::get("/site-logout",[Authentication::class,"logout"]);
 Route::get("/get-sponsor-name/{sponsorid}",[Authentication::class,"get_sponsor_name"]);
 Route::post("/process-signup",[Authentication::class,"process_signup"])->name('process-signup');
@@ -145,7 +161,8 @@ Route::middleware('auth')->group(function () {
         Route::post("/get-total-right-business",[User_dashboard::class,"get_total_right_business"])->name('member-dashboard.get-total-right-business');
         Route::post("/get-rank",[User_dashboard::class,"get_rank"])->name('member-dashboard.get-rank');
         Route::post("/get-current-week-business",[User_dashboard::class,"get_current_week_business"])->name('member-dashboard.get-current-week-business');
-        
+        Route::post("/get-current-week-left-business",[User_dashboard::class,"get_current_week_left_business"])->name('member-dashboard.get-current-week-left-business');
+        Route::post("/get-current-week-right-business",[User_dashboard::class,"get_current_week_right_business"])->name('member-dashboard.get-current-week-right-business');
         
         
 
@@ -280,6 +297,7 @@ Route::middleware('auth.admin')->group(function () {
         //======================= Admin Dashboard Routes ======================
 
         Route::get("/dashboard",[Admin::class,"dashboard"])->name('dashboard');
+        Route::post("/admin-get-current-week-business",[Admin::class,"admin_get_current_week_business"])->name('dashboard.admin-get-current-week-business');
 
 
         //======================= Settings Routes ======================
@@ -520,7 +538,7 @@ Route::middleware('auth.admin')->group(function () {
             // Add On Report
             Route::get("/addon-report",[Report_Controller::class,"addon_report"])->name('report.addon-report');
             Route::post("/generate-addon-report",[Report_Controller::class,"generate_addon_report"])->name('report.generate-addon-report');
-
+            
             // Product Delevery Report
             Route::get("/product-delevery-report",[Report_Controller::class,"product_delevery_report"])->name('report.product-delevery-report');
             Route::get("/generate-product-delevery-report",[Report_Controller::class,"generate_product_delevery_report"])->name('report.generate-product-delevery-report');

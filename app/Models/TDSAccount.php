@@ -9,5 +9,5 @@ class TDSAccount extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'amount'];
+    protected $fillable = ['user_id', 'amount', 'which_for', 'status'];
 }

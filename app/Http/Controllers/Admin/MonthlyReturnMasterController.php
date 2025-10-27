@@ -40,7 +40,7 @@ class MonthlyReturnMasterController extends Controller
     }
 
     public function get_products_by_category(Request $request){
-        $products = Products::where('category_id',$request->category_id)->where('is_deleted',0)->get();
+        $products = Products::where('category_id',$request->category_id)->where('is_deleted',0)->where('is_visible',1)->get();
         return response()->json($products);
     }
 

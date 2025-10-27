@@ -80,7 +80,7 @@
                                     </div> -->
 
                                     <!-- Submit -->
-                                    <button class="btn btn-block btn-secondary mt-4 mb-3">Verify Phone</button>
+                                    <button class="btn btn-block btn-secondary mt-4 mb-3">{{--Verify Phone--}}Reset</button>
 
                                 </form>
                             </div>

@@ -53,7 +53,7 @@
                                             <i class="mdi mdi-clock-alert h2"></i>
                                             <h6 class="text-uppercase mt-3">
                                                 What is the Downtime?</h6>
-                                            <p class="text-muted mt-3">We expect the maintenance to last for approximately 2 Days. During this time, the website will be temporarily unavailable. We apologize for any inconvenience this may cause and appreciate your patience.</p>
+                                            <p class="text-muted mt-3">We expect the maintenance to last for approximately 30 Minutes. During this time, the website will be temporarily unavailable. We apologize for any inconvenience this may cause and appreciate your patience.</p>
                                         </div>
                                     </div>
                                 </div>

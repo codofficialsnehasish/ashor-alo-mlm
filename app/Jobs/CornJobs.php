@@ -187,8 +187,8 @@ class CornJobs extends Controller
 
 
     public function forcely_disburse_roi() {
-        $startDate = Carbon::create(2025, 7, 6);
-        $endDate = Carbon::create(2025, 7, 10);
+        $startDate = Carbon::create(2025, 1, 9);
+        $endDate = Carbon::create(2025, 1, 10);
         // $endDate = Carbon::now();
         $dates = [];
         // while ($startDate->lte($endDate)) {
@@ -670,25 +670,18 @@ class CornJobs extends Controller
     } // tested 29-11-2024
 
     public function forcely_generate_payout() {
-        $start_date = '2025-07-01';
-        $lastFriday = '2025-07-15';
-        // $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
-        //                                     ->groupBy('user_id')
-        //                                     ->pluck('user_id');
-        $transactions = User::where('role','agent')->where('status',1)->where('is_deleted',0)->pluck('id');
+        $start_date = '2024-12-28';
+        $lastFriday = '2025-01-03';
+        $transactions = AccountTransaction::whereBetween(DB::raw('DATE(created_at)'), [$start_date, $lastFriday])
+                                            ->groupBy('user_id')
+                                            ->pluck('user_id');
 
         // ForcelyGeneratePayoutJob::dispatch($transactions, $start_date, $lastFriday);
 
-        // $chunks = $transactions->chunk(ceil($transactions->count() / 16));
+        $chunks = $transactions->chunk(ceil($transactions->count() / 16));
         // return $chunks; die;
         // Dispatch jobs for each chunk
-        // foreach ($chunks as $chunk) {
-        //     ForcelyGeneratePayoutJob::dispatch($chunk, $start_date, $lastFriday);
-        // }
-
-        $chunks = $transactions->chunk(3);
         foreach ($chunks as $chunk) {
-            // GeneratePayoutJob::dispatch($transactions, $lastSaturday, $current_day);
             ForcelyGeneratePayoutJob::dispatch($chunk, $start_date, $lastFriday);
         }
     }
@@ -896,55 +889,6 @@ class CornJobs extends Controller
         //         }
         //     }
         // }
-    }
-
-    public function forcely_process_direct_bonus_one_time(){
-        $topup_ids = [1472,1652,1678,1938,1939,1940,1995,1996,1997,1998,1999,2000,2001,2002,2003,2296,2491,2492,2493,2494,2495,2530,2531,2594,2595];
-        $today_join_users = TopUp::whereIn('id',$topup_ids)->where('is_provide_direct',1)->get();
-
-        foreach($today_join_users as $join_data){
-            $custo = User::find($join_data->user_id);
-            if(User::where('user_id',$custo->agent_id)->exists()){
-                $agent = User::where('user_id',$custo->agent_id)->first();
-                if(!AccountTransaction::where('user_id',$agent->id)->where('which_for','Direct Bonus')->where('topup_id',$join_data->id)->exists()){
-                    if($agent->status == 1){
-                        
-                        //Direct Bonus
-                        $mlm_settings = MLMSettings::first();
-                        $user_bonus = ($join_data->total_amount * ($mlm_settings->agent_direct_bonus/100));
-
-
-                        $transactionAdded = $this->transaction->make_transaction(
-                            $agent->id,
-                            $user_bonus,
-                            'Direct Bonus',
-                            1,
-                            $custo->id,
-                            $join_data->id
-                            // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                            // Carbon::parse($join_data->start_date)->format('Y-m-d H:i:s'),
-                        );
-                    }
-                }
-            }
-        }
-    }
-
-    public function check_test_payout_time(){
-        $now = Carbon::now(); // current time
-
-        $day = $now->day;
-        $lastDay = $now->copy()->endOfMonth()->day; // use copy() so $now is unchanged
-        $time = $now->format('H:i');
-
-        // Check conditions
-        if (($day == 10 || $day == $lastDay) && $time == '18:20') {
-            \Log::info("✅ Function executed at {$now}. Conditions met.");
-            return response()->json(['message' => 'Function executed successfully']);
-        }
-
-        \Log::info("ℹ️ Function executed at {$now}. Conditions not met.");
-        return response()->json(['message' => 'Conditions not met']);
     }
 
 }

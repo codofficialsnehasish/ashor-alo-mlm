@@ -42,7 +42,7 @@
                             <form action="{{ route('report.generate-paid-unpaid-payment-report') }}" method="get">
                                 {{-- @csrf --}}
                                 <div class="row">
-                                    <div class="mb-0 col-md-8">
+                                    <div class="mb-0 col-md-6">
                                         <label class="form-label">Search Using Payout Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                             <input type="text" class="form-control" required name="start_date" placeholder="Payout Start Date" value="{{ $start_date ?? ''}}" autocomplete="off" />
@@ -59,6 +59,9 @@
                                     </div>
                                     <div class="col-md-2" style="margin-top: 29px !important;">
                                         <button class="btn btn-primary" type="submit">Search Report</button>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top: 29px !important;">
+                                        <button class="btn btn-primary" type="submit" name="button" value="excel_download">Download Excel</button>
                                     </div>
                                 </div>
                             </form>
