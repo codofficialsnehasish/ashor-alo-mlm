@@ -318,7 +318,7 @@ class Report_Controller extends Controller
 
     // End of Product Return Report
 
-    // ID Activation Report
+    // ID Activation Report 
 
     public function id_activation_report(){
         $data['title'] = 'ID Activation Report';
@@ -354,31 +354,110 @@ class Report_Controller extends Controller
 
     // Payout Report
 
-    public function payout_report(){
+    // public function payout_report(){
+    //     $data['title'] = 'Payout Report';
+    //     // $data['items'] = Payout::all();
+    //     $data['items'] = Payout::select('start_date','end_date',DB::raw('SUM(total_payout) as total_payout'),DB::raw('COUNT(DISTINCT user_id) as total_user_count'))
+    //                             ->groupBy('start_date', 'end_date')
+    //                             ->get();
+    //     return view('admin.reports.payout_report')->with($data);
+    // }
+
+    public function payout_report()
+    {
         $data['title'] = 'Payout Report';
-        // $data['items'] = Payout::all();
-        $data['items'] = Payout::select('start_date','end_date',DB::raw('SUM(total_payout) as total_payout'),DB::raw('COUNT(DISTINCT user_id) as total_user_count'))
-                                ->groupBy('start_date', 'end_date')
-                                ->get();
+
+        // Get all unique payout periods (start_date, end_date)
+        $payoutPeriods = Payout::select('start_date', 'end_date')
+            ->groupBy('start_date', 'end_date')
+            ->orderBy('start_date')
+            ->get();
+
+        $items = collect();
+
+        foreach ($payoutPeriods as $period) {
+            $start_date = $period->start_date;
+            $end_date = $period->end_date;
+
+            $start = Carbon::parse($start_date);
+            $end = Carbon::parse($end_date);
+
+            // Determine previous payout period
+            if ($start->day == 16) {
+                // Current: 16–end of month → Previous: 1–15
+                $prevStart = $start->copy()->startOfMonth();
+                $prevEnd = $start->copy()->day(15);
+            } elseif ($start->day == 1) {
+                // Current: 1–15 → Previous: 16–end of last month
+                $prevStart = $start->copy()->subMonthNoOverflow()->day(16);
+                $prevEnd = $start->copy()->subMonthNoOverflow()->endOfMonth();
+            }
+
+            // Get users already paid in previous period
+            $previousPaidUserIds = Payout::where('paid_unpaid', '1')
+                ->whereBetween('start_date', [$prevStart->toDateString(), $prevEnd->toDateString()])
+                ->pluck('user_id')
+                ->toArray();
+
+            // Calculate payout summary for this period
+            $report = Payout::select(
+                    'start_date',
+                    'end_date',
+                    DB::raw('SUM(total_payout) as total_payout'),
+                    DB::raw('COUNT(DISTINCT user_id) as total_user_count')
+                )
+                ->where('start_date', $start_date)
+                ->where('end_date', $end_date)
+                ->where('total_payout', '>', 0)
+                ->whereNotIn('user_id', $previousPaidUserIds)
+                ->whereHas('user', function ($query) {
+                    $query->where('block', 0)
+                        ->whereHas('kyc', function ($kycQuery) {
+                            $kycQuery->where('is_confirmed', 1);
+                        });
+                })
+                ->groupBy('start_date', 'end_date')
+                ->first();
+
+            if ($report) {
+                $items->push($report);
+            }
+        }
+
+        $data['items'] = $items;
+
         return view('admin.reports.payout_report')->with($data);
     }
 
     public function payout_report_details($start_date, $end_date){
         $data['title'] = 'Payout Report';
-        // $data['items'] = Payout::where('start_date',$start_date)->where('end_date',$end_date)->where('total_payout','>',0)->get();
-        // $data['items'] = Payout::where('start_date', $start_date)
-        //                         ->where('end_date', $end_date)
-        //                         ->where('total_payout', '>', 0)
-        //                         ->whereHas('user', function ($query) {
-        //                             $query->where('block', 0); // assuming 'is_blocked' is the field name
-        //                         })
-        //                         ->whereHas('kyc', function ($query) {
-        //                             $query->where('is_completed', 1); // assuming 'is_completed' is the field name for KYC status
-        //                         })
-        //                         ->get();
+
+        // Convert to Carbon for date handling
+        $start = \Carbon\Carbon::parse($start_date);
+        $end = \Carbon\Carbon::parse($end_date);
+
+        // Determine previous payout period based on current start date
+        if ($start->day == 16) {
+            // Current period: 16 → end of month
+            // Previous: 1 → 15 of same month
+            $prevStart = $start->copy()->startOfMonth(); // 1st of same month
+            $prevEnd = $start->copy()->day(15); // 15th of same month
+        } elseif ($start->day == 1) {
+            // Current period: 1 → 15 of current month
+            // Previous: 16 → end of previous month
+            $prevStart = $start->copy()->subMonthNoOverflow()->day(16); // 16th of previous month
+            $prevEnd = $start->copy()->subMonthNoOverflow()->endOfMonth(); // last day of previous month
+        }
+        // Step 1: Find users who already received payout in previous period
+        $previousPaidUserIds = Payout::where('paid_unpaid', '1')
+            ->whereBetween('start_date', [$prevStart->toDateString(), $prevEnd->toDateString()])
+            ->pluck('user_id')
+            ->toArray();
+        
         $data['items'] = Payout::where('start_date', $start_date)
                                 ->where('end_date', $end_date)
                                 ->where('total_payout', '>', 0)
+                                ->whereNotIn('user_id', $previousPaidUserIds)
                                 ->whereHas('user', function ($query) {
                                     $query->where('block', 0) // Check if user is not blocked
                                         ->whereHas('kyc', function ($kycQuery) {
@@ -459,9 +538,32 @@ class Report_Controller extends Controller
     public function payoutExportExcel($start_date, $end_date)
     {
         try {
+            // Convert to Carbon for date handling
+            $start = \Carbon\Carbon::parse($start_date);
+            $end = \Carbon\Carbon::parse($end_date);
+
+            // Determine previous payout period based on current start date
+            if ($start->day == 16) {
+                // Current period: 16 → end of month
+                // Previous: 1 → 15 of same month
+                $prevStart = $start->copy()->startOfMonth(); // 1st of same month
+                $prevEnd = $start->copy()->day(15); // 15th of same month
+            } elseif ($start->day == 1) {
+                // Current period: 1 → 15 of current month
+                // Previous: 16 → end of previous month
+                $prevStart = $start->copy()->subMonthNoOverflow()->day(16); // 16th of previous month
+                $prevEnd = $start->copy()->subMonthNoOverflow()->endOfMonth(); // last day of previous month
+            }
+            // Step 1: Find users who already received payout in previous period
+            $previousPaidUserIds = Payout::where('paid_unpaid', '1')
+                ->whereBetween('start_date', [$prevStart->toDateString(), $prevEnd->toDateString()])
+                ->pluck('user_id')
+                ->toArray();
             $payouts = Payout::where('start_date', $start_date)
                                 ->where('end_date', $end_date)
                                 ->where('total_payout', '>', 0)
+                                // ->where('paid_unpaid','=','1')
+                                ->whereNotIn('user_id', $previousPaidUserIds)
                                 ->whereHas('user', function ($query) {
                                     $query->where('block', 0)
                                         ->whereHas('kyc', function ($kycQuery) {
@@ -615,10 +717,11 @@ class Report_Controller extends Controller
         $data['start_date'] = '';
         $data['end_date'] = '';
         $data['status'] = '';
+        $data['search_using'] = '';
         return view('admin.reports.unpaid_payment_report')->with($data);
     }
 
-    public function generate_paid_unpaid_payment_report(Request $r){
+    /*public function generate_paid_unpaid_payment_report(Request $r){
         if($r->button == "excel_download"){
             $export = $this->generate_paid_unpaid_payment_reportExportExcel($r);
             return Excel::download($export, 'payout_report.xlsx');
@@ -631,6 +734,7 @@ class Report_Controller extends Controller
         $data['start_date'] = $r->start_date;
         $data['end_date'] = $r->end_date;
         $data['status'] = $r->status;
+        $data['search_using'] = $r->search_using;
 
         if(!empty($r->status) && $r->status == 'paid'){
             $data['items'] = Payout::where('paid_unpaid','1')
@@ -682,10 +786,65 @@ class Report_Controller extends Controller
                                     ->paginate(10)->withQueryString(); 
         }
         return view('admin.reports.unpaid_payment_report')->with($data);
+    }*/
+
+    public function generate_paid_unpaid_payment_report(Request $r)
+    {
+        // Handle Excel export
+        if ($r->button == "excel_download") {
+            $export = $this->generate_paid_unpaid_payment_reportExportExcel($r);
+            return Excel::download($export, 'payout_report.xlsx');
+        }
+
+        $data['title'] = 'Paid Unpaid Payment Report';
+        $startDate = $r->start_date;
+        $endDate = $r->end_date;
+        $searchUsing = $r->search_using ?? 'payout_date';
+
+        $data['start_date'] = $startDate;
+        $data['end_date'] = $endDate;
+        $data['status'] = $r->status;
+        $data['search_using'] = $searchUsing;
+
+        // Base query
+        $query = Payout::where('total_payout', '>', 0)
+            ->whereHas('user', function ($query) {
+                $query->where('block', 0)
+                    ->whereHas('kyc', function ($kycQuery) {
+                        $kycQuery->where('is_confirmed', 1);
+                    });
+            });
+
+        // Date filtering
+        if ($searchUsing === 'paid_date') {
+            if ($startDate && $endDate) {
+                $query->whereDate('paid_date', '>=', $startDate)
+                    ->whereDate('paid_date', '<=', $endDate);
+            }
+        } else {
+            if ($startDate && $endDate) {
+                $query->whereDate('end_date', '>=', $startDate)
+                    ->whereDate('start_date', '<=', $endDate);
+            }
+        }
+
+        // Status filtering
+        if (!empty($r->status)) {
+            if ($r->status === 'paid') {
+                $query->where('paid_unpaid', '1');
+            } elseif ($r->status === 'unpaid') {
+                $query->where('paid_unpaid', '0');
+            }
+        }
+
+        // Pagination
+        $data['items'] = $query->paginate(10)->withQueryString();
+
+        return view('admin.reports.unpaid_payment_report')->with($data);
     }
 
     
-    public function generate_paid_unpaid_payment_reportExportExcel(Request $r)
+    /*public function generate_paid_unpaid_payment_reportExportExcel(Request $r)
     {
         $start_date = $r->start_date;
         $end_date = $r->end_date;
@@ -769,6 +928,103 @@ class Report_Controller extends Controller
         // } catch (\Exception $e) {
         //     return back()->with('error', 'An error occurred while generating the Excel. ' . $e->getMessage());
         // }
+    }*/
+
+    public function generate_paid_unpaid_payment_reportExportExcel(Request $r)
+    {
+        $start_date = $r->start_date;
+        $end_date = $r->end_date;
+        $status = $r->status;
+        $search_using = $r->search_using ?? 'payout_date'; // Default to payout_date if not set
+
+        $query = Payout::where('total_payout', '>', 0)
+            ->whereHas('user', function ($query) {
+                $query->where('block', 0)
+                    ->whereHas('kyc', function ($kycQuery) {
+                        $kycQuery->where('is_confirmed', 1);
+                    });
+            });
+
+        // ✅ Apply date filtering dynamically
+        if ($search_using === 'paid_date') {
+            if ($start_date && $end_date) {
+                $query->whereDate('paid_date', '>=', $start_date)
+                    ->whereDate('paid_date', '<=', $end_date);
+            }
+        } else {
+            if ($start_date && $end_date) {
+                $query->whereDate('end_date', '>=', $start_date)
+                    ->whereDate('start_date', '<=', $end_date);
+            }
+        }
+
+        // ✅ Apply status filter
+        if ($status == 'paid') {
+            $query->where('paid_unpaid', '1');
+        } elseif ($status == 'unpaid') {
+            $query->where('paid_unpaid', '0');
+        }
+
+        $payouts = $query->with('user')
+            ->get()
+            ->sortBy(function ($payout) {
+                return strtolower(optional($payout->user)->name);
+            });
+
+        // ✅ Generate Excel Export
+        $export = new class($payouts, $search_using) extends CustomValueBinder implements FromCollection, WithHeadings, WithMapping, WithCustomValueBinder {
+            protected $payouts;
+            protected $search_using;
+            protected $totalAmount = 0;
+
+            public function __construct($payouts, $search_using)
+            {
+                $this->payouts = $payouts;
+                $this->search_using = $search_using;
+            }
+
+            public function collection()
+            {
+                return $this->payouts;
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'Name',
+                    'ID',
+                    'Total Payout Amount',
+                    $this->search_using === 'paid_date' ? 'Paid Date' : 'Payout Date',
+                    'Account Name (As Per Bank)',
+                    'Bank Name',
+                    'Account Number',
+                    'IFSC',
+                    'Account Type',
+                ];
+            }
+
+            public function map($payout): array
+            {
+                $user = get_user_details($payout->user_id);
+                $this->totalAmount += $payout->total_payout;
+
+                return [
+                    get_name($payout->user_id),
+                    get_user_id($payout->user_id),
+                    $payout->total_payout,
+                    $this->search_using === 'paid_date'
+                        ? ($payout->paid_date ?? '-')
+                        : ($payout->start_date . ' - ' . $payout->end_date),
+                    $user->account_name,
+                    $user->bank_name,
+                    (string) $user->account_number, // prevent Excel auto-formatting
+                    $user->ifsc_code,
+                    $user->account_type,
+                ];
+            }
+        };
+
+        return $export;
     }
 
     /*public function exportPdf(Request $request)

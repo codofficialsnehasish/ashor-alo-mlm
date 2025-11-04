@@ -42,7 +42,14 @@
                             <form action="{{ route('report.generate-paid-unpaid-payment-report') }}" method="get">
                                 {{-- @csrf --}}
                                 <div class="row">
-                                    <div class="mb-0 col-md-6">
+                                    <div class="mb-0 col-md-2">
+                                        <label class="form-label">Search Using</label>
+                                        <select class="form-control" name="search_using">
+                                            <option @if($search_using == 'payout_date') selected @endif value="payout_date">Payout Date</option>
+                                            <option @if($search_using == 'paid_date') selected @endif value="paid_date">Paid Date</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-0 col-md-4">
                                         <label class="form-label">Search Using Payout Date</label>
                                         <div class="input-daterange input-group" id="datepicker6" data-date-format="yyyy-mm-dd" data-date-autoclose="true" data-provide="datepicker" data-date-container='#datepicker6'>
                                             <input type="text" class="form-control" required name="start_date" placeholder="Payout Start Date" value="{{ $start_date ?? ''}}" autocomplete="off" />
@@ -154,6 +161,7 @@
                                                     <th class="text-wrap">ID</th>
                                                     <th class="text-wrap">Total Payout Amount</th>
                                                     <th class="text-wrap">Payout Date</th>
+                                                    <th class="text-wrap">Paid Date</th>
                                                     <th class="text-wrap">Account Name (As Per Bank)</th>
                                                     <th class="text-wrap">Bank Name</th>
                                                     <th class="text-wrap">Account Number</th>
@@ -171,6 +179,7 @@
                                                     <td class="text-wrap">{{ get_user_id($item->user_id) }}</td>
                                                     <td class="text-wrap">{{ $item->total_payout }}</td>
                                                     <td class="text-wrap">{{ $item->start_date }} - {{ $item->end_date }}</td>
+                                                    <td class="text-wrap">{{ $item->paid_date }}</td>
                                                     <td class="text-wrap">{{ $user->account_name }}</td>
                                                     <td class="text-wrap">{{ $user->bank_name }}</td>
                                                     <td class="text-wrap">{{ $user->account_number }}</td>
