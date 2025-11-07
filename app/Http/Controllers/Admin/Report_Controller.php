@@ -458,6 +458,7 @@ class Report_Controller extends Controller
                                 ->where('end_date', $end_date)
                                 ->where('total_payout', '>', 0)
                                 ->whereNotIn('user_id', $previousPaidUserIds)
+                                ->where('paid_unpaid', '0')
                                 ->whereHas('user', function ($query) {
                                     $query->where('block', 0) // Check if user is not blocked
                                         ->whereHas('kyc', function ($kycQuery) {

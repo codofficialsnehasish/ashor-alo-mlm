@@ -94,6 +94,22 @@
             // ->where('category',$category)
             // ->first();
             $data_array = [];
+
+            //coded on 07-11-2025 by Snehasish Bhurisrestha
+            if($product->is_special_product == 1){
+                $data_array['is_special_business'] = 1;
+                $data_array['is_personal_business'] = 0;
+                $data_array['is_provide_direct'] = 0; 
+
+                $data_array['total_installment_month'] = 0;
+                $data_array['installment_amount_per_month'] = 0;
+                $data_array['total_paying_amount'] = 0;
+                $data_array['return_percentage'] = $percentage->return_persentage;
+                $data_array['percentage'] = $percentage->percentage;
+                return $data_array;
+            }
+            
+
             if(!empty($percentage->percentage)){
                 $per_month_installment_amount = $total_amount * ($percentage->percentage / 100);
                 $total_month = ($total_amount * ($percentage->return_persentage/100)) / $per_month_installment_amount;
