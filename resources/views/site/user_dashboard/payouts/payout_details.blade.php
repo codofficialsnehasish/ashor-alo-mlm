@@ -86,7 +86,7 @@
                                         <tr><td colspan="3"></td></tr>
                                         <tr>
                                             <td colspan="2">Less Repurchase Wallet {{ $payout->repurchase_persentage }}%</td>
-                                            <td>{{ $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction }}</td>
+                                            <td>{{ $payout->direct_bonus_repurchase_deduction + $payout->lavel_bonus_repurchase_deduction + $payout->remuneration_bonus_repurchase_deduction + $payout->roi_repurchase_deduction }}</td>
                                         </tr>
                                         {{-- <tr>
                                             <td colspan="2">Less <!--TDS--> Service charge {{ $payout->tds_persentage }}%</td>

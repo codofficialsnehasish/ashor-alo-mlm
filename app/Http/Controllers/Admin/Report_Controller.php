@@ -30,6 +30,7 @@ use Maatwebsite\Excel\Concerns\WithCustomValueBinder;
 use App\Exports\CustomValueBinder;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\DB;
 
@@ -1184,6 +1185,9 @@ class Report_Controller extends Controller
 
     public function level_wise(){
 
+        ini_set('max_execution_time', 30000); // 300 seconds = 5 minutes
+        ini_set('memory_limit', '512M'); 
+
         $user = User::whereNull('parent_id')->where('role','agent')->first();
         $customerTree = get_customer_tree($user->user_id);
 
@@ -1616,6 +1620,35 @@ class Report_Controller extends Controller
             $rootUser = User::where('role','agent')->where('user_id',$userId)->first();
         }
         return view('admin.reports.business_report.tree_wise',compact('rootUser','start_date','end_date'))->with($data);
+    }
+
+    public function direct_business_report(Request $request){
+        $userId = $request->input('query');
+        $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+
+        $data['title'] = 'Direct Business Report';
+        if(empty($userId)){
+            // return 0;
+            $user = User::whereNull('parent_id')->where('role','agent')->first();
+            $derect_members = User::where('agent_id',$user->user_id)->where('role','agent')->where('is_deleted', 0)->pluck('id');
+            $items = TopUp::whereIn('user_id',$derect_members)
+                            ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
+                                $q->whereDate('start_date', '>=', $start_date)
+                                ->whereDate('start_date', '<=', $end_date);
+                            })
+                            ->get();
+        }else{
+            // return 1;
+            $derect_members = User::where('agent_id',$userId)->where('role','agent')->where('is_deleted', 0)->pluck('id');
+            $items = TopUp::whereIn('user_id',$derect_members)
+                            ->when($start_date && $end_date, function ($q) use ($start_date, $end_date) {
+                                $q->whereDate('start_date', '>=', $start_date)
+                                ->whereDate('start_date', '<=', $end_date);
+                            })
+                            ->get();
+        }
+        return view('admin.reports.business_report.direct',compact('derect_members','items','start_date','end_date'))->with($data);
     }
 
 

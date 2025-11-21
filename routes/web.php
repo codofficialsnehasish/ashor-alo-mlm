@@ -530,6 +530,8 @@ Route::middleware('auth.admin')->group(function () {
             Route::get("/level-wise-business-exportExcel/{user_id}/{start_date?}/{end_date?}/{position?}",[Report_Controller::class,"level_wise_business_exportExcel"])->name('report.business-report.level-wise-business-exportExcel');
             
             Route::get("/tree-wise",[Report_Controller::class,"tree_wise"])->name('report.business-report.tree');
+            
+            Route::get("/direct-business-report",[Report_Controller::class,"direct_business_report"])->name('report.business-report.direct');
         
             // Dilse Report
             Route::get("/dilse-plan-report",[Report_Controller::class,"dilse_plan_report"])->name('report.dilse-plan-report');

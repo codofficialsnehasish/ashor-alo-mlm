@@ -138,6 +138,7 @@
                             <ul class="sub-menu" aria-expanded="true">
                                 <li><a href="{{ route('report.business-report.level') }}">Level Wise</a></li>
                                 <li><a href="{{ route('report.business-report.tree') }}">Tree Wise</a></li>
+                                <li><a href="{{ route('report.business-report.direct') }}">Direct</a></li>
                             </ul>
                         </li>
                         <li><a href="{{ route('report.dilse-plan-report') }}">Dilse Plan Report</a></li>
